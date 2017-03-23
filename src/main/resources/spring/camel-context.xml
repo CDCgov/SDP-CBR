@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+   
+   <!-- START SNIPPET: e1 -->
+  <!-- this is the JDBC data source which uses an in-memory only Apache Derby database -->
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+    <property name="url" value="jdbc:derby:memory:orders;create=true"/>
+    <property name="username" value=""/>
+    <property name="password" value=""/>
+  </bean>
+
+  <!-- bean which creates/destroys the database table for this example -->
+  <bean id="initDatabase" class="org.apache.camel.example.sql.DatabaseBean"
+        init-method="create" destroy-method="destroy">
+    <property name="dataSource" ref="dataSource"/>
+  </bean>
+
+
+   
+    <!-- Define a traditional camel context here -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="simple-route">
+            <from id="route-timer" uri="timer:foo?period=2000"/>
+            <transform id="route-transform">
+                <method ref="myTransformer"/>
+            </transform>
+            <log id="route-log" message=">>> ${body}"/>
+        </route>
+        <route id="_route1">
+            <from id="_to1" uri="file:directoryName?runLoggingLevel=DEBUG&amp;delay=10000"/>
+            <unmarshal id="_unmarshal1" ref="hl7"/>
+            <log id="_log1" message="${body}"/>
+            <multicast id="_multicast1">
+                <to id="_to3" uri="direct:foo"/>
+                <to id="_to4" uri="direct:foo2"/>
+            </multicast>
+        </route>
+        <route id="_route2">
+            <from id="_from2" uri="direct:foo"/>
+            <filter id="_filter1">
+                <javaScript>request.body.get("MSH").getMessageType().getMessageType().toString() == 'ADT'</javaScript>
+                <marshal id="_marshal1" ref="hl7"/>
+                <to id="_to2" uri="file:nndss?allowNullBody=true"/>
+            </filter>
+        </route>
+        <route id="_route3">
+            <from id="_from3" uri="direct:foo2"/>
+            <marshal id="_marshal2" ref="hl7"/>
+            <to id="_from1" uri="file:foodNet?allowNullBody=true"/>
+        </route>
+        <route id="_route4">
+            <from id="_from4" uri="sql:query"/>
+        </route>
+    </camelContext>
+</beans>
