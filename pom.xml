@@ -135,6 +135,20 @@
       <artifactId>camel-sql-starter</artifactId>
       <version>2.18.1.redhat-000012</version>
     </dependency>
+     <!-- jdbc -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+    <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.6</version>
+</dependency>
   </dependencies>
   <build>
     <defaultGoal>spring-boot:run</defaultGoal>
