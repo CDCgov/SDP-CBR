@@ -1,4 +1,4 @@
-package org.mycompany;
+package org.cdc.gov.sdp;
 
 import java.util.Map;
 

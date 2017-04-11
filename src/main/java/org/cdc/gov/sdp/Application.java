@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  *
  */
-package org.mycompany;
+package org.cdc.gov.sdp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
