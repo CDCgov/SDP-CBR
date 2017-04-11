@@ -1,44 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:camel="http://camel.apache.org/schema/spring"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
-    <!-- this is the JDBC data source which uses an in-memory only Apache Derby database -->
+    <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
+		database -->
     <bean class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close" id="dataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/phinms"/>
-        <property name="username" value="phinms_user"/>
-        <property name="password" value="phinms"/>
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
     <bean class="org.mycompany.Transformer" id="myProcessor"/>
-    <bean class="org.mycompany.ProfileFilter" id="profFilter"/>
     <!-- Define a traditional camel context here -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <!--         <route id="simple-route">
-            <from id="route-timer" uri="timer:foo?period=2000"/>
-            <transform id="route-transform">
-                <method ref="myTransformer"/>
-            </transform>
-            <log id="route-log" message=">>> ${body}"/>
-        </route> -->
-        <!--  <route id="_route1">
-            <from id="_to1" uri="file:directoryName?runLoggingLevel=DEBUG&amp;delay=10000"/>
-            <unmarshal id="_unmarshal1" ref="hl7"/>
-            <log id="_log1" message="${body}"/>
-            <multicast id="_multicast1">
-                <to id="_to3" uri="direct:foo"/>
-                <to id="_to4" uri="direct:foo2"/>
-            </multicast>
-        </route> -->
+    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route id="_route2">
             <from id="_from2" uri="direct:foo"/>
             <log id="myLog" message="Message Type ${body.getMSH().getMessageProfileIdentifier()}"/>
-            <camel:process id="_process2" ref="profFilter"/>
             <filter id="_filter1">
                 <javaScript>
                 result = false
-                var pi = request.body.getMSH().getMessageProfileIdentifier()
+                var header = request.body.getMSH()
+                var pi = header.getMessageProfileIdentifier()
                 if(pi  &amp;&amp;  pi.length &gt; 0){
                 	for(var i = 0; i&lt;= pi.length; i++){
                 		if(pi[i].getEntityIdentifier().getValue() == "FDD_MMG_V1.0"){
@@ -50,8 +35,17 @@
                 result = false
                 }</javaScript>
                 <marshal id="_marshal1" ref="hl7"/>
-                <to id="_to2" uri="file:foodNet?allowNullBody=true"/>
+                <to id="_to2" uri="direct:s3"/>
             </filter>
+        </route>
+        <route id="s3_route">
+            <from id="_sfrom" uri="direct:s3"/>
+            <setHeader headerName="CamelAwsS3Key" id="_setHeader1">
+                <simple>
+				${in.header.ID}
+            </simple>
+            </setHeader>
+            <to id="_from_s3" uri="aws-s3://foodnet?amazonS3Endpoint=http://localhost:4567&amp;accessKey=ak&amp;secretKey=sk"/>
         </route>
         <route id="_route3">
             <from id="_from3" uri="direct:foo2"/>
@@ -59,11 +53,10 @@
             <to id="_from1" uri="file:nndss?allowNullBody=true"/>
         </route>
         <route id="_route4">
-            <from id="_from4" uri="sql:select * from message_inq where applicationStatus is NULL and processingStatus = 'queued'?dataSource=dataSource&amp;onConsume=update message_inq set applicationStatus='completed' where recordId=:#recordId"/>
+            <from id="_from4" uri="sql:{{phinms.sql}"/>
             <log id="_log2" message="${body}"/>
             <camel:process id="_process1" ref="myProcessor"/>
             <unmarshal id="_unmarshal2" ref="hl7"/>
-            <log id="_log3" message="UNMARSHELLED ${body.getClass}"/>
             <multicast id="_multicast2">
                 <to id="_to31" uri="direct:foo"/>
                 <to id="_to41" uri="direct:foo2"/>
