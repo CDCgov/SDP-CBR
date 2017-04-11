@@ -14,9 +14,17 @@
 		<property name="password" value="${jdbc.password}" />
 	</bean>
 	<bean class="org.cdc.gov.sdp.Transformer" id="myProcessor" />
+	<bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer" />
 	<!-- Define a traditional camel context here -->
 	<camelContext id="camel" trace="true"
 		xmlns="http://camel.apache.org/schema/spring">
+		<dataFormats>
+			<!-- Here we define a Json data format with the id jack and that it should 
+				use the TestPojo as the class type when doing unmarshal. The unmarshalTypeName 
+				is optional, if not provided Camel will use a Map as the type. -->
+			<json id="jack" library="Jackson" />
+		</dataFormats>
+
 		<route id="FoodNetRoute">
 			<from id="foodNetFrom" uri="direct:foodNet" />
 			<filter id="foodNetFilter">
@@ -45,10 +53,10 @@
 				${in.header.ID}
             </simple>
 			</setHeader>
-			<doTry>
+			<doTry id="_doTry1">
 				<to id="_to_s3"
 					uri="aws-s3://foodnet?amazonS3Endpoint=http://localhost:4567&amp;accessKey=ak&amp;secretKey=sk" />
-				<doCatch>
+				<doCatch id="_doCatch1">
 					<exception>java.lang.Exception</exception>
 				</doCatch>
 			</doTry>
@@ -56,6 +64,8 @@
 		<route id="nndssRoute">
 			<from id="from_nndss" uri="direct:nndss" />
 			<marshal id="_marshal2" ref="hl7" />
+			<camel:process id="nndssJsonTransform" ref="jsonTransformer" />
+			<marshal id="jsonNndssMarshller" ref="jack" />
 			<to id="to_nndss" uri="file:nndss?allowNullBody=true" />
 		</route>
 		<route id="MvpsPhinMSRoute">
