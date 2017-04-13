@@ -1,81 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
-	<!-- START SNIPPET: e1 -->
-	<!-- this is the JDBC data source which uses an in-memory only Apache Derby 
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+    <!-- START SNIPPET: e1 -->
+    <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
 		database -->
-	<bean class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" id="dataSource">
-		<property name="driverClassName" value="${jdbc.driverClassName}" />
-		<property name="url" value="${jdbc.url}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-	</bean>
-	<bean class="org.cdc.gov.sdp.Transformer" id="myProcessor" />
-	<bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer" />
-	<!-- Define a traditional camel context here -->
-	<camelContext id="camel" trace="true"
-		xmlns="http://camel.apache.org/schema/spring">
-		<dataFormats>
-			<!-- Here we define a Json data format with the id jack and that it should 
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="dataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
+    <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+    <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
+    <!-- repository for the idempotent consumer -->
+    <bean
+        class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
+    <!-- repository for the idempotent consumer -->
+    <bean
+        class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="foodNetIDRepo"/>
+    <!-- Define a traditional camel context here -->
+    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
+        <dataFormats>
+            <!-- Here we define a Json data format with the id jack and that it should 
 				use the TestPojo as the class type when doing unmarshal. The unmarshalTypeName 
 				is optional, if not provided Camel will use a Map as the type. -->
-			<json id="jack" library="Jackson" />
-		</dataFormats>
-
-		<route id="FoodNetRoute">
-			<from id="foodNetFrom" uri="direct:foodNet" />
-			<filter id="foodNetFilter">
-				<javaScript>
-                result = false
-                var header = request.body.getMSH()
-                var pi = header.getMessageProfileIdentifier()
-                if(pi  &amp;&amp;  pi.length &gt; 0){
-                	for(var i = 0; i&lt;= pi.length; i++){
-                		if(pi[i].getEntityIdentifier().getValue() == "FDD_MMG_V1.0"){
-                		  result = true
-                		  break
-                		}
-                	}
-                }else{
-                result = false
-                }</javaScript>
-				<marshal id="_marshal1" ref="hl7" />
-				<to id="to_aphl_s3" uri="direct:aphl_s3" />
-			</filter>
-		</route>
-		<route id="APHL_ROUTE">
-			<from id="from_aphl_s3" uri="direct:aphl_s3" />
-			<setHeader headerName="CamelAwsS3Key" id="_setHeader1">
-				<simple>
+            <json id="jack" library="Jackson"/>
+        </dataFormats>
+        <route id="FoodNetRoute">
+            <from id="foodNetFrom" uri="direct:foodNet"/>
+            <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="foodNetIDRepo">
+                <header>ID</header>
+                 <log message="FOOOD NEET FILLTER"/>
+                <filter id="foodNetFilter">
+               
+                    <javaScript>
+	                result = false
+	                var header = request.body.getMSH()
+	                var version = header.getVersionID().getVersionID().getValue()
+	                if( version &amp;&amp; (version.startsWith("2.5") || version.startsWith("2.6"))){
+		        	   java.lang.System.out.println("HEADER "+header.encode())
+		        	    if(header.encode().contains("FDD_MMG_V1.0")){
+		        	    	result = true;
+		        	    	java.lang.System.out.println("PASSED FILTER")
+		        	    }
+		                else{
+		                	result = false
+		                	java.lang.System.out.println("DID NOT PASSED FILTER")
+		               	 }
+	                }</javaScript>
+                    <marshal id="_marshal1" ref="hl7"/>
+                    <to id="to_aphl_s3" uri="direct:aphl_s3"/>
+                </filter>
+            </idempotentConsumer>
+        </route>
+        <route id="APHL_ROUTE">
+            <from id="from_aphl_s3" uri="direct:aphl_s3"/>
+            <setHeader headerName="CamelAwsS3Key" id="_setHeader1">
+                <simple>
 				${in.header.ID}
             </simple>
-			</setHeader>
-			<doTry id="_doTry1">
-				<to id="_to_s3"
-					uri="aws-s3://foodnet?amazonS3Endpoint=http://localhost:4567&amp;accessKey=ak&amp;secretKey=sk" />
-				<doCatch id="_doCatch1">
-					<exception>java.lang.Exception</exception>
-				</doCatch>
-			</doTry>
-		</route>
-		<route id="nndssRoute">
-			<from id="from_nndss" uri="direct:nndss" />
-			<marshal id="_marshal2" ref="hl7" />
-			<camel:process id="nndssJsonTransform" ref="jsonTransformer" />
-			<marshal id="jsonNndssMarshller" ref="jack" />
-			<to id="to_nndss" uri="file:nndss?allowNullBody=true" />
-		</route>
-		<route id="MvpsPhinMSRoute">
-			<from id="mvps_phinms" uri="sql:{{phinms.sql}}" />
-			<camel:process id="_process1" ref="myProcessor" />
-			<unmarshal id="_unmarshal2" ref="hl7" />
-			<multicast id="_multicast2">
-				<to id="_to31" uri="direct:foodNet" />
-				<to id="_to41" uri="direct:nndss" />
-			</multicast>
-		</route>
-	</camelContext>
+            </setHeader>
+            <doTry id="_doTry1">
+            	<camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
+                <to id="_to_s3" uri="aws-s3://foodnet?amazonS3Endpoint=http://localhost:8000&amp;accessKey=accessKey1&amp;secretKey=verySecretKey1"/>
+                <doCatch id="_doCatch1">
+                    <exception>java.lang.Exception</exception>
+                    <log message="EXCEPTIPN"/>
+                </doCatch>
+            </doTry>
+        </route>
+        <route id="nndssRoute">
+            <from id="from_nndss" uri="direct:nndss"/>
+            <idempotentConsumer id="_idempotentConsumer2" messageIdRepositoryRef="nndssIDRepo">
+                <header>ID</header>
+                <marshal id="_marshal2" ref="hl7"/>
+                <camel:process id="nndssJsonTransform" ref="jsonTransformer"/>
+                <marshal id="jsonNndssMarshller" ref="jack"/>
+                <to id="to_nndss" uri="file:nndss?allowNullBody=true"/>
+            </idempotentConsumer>
+        </route>
+        <route id="MvpsPhinMSRoute">
+            <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
+            <camel:process id="_process1" ref="myProcessor"/>
+            <unmarshal id="_unmarshal2" ref="hl7"/>
+            <multicast id="_multicast2">
+                <to id="_to31" uri="direct:foodNet"/>
+                <to id="_to41" uri="direct:nndss"/>
+            </multicast>
+        </route>
+    </camelContext>
 </beans>

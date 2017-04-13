@@ -9,7 +9,6 @@ import org.apache.camel.Processor;
 public class JSONTransformer implements Processor {
 
 	public void process(Exchange in){
-
 		Map<String, Object> map = new HashMap<String, Object>();
 //		map.putAll(in.getIn().getHeaders());
 		map.put("BODY", in.getIn().getBody());
