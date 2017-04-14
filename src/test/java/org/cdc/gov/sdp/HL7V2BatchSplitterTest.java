@@ -1,13 +1,14 @@
 package org.cdc.gov.sdp;
 
-import java.io.FileReader;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
-
 public class HL7V2BatchSplitterTest {
 
 	@Before
@@ -16,15 +17,17 @@ public class HL7V2BatchSplitterTest {
 	}
 
 	@Test
-	public void test() {
+	public void test() throws Exception{
 		HL7V2BatchSplitter splitter = new HL7V2BatchSplitter();
 		Message msg = new DefaultMessage();
-		msg.setBody(readFile(""));
+		msg.setBody(readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
 		List<Message> messages = splitter.splitMessage(msg);
+		System.out.println(messages);
+		assertEquals(2,messages.size());
 	}
 
-	private String readFile(String file){
-		//FileReader in = new FileReader(file);
-		return "";
+	private String readFile(String file) throws IOException{
+		return  new String(java.nio.file.Files.readAllBytes(
+			    java.nio.file.Paths.get(file)));
 	}
 }
