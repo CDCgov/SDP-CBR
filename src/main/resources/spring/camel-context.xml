@@ -30,13 +30,39 @@
 				is optional, if not provided Camel will use a Map as the type. -->
             <json id="jack" library="Jackson"/>
         </dataFormats>
+        <route id="MvpsPhinMSRoute">
+            <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
+            <camel:process id="_process1" ref="myProcessor"/>
+            <camel:choice id="_choice1">
+                <camel:when id="_when1">
+                    <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+                    <camel:split id="_split1">
+                        <camel:method
+                            beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                            method="split" trim="false"/>
+                        <to id="_to1" uri="direct:multicast"/>
+                    </camel:split>
+                </camel:when>
+                <camel:otherwise id="_otherwise1">
+                    <to id="_to2" uri="direct:multicast"/>
+                </camel:otherwise>
+            </camel:choice>
+        </route>
+        <route id="Multicast">
+            <from id="_from1" uri="direct:multicast"/>
+            <log id="_log3" message="multicast ${body}"/>
+            <unmarshal id="_unmarshal1" ref="hl7"/>
+            <multicast id="_multicast2">
+                <to id="_to31" uri="direct:foodNet"/>
+                <to id="_to41" uri="direct:nndss"/>
+            </multicast>
+        </route>
         <route id="FoodNetRoute">
             <from id="foodNetFrom" uri="direct:foodNet"/>
             <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="foodNetIDRepo">
                 <header>ID</header>
-                 <log message="FOOOD NEET FILLTER"/>
+                <log id="_log1" message="FOOOD NEET FILLTER"/>
                 <filter id="foodNetFilter">
-               
                     <javaScript>
 	                result = false
 	                var header = request.body.getMSH()
@@ -65,11 +91,11 @@
             </simple>
             </setHeader>
             <doTry id="_doTry1">
-            	<camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-                <to id="_to_s3" uri="aws-s3://${aims.bucketName}?amazonS3Endpoint=${aims.S3Url}&amp;accessKey=${aims.AccessKey}&amp;secretKey=${aims.SecretAccessKey}"/>
+                <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
+                <to id="_to_s3" uri="aws-s3://{{aims.bucketName}}?amazonS3Endpoint={{aims.S3Url}}&amp;accessKey={{aims.AccessKey}}&amp;secretKey={{aims.SecretAccessKey}}"/>
                 <doCatch id="_doCatch1">
                     <exception>java.lang.Exception</exception>
-                    <log message="EXCEPTIPN"/>
+                    <log id="_log2" message="EXCEPTIPN \n ${exception.stacktrace}"/>
                 </doCatch>
             </doTry>
         </route>
@@ -82,15 +108,6 @@
                 <marshal id="jsonNndssMarshller" ref="jack"/>
                 <to id="to_nndss" uri="file:nndss?allowNullBody=true"/>
             </idempotentConsumer>
-        </route>
-        <route id="MvpsPhinMSRoute">
-            <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
-            <camel:process id="_process1" ref="myProcessor"/>
-            <unmarshal id="_unmarshal2" ref="hl7"/>
-            <multicast id="_multicast2">
-                <to id="_to31" uri="direct:foodNet"/>
-                <to id="_to41" uri="direct:nndss"/>
-            </multicast>
         </route>
     </camelContext>
 </beans>
