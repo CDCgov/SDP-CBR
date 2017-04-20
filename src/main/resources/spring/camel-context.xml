@@ -16,6 +16,7 @@
     <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
     <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
     <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
+    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
     <!-- repository for the idempotent consumer -->
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
@@ -23,7 +24,7 @@
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="foodNetIDRepo"/>
     <!-- Define a traditional camel context here -->
-    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
             <!-- Here we define a Json data format with the id jack and that it should 
 				use the TestPojo as the class type when doing unmarshal. The unmarshalTypeName 
@@ -36,7 +37,7 @@
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
                     <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                    <camel:split id="_split1">
+                    <camel:split id="_split1" parallelProcessing="true" strategyRef="agg" >
                         <camel:method
                             beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
                             method="split" trim="false"/>
@@ -50,7 +51,6 @@
         </route>
         <route id="Multicast">
             <from id="_from1" uri="direct:multicast"/>
-            <log id="_log3" message="multicast ${body}"/>
             <unmarshal id="_unmarshal1" ref="hl7"/>
             <multicast id="_multicast2">
                 <to id="_to31" uri="direct:foodNet"/>

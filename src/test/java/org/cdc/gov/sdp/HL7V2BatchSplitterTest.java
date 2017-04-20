@@ -23,7 +23,7 @@ public class HL7V2BatchSplitterTest {
 		msg.setBody(readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
 		List<Message> messages = splitter.splitMessage(msg);
 		System.out.println(messages);
-		assertEquals(2,messages.size());
+		assertEquals(3,messages.size());
 	}
 
 	private String readFile(String file) throws IOException{
