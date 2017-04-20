@@ -4,7 +4,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
-    <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
+    <!-- this is the JDBC data source which uses an in-memory only Apache Derby
 		database -->
     <bean class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close" id="dataSource">
@@ -17,6 +17,8 @@
     <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
     <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
     <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
+
     <!-- repository for the idempotent consumer -->
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
@@ -24,13 +26,8 @@
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="foodNetIDRepo"/>
     <!-- Define a traditional camel context here -->
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <dataFormats>
-            <!-- Here we define a Json data format with the id jack and that it should 
-				use the TestPojo as the class type when doing unmarshal. The unmarshalTypeName 
-				is optional, if not provided Camel will use a Map as the type. -->
-            <json id="jack" library="Jackson"/>
-        </dataFormats>
         <route id="MvpsPhinMSRoute">
             <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="_process1" ref="myProcessor"/>
@@ -104,9 +101,8 @@
             <idempotentConsumer id="_idempotentConsumer2" messageIdRepositoryRef="nndssIDRepo">
                 <header>ID</header>
                 <marshal id="_marshal2" ref="hl7"/>
-                <camel:process id="nndssJsonTransform" ref="jsonTransformer"/>
-                <marshal id="jsonNndssMarshller" ref="jack"/>
-                <to id="to_nndss" uri="file:nndss?allowNullBody=true"/>
+                <camel:process id="httpEndTransform" ref="httpTransformer"/>
+                <to id="_to_nndss" uri="http4://{{nndss.httpUrl}}"/>
             </idempotentConsumer>
         </route>
     </camelContext>
