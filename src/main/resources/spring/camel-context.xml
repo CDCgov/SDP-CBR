@@ -4,7 +4,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
-    <!-- this is the JDBC data source which uses an in-memory only Apache Derby
+    <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
 		database -->
     <bean class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close" id="dataSource">
@@ -18,7 +18,6 @@
     <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
     <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
     <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
-
     <!-- repository for the idempotent consumer -->
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
@@ -26,15 +25,19 @@
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="foodNetIDRepo"/>
     <!-- Define a traditional camel context here -->
-
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <errorHandler id="eh" redeliveryPolicyRef="myPolicy"/>
+        <!-- and the redelivery policy is a profile where we can configure it -->
+        <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
+            redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
         <route id="MvpsPhinMSRoute">
             <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
-            <camel:process id="_process1" ref="myProcessor"/>
+            <camel:process id="setHeaders" ref="myProcessor"/>
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
                     <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                    <camel:split id="_split1" parallelProcessing="true" strategyRef="agg" >
+                    <camel:split id="batchSplitter"
+                        parallelProcessing="false" strategyRef="agg">
                         <camel:method
                             beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
                             method="split" trim="false"/>
@@ -58,20 +61,22 @@
             <from id="foodNetFrom" uri="direct:foodNet"/>
             <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="foodNetIDRepo">
                 <header>ID</header>
-                <log id="_log1" message="FOOOD NEET FILLTER"/>
+                <log id="_log1" message="FOOD NET FILTER"/>
                 <filter id="foodNetFilter">
                     <javaScript>
 	                result = false
 	                var header = request.body.getMSH()
 	                var version = header.getVersionID().getVersionID().getValue()
 	                if( version &amp;&amp; (version.startsWith("2.5") || version.startsWith("2.6"))){
-		        	   java.lang.System.out.println("HEADER "+header.encode())
+		        	   
 		        	    if(header.encode().contains("FDD_MMG_V1.0")){
 		        	    	result = true;
-		        	    	java.lang.System.out.println("PASSED FILTER")
+		        	    	java.lang.System.out.println("HEADER "+header.encode())
+		        	    	java.lang.System.out.println(" PASSED FILTER")
 		        	    }
 		                else{
 		                	result = false
+		                	java.lang.System.out.println("HEADER "+header.encode())
 		                	java.lang.System.out.println("DID NOT PASSED FILTER")
 		               	 }
 	                }</javaScript>
@@ -82,8 +87,8 @@
         </route>
         <route id="APHL_ROUTE">
             <from id="from_aphl_s3" uri="direct:aphl_s3"/>
-            <setHeader headerName="CamelAwsS3Key" id="_setHeader1">
-                <simple>
+            <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
+                <simple trim="false">
 				${in.header.ID}
             </simple>
             </setHeader>
@@ -96,7 +101,7 @@
                 </doCatch>
             </doTry>
         </route>
-        <route id="nndssRoute">
+        <route errorHandlerRef="eh" id="nndssRoute">
             <from id="from_nndss" uri="direct:nndss"/>
             <idempotentConsumer id="_idempotentConsumer2" messageIdRepositoryRef="nndssIDRepo">
                 <header>ID</header>
