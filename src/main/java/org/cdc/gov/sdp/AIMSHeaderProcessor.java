@@ -44,7 +44,7 @@ public class AIMSHeaderProcessor implements Processor {
 		aimsHeaders.put(CBR.SOURCE_ATTRIBUTES,
 				urlEncodeUTF8((Map<String, String>) in.getHeader(CBR.SOURCE_ATTRIBUTES)));
 	
-		String [] headers = new String[]{CBR.BATCH,CBR.BATCH_INDEX,CBR.CRB_ID,CBR.CBR_RECEIVED_TIME,CBR.SOURCE,CBR.SOURCE_ID};
+		String [] headers = new String[]{CBR.BATCH,CBR.BATCH_INDEX,CBR.CBR_ID,CBR.CBR_RECEIVED_TIME,CBR.SOURCE,CBR.SOURCE_ID};
 		for (int i = 0; i < headers.length; i++) {
 			Object v = in.getHeader(headers[i]);
 			if(v!=null){

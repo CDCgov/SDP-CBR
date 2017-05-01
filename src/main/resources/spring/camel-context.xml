@@ -18,6 +18,9 @@
     <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
     <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
     <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
+    <bean class="org.cdc.gov.sdp.LogProcess" id="loggingProcess"/>
+    <bean class="org.cdc.gov.sdp.TestingRoute" id="testingRoute"/>
+
     <!-- repository for the idempotent consumer -->
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
@@ -30,9 +33,11 @@
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
+        <routeBuilder ref="testingRoute"/>
         <route id="MvpsPhinMSRoute">
             <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
+            <camel:process id="_process2" ref="loggingProcess"/>
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
                     <camel:simple>body.trim().startsWith("FHS")</camel:simple>

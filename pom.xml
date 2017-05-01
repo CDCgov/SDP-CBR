@@ -184,6 +184,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-sql</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<defaultGoal>spring-boot:run</defaultGoal>
