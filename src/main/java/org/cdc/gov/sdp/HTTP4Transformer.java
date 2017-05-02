@@ -9,7 +9,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 public class HTTP4Transformer implements Processor {
 	public void process(Exchange exchange) throws Exception {
-		String[] headers = { CBR.SOURCE, CBR.SOURCE_ID, CBR.SOURCE_RECEIVED_TIME, CBR.BATCH, CBR.BATCH_INDEX, CBR.CRB_ID, CBR.SENDER, CBR.RECIPIENT, CBR.SOURCE_ATTRIBUTES, CBR.CBR_RECEIVED_TIME };
+		String[] headers = { CBR.SOURCE, CBR.SOURCE_ID, CBR.SOURCE_RECEIVED_TIME, CBR.BATCH, CBR.BATCH_INDEX, CBR.CBR_ID, CBR.SENDER, CBR.RECIPIENT, CBR.SOURCE_ATTRIBUTES, CBR.CBR_RECEIVED_TIME };
 		MultipartEntityBuilder mpb = MultipartEntityBuilder.create();
 		String file = exchange.getIn().getBody(String.class);
         Map<String, Object> source_headers = exchange.getIn().getHeaders();

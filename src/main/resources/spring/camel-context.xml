@@ -2,16 +2,31 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:camel="http://camel.apache.org/schema/spring"
     xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
     <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
 		database -->
     <bean class="org.apache.commons.dbcp.BasicDataSource"
-        destroy-method="close" id="dataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
+        destroy-method="close" id="phinMsDataSource">
+        <property name="driverClassName" value="${phinms.jdbc.driverClassName}"/>
+        <property name="url" value="${phinms.jdbc.url}"/>
+        <property name="username" value="${phinms.jdbc.username}"/>
+        <property name="password" value="${phinms.jdbc.password}"/>
+    </bean>
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="foodNetDataSource">
+        <property name="driverClassName" value="${foodNet.jdbc.driverClassName}"/>
+        <property name="url" value="${foodNet.jdbc.url}"/>
+        <property name="username" value="${foodNet.jdbc.username}"/>
+        <property name="password" value="${foodNet.jdbc.password}"/>
+    </bean>
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="nndssDataSource" primary="true">
+        <property name="driverClassName" value="${nndss.jdbc.driverClassName}"/>
+        <property name="url" value="${nndss.jdbc.url}"/>
+        <property name="username" value="${nndss.jdbc.username}"/>
+        <property name="password" value="${nndss.jdbc.password}"/>
     </bean>
     <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
     <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
@@ -25,7 +40,7 @@
     <bean
         class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="foodNetIDRepo"/>
     <!-- Define a traditional camel context here -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <errorHandler id="eh" redeliveryPolicyRef="myPolicy"/>
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
@@ -51,15 +66,15 @@
         </route>
         <route id="Multicast">
             <from id="_from1" uri="direct:multicast"/>
-            <unmarshal id="_unmarshal1" ref="hl7"/>
             <multicast id="_multicast2">
-                <to id="_to31" uri="direct:foodNet"/>
-                <to id="_to41" uri="direct:nndss"/>
+                <to id="_to31" uri="direct:foodNetFilter"/>
+                <to id="_to41" uri="direct:nndssQueue"/>
             </multicast>
         </route>
-        <route id="FoodNetRoute">
-            <from id="foodNetFrom" uri="direct:foodNet"/>
-            <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="foodNetIDRepo">
+        <route id="foodNetFilter">
+            <from id="_from2" uri="direct:foodNetFilter"/>
+            <unmarshal id="_unmarshal1" ref="hl7"/>
+            <idempotentConsumer id="_idempotentConsumer" messageIdRepositoryRef="foodNetIDRepo">
                 <header>ID</header>
                 <log id="_log1" message="FOOD NET FILTER"/>
                 <filter id="foodNetFilter">
@@ -81,12 +96,21 @@
 		               	 }
 	                }</javaScript>
                     <marshal id="_marshal1" ref="hl7"/>
-                    <to id="to_aphl_s3" uri="direct:aphl_s3"/>
+                    <to id="_to3" uri="sql:{{foodNet.queue.sqlInsert}}"/>
                 </filter>
             </idempotentConsumer>
         </route>
-        <route id="APHL_ROUTE">
-            <from id="from_aphl_s3" uri="direct:aphl_s3"/>
+        <route id="nndssQueue">
+            <from id="foodNetFrom" uri="direct:nndssQueue"/>
+            <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="nndssIDRepo">
+                <header>ID</header>
+                <to id="_to4" uri="sql:{{nndss.queue.sqlInsert}}"/>
+            </idempotentConsumer>
+        </route>
+        <!--   
+        <route id="FoodNetRoute">
+             need processor to handle data coming out of QUEUE  
+            <from id="_from3" uri="sql:{{foodNet.queue.sqlRead}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
                 <simple trim="false">
 				${in.header.ID}
@@ -101,14 +125,13 @@
                 </doCatch>
             </doTry>
         </route>
+        -->
         <route errorHandlerRef="eh" id="nndssRoute">
-            <from id="from_nndss" uri="direct:nndss"/>
-            <idempotentConsumer id="_idempotentConsumer2" messageIdRepositoryRef="nndssIDRepo">
-                <header>ID</header>
-                <marshal id="_marshal2" ref="hl7"/>
-                <camel:process id="httpEndTransform" ref="httpTransformer"/>
-                <to id="_to_nndss" uri="http4://{{nndss.httpUrl}}"/>
-            </idempotentConsumer>
+            <from id="from_nndss" uri="sql:{{nndss.queue.sqlRead}}"/>
+            <camel:process ref="queueProcessor"></camel:process>
+            <camel:process id="httpEndTransform" ref="httpTransformer"/>
+            <to id="_to_nndss" uri="http4://{{nndss.httpUrl}}"/>
         </route>
+        
     </camelContext>
 </beans>

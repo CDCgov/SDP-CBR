@@ -10,6 +10,11 @@
     </encoder>
   </appender>
 
+
+<!-- <logger name="org.apache.camel.component.sql" level="trace"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> -->
   <root level="info">
     <appender-ref ref="STDOUT" />
   </root>

@@ -9,53 +9,21 @@ import java.util.ListIterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 
 public class HL7V2BatchSplitter {
+	private static final Logger LOG = LoggerFactory.getLogger(HL7V2BatchSplitter.class);
 
 	public List<Message> split(Exchange exchange) throws HL7Exception {
-		System.out.println("CALLING SPLITTER WITH EXCHANGE");
+		LOG.debug("CALLING SPLITTER WITH EXCHANGE");
 		return splitMessage(exchange.getIn());
 	}
 
-	// public List<Message> splitMessage(org.apache.camel.Message inMessage) {
-	// System.out.println("CALLING SPLITTER WITH MESSAGE");
-	// String batch = inMessage.getBody(String.class);
-	// StringReader reader = new StringReader(batch);
-	//
-	// List<String> segments = Arrays.asList(batch.split("\\r?\\n"));
-	// System.out.println("Number of segments = "+ segments.size());
-	// List<Message> messages = new ArrayList<Message>();
-	// int messageCount = 0;
-	//
-	// ListIterator<String> iter = segments.listIterator();
-	//
-	// while (iter.hasNext()) {
-	// String st = iter.next();
-	//
-	// if (st.trim().startsWith("MSH")) {
-	// try {
-	// iter.previous();
-	// String hl7 = createMessage(iter);
-	// DefaultMessage message = new DefaultMessage();
-	// message.setHeaders(inMessage.getHeaders());
-	// message.setHeader(CBR.BATCH, true);
-	// message.setHeader(CBR.BATCH_INDEX, messageCount);
-	// System.out.println(hl7);
-	// message.setBody(hl7);
-	// messages.add(message);
-	// } catch (HL7Exception e) {
-	// // need to log that we missed a message for some reason
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// return messages;
-	// }
-
 	public List<Message> splitMessage(org.apache.camel.Message inMessage) {
-		System.out.println("CALLING SPLITTER WITH MESSAGE");
+		LOG.debug("CALLING SPLITTER WITH MESSAGE");
 		String batch = inMessage.getBody(String.class);
 		List<Message> messages = new ArrayList<Message>();
 		int messageCount = 0;
@@ -71,17 +39,15 @@ public class HL7V2BatchSplitter {
 					String hl7 = batchMessageIter.next();
 					DefaultMessage message = new DefaultMessage();
 					Iterator<String> headerKeys = inMessage.getHeaders().keySet().iterator();
-					while(headerKeys.hasNext()){
+					while (headerKeys.hasNext()) {
 						String key = headerKeys.next();
 						message.setHeader(key, inMessage.getHeader(key));
 					}
 					message.setHeader(CBR.BATCH, true);
 					message.setHeader(CBR.BATCH_INDEX, messageCount);
-					message.setHeader(CBR.ID, inMessage.getHeader(CBR.ID).toString() + "_"+messageCount);
-					System.out.println(hl7);
-					System.out.println();
-					System.out.println(message.getHeader(CBR.ID));
-					System.out.println();
+					message.setHeader(CBR.ID, inMessage.getHeader(CBR.ID).toString() + "_" + messageCount);
+					LOG.debug(message.getHeader(CBR.ID).toString());
+					LOG.debug(hl7);
 					message.setBody(hl7);
 					messages.add(message);
 					messageCount++;
@@ -89,15 +55,15 @@ public class HL7V2BatchSplitter {
 			}
 
 		}
-		System.out.println("NUMBER OF MESSAGES "  + messages.size());
-		
+		LOG.debug("NUMBER OF MESSAGES " + messages.size());
+
 		return messages;
 	}
 
 	public List<List<String>> readFHS(String data) {
-		System.out.println("SPLITTING FHS");
+		LOG.debug("SPLITTING FHS");
 		List<String> segments = Arrays.asList(data.split("\r?\n"));
-		System.out.println("Number of segments = " + segments.size());
+		LOG.debug("Number of segments = " + segments.size());
 		ListIterator<String> iter = segments.listIterator();
 		List<List<String>> fhs = new ArrayList<List<String>>();
 		while (iter.hasNext()) {
@@ -111,7 +77,6 @@ public class HL7V2BatchSplitter {
 	}
 
 	public List<List<String>> readBatches(List<String> segments) {
-		System.out.println("SPLITTING BHS");
 		ListIterator<String> iter = segments.listIterator();
 		List<List<String>> batches = new ArrayList<List<String>>();
 		while (iter.hasNext()) {

@@ -33,7 +33,7 @@ public interface CBR {
 	/* The CBR assigned message identifier. */
 	String ID = "ID";
 	/* The CBR assigned message identifier. */
-	String CRB_ID = "CRB_ID";
+	String CBR_ID = "CBR_ID";
 
 	/* The sender of the message. */
 	String SENDER = "SENDER";

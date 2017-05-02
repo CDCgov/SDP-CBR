@@ -28,7 +28,7 @@ public class AIMSHeaderProcessor implements Processor {
 	private String sender = "";
 	private String protocol = "";
 	private String encryptionType = "";
-	S3Producer p;
+	
 	public void process(Exchange exchange) {
 		Message in = exchange.getIn();
 		Map<String, String> aimsHeaders = new HashMap<String, String>();
@@ -44,7 +44,7 @@ public class AIMSHeaderProcessor implements Processor {
 		aimsHeaders.put(CBR.SOURCE_ATTRIBUTES,
 				urlEncodeUTF8((Map<String, String>) in.getHeader(CBR.SOURCE_ATTRIBUTES)));
 	
-		String [] headers = new String[]{CBR.BATCH,CBR.BATCH_INDEX,CBR.CRB_ID,CBR.CBR_RECEIVED_TIME,CBR.SOURCE,CBR.SOURCE_ID};
+		String [] headers = new String[]{CBR.BATCH,CBR.BATCH_INDEX,CBR.CBR_ID,CBR.CBR_RECEIVED_TIME,CBR.SOURCE,CBR.SOURCE_ID};
 		for (int i = 0; i < headers.length; i++) {
 			Object v = in.getHeader(headers[i]);
 			if(v!=null){
