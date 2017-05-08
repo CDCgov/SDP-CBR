@@ -1,5 +1,7 @@
 package org.cdc.gov.sdp;
 
+import java.util.Date;
+
 public interface CBR {
 	/*
 	 * Identifies the source system from which CBR received the message. For the
@@ -57,5 +59,7 @@ public interface CBR {
 	 * The time the message was delivered by the CBR service
 	 */
 	String CBR_DELIVERED_TIME = "CBR_DELIVERED_TIME";
-
+	String ROUTE = "ROUTE";
+	String MESSAGE = "MESSAGE";
+	String TIMESTAMP = "TIMESTAMP";
 }
