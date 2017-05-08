@@ -1,7 +1,5 @@
 package org.cdc.gov.sdp;
 
-import java.util.Date;
-
 public interface CBR {
 	/*
 	 * Identifies the source system from which CBR received the message. For the

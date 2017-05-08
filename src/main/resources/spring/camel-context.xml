@@ -5,8 +5,6 @@
     xmlns:jee="http://www.springframework.org/schema/jee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
-    <!-- this is the JDBC data source which uses an in-memory only Apache Derby 
-		database -->
     <bean class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close" id="phinMsDataSource">
         <property name="driverClassName" value="${phinms.jdbc.driverClassName}"/>
@@ -48,7 +46,6 @@
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
-        <routeBuilder ref="testingRoute"/>
         <route id="MvpsPhinMSRoute">
             <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
@@ -127,11 +124,5 @@
                 </doCatch>
             </doTry>
         </route>
-        <!--   route errorHandlerRef="eh" id="nndssRoute">
-			<from id="from_nndss" uri="sql:{{nndss.queue.sqlRead}}" />
-			<camel:process id="_process1" ref="queueProcessor" />
-			<camel:process id="httpEndTransform" ref="httpTransformer" />
-			<to id="_to_nndss" uri="http4://{{nndss.httpUrl}}" />
-		</route -->
     </camelContext>
 </beans>
