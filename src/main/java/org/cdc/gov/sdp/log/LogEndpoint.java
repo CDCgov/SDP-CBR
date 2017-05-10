@@ -7,27 +7,24 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @UriEndpoint(scheme = "sdplog", title = "SDPLog", syntax = "sdplog:message", label = "database,sql,log")
 public class LogEndpoint extends DefaultEndpoint {
-		
-    @UriParam(description = "Sets the DataSource to use to communicate with the database.")
-    private DataSource dataSource;
-    
-    private String log_msg;
-    
-    public LogEndpoint(String uri, Component component, DataSource ds, String log_message) {
-        super(uri, component);
-        this.dataSource = ds;
-        this.log_msg = log_message;
-    }
+
+	@UriParam(description = "Sets the DataSource to use to communicate with the database.")
+	private DataSource dataSource;
+	private String log_msg;
+
+	public LogEndpoint(String uri, Component component, DataSource ds, String log_message) {
+		super(uri, component);
+		this.dataSource = ds;
+		this.log_msg = log_message;
+	}
 
 	@Override
-	public Producer createProducer() throws Exception {		
+	public Producer createProducer() throws Exception {
 		return new LogProducer(this, getEndpointUri(), dataSource, log_msg);
 	}
 
@@ -35,9 +32,9 @@ public class LogEndpoint extends DefaultEndpoint {
 	public boolean isSingleton() {
 		return false;
 	}
-	
+
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
 		return null;
-	}    
+	}
 }
