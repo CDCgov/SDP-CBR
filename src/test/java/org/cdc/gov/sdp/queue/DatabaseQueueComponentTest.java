@@ -32,10 +32,19 @@ public class DatabaseQueueComponentTest {
 
 	@Test
 	@DirtiesContext
-	public void testAddToQueue() throws InterruptedException {
+	public void testQueueBasic() throws InterruptedException {
 		String expectedBody = "TEST";
 		foo.expectedBodiesReceived(expectedBody);
-		template.sendBodyAndHeader(expectedBody, "CBR_ID", "testAddToQueue");
+		template.sendBodyAndHeader(expectedBody, "CBR_ID", "testQueueBasic");
+		MockEndpoint.assertIsSatisfied(camelContext);
+	}
+
+	@Test
+	@DirtiesContext
+	public void testQueueProducer() throws InterruptedException {
+		String expectedBody = "TEST";
+		foo.expectedBodiesReceived(expectedBody);
+		template.sendBodyAndHeader(expectedBody, "CBR_ID", "testQueueProducer");
 		MockEndpoint.assertIsSatisfied(camelContext);
 	}
 	

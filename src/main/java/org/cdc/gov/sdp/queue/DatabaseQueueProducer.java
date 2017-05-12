@@ -17,8 +17,13 @@ import org.cdc.gov.sdp.CBR;
 
 public class DatabaseQueueProducer extends DefaultProducer {
 
-	public DatabaseQueueProducer(Endpoint endpoint, String uri, DataSource ds, String msg) {
+	private String sqlInsertCommand;
+	private DataSource sqlDataSource;
+
+	public DatabaseQueueProducer(Endpoint endpoint, String uri, DataSource ds, String tableName, String msg) {
 		super(endpoint);
+		//sqlInsertCommand = "insert into " + tableName + " " + column_order + values;
+		sqlDataSource = ds;
 	}
 
 	@Override

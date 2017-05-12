@@ -29,11 +29,11 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 	@Override
 	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 		DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
-	//	String tableName = resolveAndRemoveReferenceParameter(parameters, "tableName", String.class);
+		String tableName = getAndRemoveParameter(parameters, "tableName", String.class);
 //		if (ds == null) {
 //			throw new IllegalArgumentException("DataSource must be configured");
 //		}
-		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, null, remaining);
+		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName, remaining);
 		return endpoint;
 	}
 }

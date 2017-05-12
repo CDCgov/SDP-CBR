@@ -13,7 +13,7 @@
     <camelContext id="camelContext-06e68a1a-58d8-48f7-8348-f79c7362486c" xmlns="http://camel.apache.org/schema/spring">
         <route id="_route1">
             <from id="_from1" uri="direct:start"/>
-            <to id="queue_component_test1" uri="sdpqueue:test1?dataSource=nndssDataSource"/>
+            <to id="queue_component_test1" uri="sdpqueue:test1?dataSource=nndssDataSource&amp;tableName=table1"/>
             <to id="_to1" uri="mock:foo"/>
         </route>
     </camelContext>
