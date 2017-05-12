@@ -38,9 +38,6 @@ public class LogComponentTest {
 	@Test
 	@DirtiesContext
 	public void testLogFunctionality() throws Exception {
-
-
-
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(
 				(DataSource) camelContext.getRegistry().lookupByName("sdplogDataSource"));
 
@@ -62,12 +59,4 @@ public class LogComponentTest {
 			assertEquals(0, lst.size());
 		}
 	}
-
-	// @Test
-	// public void testDatabaseQueueComponent() throws Exception {
-	//
-	//
-	// fail("Implement me!");
-	// }
-
 }

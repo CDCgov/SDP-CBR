@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tag::example[] -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="nndssDataSource" primary="true">
+        <property name="driverClassName" value="${nndss.jdbc.driverClassName}"/>
+        <property name="url" value="${nndss.jdbc.url}"/>
+        <property name="username" value="${nndss.jdbc.username}"/>
+        <property name="password" value="${nndss.jdbc.password}"/>
+    </bean>
+    <camelContext id="camelContext-06e68a1a-58d8-48f7-8348-f79c7362486c" xmlns="http://camel.apache.org/schema/spring">
+        <route id="_route1">
+            <from id="_from1" uri="direct:start"/>
+            <to id="queue_component_test1" uri="sdpqueue:test1?dataSource=nndssDataSource"/>
+            <to id="_to1" uri="mock:foo"/>
+        </route>
+    </camelContext>
+</beans>
+<!-- end::example[] -->
