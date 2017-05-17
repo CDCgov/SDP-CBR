@@ -8,6 +8,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
+/**
+ * Component for handing messages within a defined database structure.  The table name
+ * and datasource to use are provided as parameters.  Currently, the remaining portion of
+ * the URI, after the component prefix, is not used.
+ * 
+ * @author Betsy Cole
+ */
 public class DatabaseQueueComponent extends UriEndpointComponent {
 
 	public DatabaseQueueComponent() {
@@ -30,10 +37,10 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 		DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
 		String tableName = getAndRemoveParameter(parameters, "tableName", String.class);
-//		if (ds == null) {
-//			throw new IllegalArgumentException("DataSource must be configured");
-//		}
-		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName, remaining);
+		if (ds == null) {
+			throw new IllegalArgumentException("DataSource must be configured");
+		}
+		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName);
 		return endpoint;
 	}
 }

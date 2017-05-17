@@ -18,10 +18,10 @@ public class HL7V2BatchSplitterTest {
 	}
 
 	@Test
-	@Ignore
 	public void test() throws Exception{
 		HL7V2BatchSplitter splitter = new HL7V2BatchSplitter();
-		Message msg = new DefaultMessage();
+		Message msg = new DefaultMessage();		
+		msg.setHeader(CBR.ID, "Test_message");
 		msg.setBody(readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
 		List<Message> messages = splitter.splitMessage(msg);
 		System.out.println(messages);

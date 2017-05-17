@@ -110,7 +110,7 @@
             <from id="foodNetFrom" uri="direct:nndssQueue"/>
             <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="nndssIDRepo">
                 <header>ID</header>
-                <to id="_to4" uri="sql:{{nndss.queue.sqlInsert}}"/>
+                <to id="_to4" uri="sdpqueue:push?dataSource=nndssDataSource&amp;tableName={{nndss.queue.tableName}}"/>
             </idempotentConsumer>
         </route>
         <route id="FoodNetRoute">

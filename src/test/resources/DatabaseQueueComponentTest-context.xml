@@ -10,12 +10,32 @@
         <property name="username" value="${nndss.jdbc.username}"/>
         <property name="password" value="${nndss.jdbc.password}"/>
     </bean>
-    <camelContext id="camelContext-06e68a1a-58d8-48f7-8348-f79c7362486c" xmlns="http://camel.apache.org/schema/spring">
+    <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+	  <property name="location" value="classpath:application.properties"/>
+	</bean>
+    <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
+    <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+    <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
+    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route id="_route1">
             <from id="_from1" uri="direct:start"/>
-            <to id="queue_component_test1" uri="sdpqueue:test1?dataSource=nndssDataSource&amp;tableName=table1"/>
-            <to id="_to1" uri="mock:foo"/>
+            <process id="setHeaders" ref="myProcessor"/>
+            <split id="batchSplitter"
+                parallelProcessing="false" strategyRef="agg">
+                <method
+                    beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                    method="split" trim="false"/>
+                <to id="_to1" uri="direct:test2"/>
+            </split>
+           </route>
+           <route id="_route2">
+            <from id="_from2" uri="direct:test2"/>
+            <to id="queue_component_test1" uri="sdpqueue:push?dataSource=nndssDataSource&amp;tableName=message_queue"/>
+            <to id="_to2" uri="mock:foo"/>
         </route>
+       
     </camelContext>
 </beans>
 <!-- end::example[] -->

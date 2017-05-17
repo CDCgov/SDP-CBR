@@ -17,18 +17,16 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 	private DataSource dataSource;
 	@UriParam(description = "Sets the table in which the data will be stored.")
 	private String tableName;
-	private String log_msg;
 
-	public DatabaseQueueEndpoint(String uri, Component component, DataSource ds, String tableName, String log_message) {
+	public DatabaseQueueEndpoint(String uri, Component component, DataSource ds, String tableName) {
 		super(uri, component);
 		this.dataSource = ds;
 		this.tableName = tableName;
-		this.log_msg = log_message;
 	}
 
 	@Override
 	public Producer createProducer() throws Exception {
-		return new DatabaseQueueProducer(this, getEndpointUri(), dataSource, log_msg);
+		return new DatabaseQueueProducer(this, getEndpointUri(), dataSource, tableName);
 	}
 
 	@Override
