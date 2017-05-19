@@ -50,11 +50,6 @@
     <!-- and the redelivery policy is a profile where we can configure it -->
     <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
       redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
-    <route id="misery">
-	    <from id="sdlq" uri="sdpqueue:nothing?dataSource=sdplogDataSource"/>
-	    <to id="fu" uri="file:test1"/>
-    </route>
-    <!-- 
     <route id="MvpsPhinMSRoute">
       <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
       <camel:process id="setHeaders" ref="myProcessor"/>
@@ -131,6 +126,5 @@
         </doCatch>
       </doTry>
     </route>
-     -->
   </camelContext>
 </beans>
