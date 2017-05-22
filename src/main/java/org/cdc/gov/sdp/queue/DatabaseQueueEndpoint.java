@@ -67,22 +67,6 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 		}
 
 		return data;
-		// if (allowMapToClass && outputClass != null) {
-		// Class<?> outputClazz =
-		// getCamelContext().getClassResolver().resolveClass(outputClass);
-		// RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
-		// RowMapperResultSetExtractor<?> mapper = new
-		// RowMapperResultSetExtractor(rowMapper);
-		// List<?> data = mapper.extractData(rs);
-		// return data;
-		// } else {
-		// ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-		// RowMapperResultSetExtractor<Map<String, Object>> mapper = new
-		// RowMapperResultSetExtractor<Map<String, Object>>(
-		// rowMapper);
-		// List<Map<String, Object>> data = mapper.extractData(rs);
-		// return data;
-		// }
 	}
 
 	@SuppressWarnings("unchecked")

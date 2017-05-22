@@ -5,6 +5,7 @@ import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +30,13 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	private String tableName;
 	private JdbcTemplate jdbcTemplate;
 
-	private final String query = "SELECT TOP (10) * FROM [PHIN].[dbo].[fake_table] WHERE attempts = 0 and status = 'queued'";
-	/*
-	 * private String onConsumeFailed =
-	 * "update message_inq set applicationStatus='failed' where recordId=:#recordId"
-	 * ; private String onConsume =
-	 * "update [PHIN].[dbo].[message_inq] set applicationStatus='completed' where recordId=?"
-	 * ;
-	 */
+	private final String query;
 	private String onConsumeFailed = "UPDATE [PHIN].[dbo].[fake_table] SET status = 'failed' where id=?";
 	private String onConsume = "UPDATE [PHIN].[dbo].[fake_table] SET status = 'sent' where id=?";
-
 	private String onConsumeBatchComplete = "SELECT TOP (10) * FROM [PHIN].[dbo].[fake_table]";
+
+	private String[] headers = { "id", "cbr_id", "batch", "batch_index", "payload", "errorCode", "errorMessage",
+			"attempts", "status" };
 
 	private boolean breakBatchOnConsumeFail;
 
@@ -67,6 +63,19 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		super(endpoint, processor);
 		this.jdbcTemplate = new JdbcTemplate(ds);
 		this.tableName = tn;
+		// TODO avoid using this
+		this.query = "SELECT TOP (10) * FROM [PHIN].[dbo].[fake_table] WHERE attempts = 0 and status = 'queued'";
+	}
+
+	public DatabaseQueueConsumer(Endpoint endpoint, DataSource ds, Processor processor, String tn, String q, String onC,
+			String onCF, String onCBC) {
+		super(endpoint, processor);
+		this.jdbcTemplate = new JdbcTemplate(ds);
+		this.query = q;
+		this.tableName = tn;
+		this.onConsume = onC;
+		this.onConsumeFailed = onCF;
+		this.onConsumeBatchComplete = onCBC;
 	}
 
 	@Override
@@ -81,9 +90,6 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		private DataHolder() {
 		}
 	}
-
-	private String[] headers = { "id", "cbr_id", "batch", "batch_index", "payload", "errorCode", "errorMessage",
-			"attempts", "status" };
 
 	@Override
 	protected int poll() throws Exception {
@@ -154,14 +160,20 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		answer.add(holder);
 	}
 
+	// @SuppressWarnings("unchecked")
 	protected Exchange createExchange(Object data) {
 		final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
 		Message msg = exchange.getIn();
-		// if (getEndpoint().getOutputHeader() != null) {
-		// msg.setHeader(getEndpoint().getOutputHeader(), data);
-		// } else {
+		Map<String, Object> new_headers = msg.getHeaders();
+		HashMap<String, Object> data_hash = (HashMap<String, Object>) data;
+
+		for (String header : data_hash.keySet()) {
+			new_headers.put(header, data_hash.get(header));
+		}
+
 		msg.setBody(data);
-		// }
+		msg.setHeaders(new_headers);
+
 		return exchange;
 	}
 
@@ -226,19 +238,20 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 			}
 		}
 
-		// try {
-		// if (onConsumeBatchComplete != null) {
-		// int updateCount = jdbcTemplate.execute(onConsumeBatchComplete,
-		// onConsumePreparedStatementCallback);
-		// }
-		// } catch (Exception e) {
-		// if (breakBatchOnConsumeFail) {
-		// throw e;
-		// } else {
-		// handleException("Error executing onConsumeBatchComplete query " +
-		// onConsumeBatchComplete, e);
-		// }
-		// }
+		try {
+			if (onConsumeBatchComplete != null) {
+				// TODO
+				// int updateCount =
+				// jdbcTemplate.execute(onConsumeBatchComplete, new
+				// ocPreparedStatementCallback<Integer>(rid));
+			}
+		} catch (Exception e) {
+			if (breakBatchOnConsumeFail) {
+				throw e;
+			} else {
+				handleException("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
+			}
+		}
 		return total;
 	}
 }

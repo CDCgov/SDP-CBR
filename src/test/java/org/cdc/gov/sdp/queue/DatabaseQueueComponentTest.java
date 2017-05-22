@@ -47,6 +47,35 @@ public class DatabaseQueueComponentTest {
 
 	@Test
 	@DirtiesContext
+	public void testQueueConsumer() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdplogDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String create_dummy_data = "INSERT into [PHIN].[dbo].[fake_table] (id, status, attempts) values (1337, 'queued', 0)";
+		String check_sent = "SELECT * FROM [PHIN].[dbo].[fake_table] WHERE status = 'sent'";
+		String clear_dummy_data = "DELETE FROM [PHIN].[dbo].[fake_table] WHERE id=1337";
+		String get_count = "select * from [PHIN].[dbo].[fake_table]";
+		int initial_count = 0;
+
+		try {
+			initial_count = jdbcTemplate.queryForList(get_count).size();
+			int rows_affected = jdbcTemplate.update(create_dummy_data);
+			assertEquals(1, rows_affected);
+
+			foo.expectedMessageCount(rows_affected);
+			MockEndpoint.assertIsSatisfied(camelContext);
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+			assertEquals(1, lst.size());
+		} finally {
+			jdbcTemplate.update(clear_dummy_data);
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+			assertEquals(initial_count, lst.size());
+		}
+	}
+
+	@Test
+	@DirtiesContext
 	public void testQueueProducer() throws Exception {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(
 				(DataSource) camelContext.getRegistry().lookupByName("nndssDataSource"));
