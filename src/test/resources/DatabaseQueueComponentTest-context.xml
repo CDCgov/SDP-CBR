@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tag::example[] -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+  <bean class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close" id="nndssDataSource" primary="true">
+    <property name="driverClassName" value="${nndss.jdbc.driverClassName}"/>
+    <property name="url" value="${nndss.jdbc.url}"/>
+    <property name="username" value="${nndss.jdbc.username}"/>
+    <property name="password" value="${nndss.jdbc.password}"/>
+  </bean>
+  <bean class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close" id="sdpqDataSource">
+    <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+    <property name="url" value="${sdpq.jdbc.url}"/>
+    <property name="username" value="${sdpq.jdbc.username}"/>
+    <property name="password" value="${sdpq.jdbc.password}"/>
+  </bean>
+  <bean
+    class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
+    <property name="location" value="classpath:application.properties"/>
+  </bean>
+  <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
+  <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+  <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
+  <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
+  <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route id="_route1">
+      <from id="_from1" uri="direct:start"/>
+      <process id="setHeaders" ref="myProcessor"/>
+      <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
+        <method beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+          method="split" trim="false"/>
+        <to id="_to1" uri="direct:test2"/>
+      </split>
+    </route>
+    <route id="_route2">
+      <from id="_from2" uri="direct:test2"/>
+      <to id="queue_component_test1" uri="sdpqueue:push?dataSource=nndssDataSource&amp;tableName=message_queue"/>
+      <to id="_to2" uri="mock:foo"/>
+    </route>
+    <route id="_route3">
+      <from id="_from3" uri="sdpqueue:junkdata?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
+      <to id="_to3" uri="mock:foo"/>
+    </route>
+  </camelContext>
+</beans>
+<!-- end::example[] -->
