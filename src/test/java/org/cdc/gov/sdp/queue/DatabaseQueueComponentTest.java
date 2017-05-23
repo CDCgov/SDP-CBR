@@ -48,13 +48,20 @@ public class DatabaseQueueComponentTest {
 	@Test
 	@DirtiesContext
 	public void testQueueConsumer() throws Exception {
-		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdplogDataSource");
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-		String create_dummy_data = "INSERT into [PHIN].[dbo].[fake_table] (id, status, attempts) values (1337, 'queued', 0)";
-		String check_sent = "SELECT * FROM [PHIN].[dbo].[fake_table] WHERE status = 'sent'";
-		String clear_dummy_data = "DELETE FROM [PHIN].[dbo].[fake_table] WHERE id=1337";
-		String get_count = "select * from [PHIN].[dbo].[fake_table]";
+		String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+		String col_val = minimum_required_headers
+				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+				+ new Date(System.currentTimeMillis()) + "')";
+		String tableName = "message_queue";
+
+		String create_dummy_data = "INSERT into " + tableName + col_val;
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337 AND status='sent'";
+		check_sent = "SELECT (id, status) FROM " + tableName + " WHERE id=1337";
+		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
+		String get_count = "select * from " + tableName;
 		int initial_count = 0;
 
 		try {

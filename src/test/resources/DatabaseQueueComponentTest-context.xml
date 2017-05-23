@@ -11,11 +11,11 @@
     <property name="password" value="${nndss.jdbc.password}"/>
   </bean>
   <bean class="org.apache.commons.dbcp.BasicDataSource"
-    destroy-method="close" id="sdplogDataSource">
-    <property name="driverClassName" value="${sdplog.jdbc.driverClassName}"/>
-    <property name="url" value="${sdplog.jdbc.url}"/>
-    <property name="username" value="${sdplog.jdbc.username}"/>
-    <property name="password" value="${sdplog.jdbc.password}"/>
+    destroy-method="close" id="sdpqDataSource">
+    <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+    <property name="url" value="${sdpq.jdbc.url}"/>
+    <property name="username" value="${sdpq.jdbc.username}"/>
+    <property name="password" value="${sdpq.jdbc.password}"/>
   </bean>
   <bean
     class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
@@ -42,7 +42,7 @@
       <to id="_to2" uri="mock:foo"/>
     </route>
     <route id="_route3">
-      <from id="_from3" uri="sdpqueue:junkdata?dataSource=sdplogDataSource&amp;tableName=fake_table"/>
+      <from id="_from3" uri="sdpqueue:junkdata?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
       <to id="_to3" uri="mock:foo"/>
     </route>
   </camelContext>

@@ -31,14 +31,15 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	private JdbcTemplate jdbcTemplate;
 
 	private final String query;
-	private String onConsumeFailed = "UPDATE [PHIN].[dbo].[fake_table] SET status = 'failed' where id=?";
-	private String onConsume = "UPDATE [PHIN].[dbo].[fake_table] SET status = 'sent' where id=?";
-	private String onConsumeBatchComplete = "SELECT TOP (10) * FROM [PHIN].[dbo].[fake_table]";
+	private String onConsumeFailed;
+	private String onConsume;
+	private String onConsumeBatchComplete;
 
-	private String[] headers = { "id", "cbr_id", "batch", "batch_index", "payload", "errorCode", "errorMessage",
-			"attempts", "status" };
+	private String[] default_headers = { "id", "cbr_id", "source", "source_id", "source_attributes", "batch",
+			"batch_index", "payload", "cbr_recevied_time", "sender", "recipient", "attempts", "status", "created_at",
+			"updated_at" };
 
-	private boolean breakBatchOnConsumeFail;
+	private boolean breakBatchOnConsumeFail = false;
 
 	private class ocPreparedStatementCallback<T> implements PreparedStatementCallback<Integer> {
 		public ocPreparedStatementCallback(Integer recordId) {
@@ -63,19 +64,11 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		super(endpoint, processor);
 		this.jdbcTemplate = new JdbcTemplate(ds);
 		this.tableName = tn;
-		// TODO avoid using this
-		this.query = "SELECT TOP (10) * FROM [PHIN].[dbo].[fake_table] WHERE attempts = 0 and status = 'queued'";
-	}
 
-	public DatabaseQueueConsumer(Endpoint endpoint, DataSource ds, Processor processor, String tn, String q, String onC,
-			String onCF, String onCBC) {
-		super(endpoint, processor);
-		this.jdbcTemplate = new JdbcTemplate(ds);
-		this.query = q;
-		this.tableName = tn;
-		this.onConsume = onC;
-		this.onConsumeFailed = onCF;
-		this.onConsumeBatchComplete = onCBC;
+		this.query = "SELECT * FROM " + tableName + " WHERE attempts = 0 and status = 'queued'";
+		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed' where id=?";
+		this.onConsume = "UPDATE " + tableName + " SET status = 'sent' where id=?";
+		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
 	}
 
 	@Override
@@ -110,7 +103,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				boolean closeEager = true;
 				try {
 					log.trace("Got result list from query: {}", rs);
-					List<?> data = getEndpoint().queryForList(headers, rs, true);
+					List<?> data = getEndpoint().queryForList(default_headers, rs, true);
 					addListToQueue(data, answer);
 				} finally {
 					if (closeEager) {
