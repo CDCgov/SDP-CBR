@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:camel="http://camel.apache.org/schema/spring"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+  <!-- START SNIPPET: e1 -->
+  <!-- repository for the idempotent consumer -->
+  <bean
+    class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
+  <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+  <!-- Define a traditional camel context here -->
+  <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="application.properties"/>
+    <route id="aphls3_tr">
+      <from id="_from1" uri="file:test/"/>
+      <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
+        <simple trim="false">${properties:${aims.testFileName}}</simple>
+      </setHeader>
+      <doTry id="_doTry1">
+        <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
+        <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
+        <doCatch id="_doCatch1">
+          <exception>java.lang.Exception</exception>
+          <log id="_log2" message="EXCEPTION \n ${exception.stacktrace}"/>
+        </doCatch>
+      </doTry>
+    </route>
+  </camelContext>
+</beans>
