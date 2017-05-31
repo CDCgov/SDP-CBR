@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.cdc.gov.sdp.model.SDPMessage;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.gson.Gson;
 public class HL7V2BatchSplitterTest {
 
 	@Before
@@ -21,7 +24,9 @@ public class HL7V2BatchSplitterTest {
 	public void test() throws Exception{
 		HL7V2BatchSplitter splitter = new HL7V2BatchSplitter();
 		Message msg = new DefaultMessage();		
-		msg.setHeader(CBR.ID, "Test_message");
+		SDPMessage sdpMsg = new SDPMessage();
+		sdpMsg.setId("Test_message");
+		msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, new Gson().toJson(sdpMsg));
 		msg.setBody(readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
 		List<Message> messages = splitter.splitMessage(msg);
 		System.out.println(messages);

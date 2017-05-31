@@ -21,7 +21,7 @@
     class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
     <property name="location" value="classpath:application.properties"/>
   </bean>
-  <bean class="org.cdc.gov.sdp.Transformer" id="myProcessor"/>
+  <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
   <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
   <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
   <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>

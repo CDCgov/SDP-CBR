@@ -12,6 +12,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.component.aws.s3.S3Producer;
+import org.cdc.gov.sdp.model.SDPMessage;
+
+import com.google.gson.Gson;
 
 public class AIMSHeaderProcessor implements Processor {
 
@@ -32,25 +35,16 @@ public class AIMSHeaderProcessor implements Processor {
 	public void process(Exchange exchange) {
 		Message in = exchange.getIn();
 		Map<String, String> aimsHeaders = new HashMap<String, String>();
+		SDPMessage sdpMsg = new Gson().fromJson((String)in.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class);
 		in.setHeader(S3Constants.S3_HEADERS, aimsHeaders);
-		aimsHeaders.put(AIMSPlatformSender, stringOrNull(getSender((String) in.getHeader(CBR.SENDER))));
-		aimsHeaders.put(AIMSPlatformRecipient, stringOrNull(getRecipient((String) in.getHeader(CBR.RECIPIENT))));
+		aimsHeaders.put(AIMSPlatformSender, sdpMsg.getSender());
+		aimsHeaders.put(AIMSPlatformRecipient, sdpMsg.getRecipient());
 		aimsHeaders.put(AIMSPlatformSenderProject, stringOrNull(getProject((String) in.getHeader(AIMSPlatformSenderProject))));
 		aimsHeaders.put(AIMSPlatformSenderProtocol, stringOrNull(getProtocol((String) in.getHeader(AIMSPlatformSenderProtocol))));
 		aimsHeaders.put(AIMSPlatformSenderEncryptionType,
 				 stringOrNull(getEncryptionType((String) in.getHeader(AIMSPlatformSenderEncryptionType))));
-		aimsHeaders.put( AIMSPlatformMessageId,stringOrNull( (String) in.getHeader(CBR.ID)));
-		aimsHeaders.put(CBR.CBR_DELIVERED_TIME, new Date(System.currentTimeMillis()).toString());
-		aimsHeaders.put(CBR.SOURCE_ATTRIBUTES,
-				urlEncodeUTF8((Map<String, String>) in.getHeader(CBR.SOURCE_ATTRIBUTES)));
-	
-		String [] headers = new String[]{CBR.BATCH,CBR.BATCH_INDEX,CBR.CBR_ID,CBR.CBR_RECEIVED_TIME,CBR.SOURCE,CBR.SOURCE_ID};
-		for (int i = 0; i < headers.length; i++) {
-			Object v = in.getHeader(headers[i]);
-			if(v!=null){
-				aimsHeaders.put(headers[i], v.toString());
-			}
-		}
+		aimsHeaders.put( AIMSPlatformMessageId, sdpMsg.getId());
+		aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String)in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
 		
 		aimsHeaders.values().removeIf(Objects::isNull);
 	}

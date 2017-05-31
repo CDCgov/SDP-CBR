@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -24,7 +25,9 @@ import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.BootstrapWith;
@@ -102,7 +105,7 @@ public class DatabaseQueueComponentTest {
 			map.put("arguments", "arge");
 			map.put("fromPartyId", "testQueueProducer");
 			map.put("messageRecipient", "recipient");
-			map.put("receivedTime", new Date());
+			map.put("receivedTime", new Date().toString());
 			msg.setBody(map);
 
 			exchange.setIn(msg);
