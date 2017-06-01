@@ -6,9 +6,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.S3Configuration;
-import org.apache.camel.component.aws.s3.S3Consumer;
 import org.apache.camel.component.aws.s3.S3Endpoint;
-import org.apache.camel.component.aws.s3.S3Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -18,15 +16,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.S3ClientOptions;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
 
 /**
  * The aws-s3 component is used for storing and retrieving objecct from Amazon
@@ -60,14 +55,17 @@ public class AphlS3Endpoint extends DefaultEndpoint {
 		ensureClient();
 	}
 
+	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
 		return null;
 	}
 
+	@Override
 	public Producer createProducer() throws Exception {
 		return new AphlS3Producer(this);
 	}
 
+	@Override
 	public boolean isSingleton() {
 		return true;
 	}
@@ -79,7 +77,7 @@ public class AphlS3Endpoint extends DefaultEndpoint {
 		if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
 			s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
 		}
-		
+
 		LOG.debug("started CDC APHL Producer only AWS S3 client");
 	}
 
@@ -114,8 +112,8 @@ public class AphlS3Endpoint extends DefaultEndpoint {
 			clientConfiguration.setProxyPort(configuration.getProxyPort());
 			isClientConfigFound = true;
 		}
-		LOG.info("AWS ACCESS KEY "+configuration.getAccessKey());
-		LOG.info("AWS SECRET KEY "+configuration.getSecretKey());
+		LOG.info("AWS ACCESS KEY " + configuration.getAccessKey());
+		LOG.info("AWS SECRET KEY " + configuration.getSecretKey());
 		if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
 			AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(),
 					configuration.getSecretKey());
@@ -126,9 +124,9 @@ public class AphlS3Endpoint extends DefaultEndpoint {
 			}
 		} else {
 			if (isClientConfigFound) {
-				client = new AmazonS3Client();
-			} else {
 				client = new AmazonS3Client(clientConfiguration);
+			} else {
+				client = new AmazonS3Client();
 			}
 		}
 

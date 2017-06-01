@@ -1,17 +1,24 @@
 package org.cdc.gov.sdp.aphl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.Test;
@@ -33,28 +40,28 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 @ContextConfiguration(locations = { "/AphlS3ComponentTest-context.xml" })
 @PropertySource("/application.properties")
 public class AphlS3ComponentTest {
-
 	@Autowired
 	protected CamelContext camelContext;
 
 	@EndpointInject(uri = "mock:foo")
 	protected MockEndpoint foo;
 
-	@Produce(uri = "direct:start")
+	@Produce(uri = "direct:aphls3")
 	protected ProducerTemplate template;
 
 	@Test
 	@DirtiesContext
-	public void testAphlS3Producer() throws Exception {
+	public void testAphlS3Route() throws Exception {
 		final String accessKey = "accessKey1";
 		final String secretKey = "verySecretKey1";
 		final String bucketName = "tradingpartners-east.sandbox.aimsplatform.com";/// AIMSPlatform
 		final String s3url = "http://127.0.0.1:8000";
 
 		final String file_name = "hl7v2.txt";
-		final String source_file_path = "/home/k/SDP-CBR/src/test/resources/hl7v2.txt";
-		final String input_file_path = "/home/k/SDP-CBR/test/" + file_name;
-		final String output_file_path = "/home/k/SDP-CBR/test2/" + file_name;
+
+		final String source_file_path = "src/test/resources/hl7v2.txt";
+		final String input_file_path = "test/" + file_name;
+		final String output_file_path = "test2/" + file_name;
 
 		final String s3ObjectKey = "TRY";
 
@@ -73,14 +80,37 @@ public class AphlS3ComponentTest {
 
 		// Get object and put in 2nd test directory to easily examine it
 		s3client.getObject(new GetObjectRequest(bucketName, s3ObjectKey), new File(output_file_path));
+		assertTrue(Files.exists(Paths.get(output_file_path)));
 
 		// Easily examine it
 		List<String> lines = Files.readAllLines(Paths.get(output_file_path));
 		assertEquals(expected_lines, lines);
 
 		// Finally, clean up your mess
-		if (s3client.doesObjectExist(bucketName, file_name)) {
-			s3client.deleteObject(bucketName, file_name);
+		if (s3client.doesObjectExist(bucketName, s3ObjectKey)) {
+			s3client.deleteObject(bucketName, s3ObjectKey);
+		}
+		Files.deleteIfExists(Paths.get(output_file_path));
+		assertTrue(!Files.exists(Paths.get(output_file_path)));
+	}
+
+	@Test
+	@DirtiesContext
+	public void testAphlS3Producer() throws Exception {
+		try {
+			Exchange exchange = new DefaultExchange(camelContext);
+			Message msg = new DefaultMessage();
+
+			Map map = new HashMap<>();
+			map.put("CamelAwsS3Key", "arbitraryKey");
+			msg.setHeader("CamelAwsS3Key", "arbitraryKey");
+			msg.setBody(map);
+			exchange.setIn(msg);
+
+			foo.expectedMessageCount(1);
+			template.send(exchange);
+			MockEndpoint.assertIsSatisfied(camelContext);
+		} finally {
 		}
 	}
 }
