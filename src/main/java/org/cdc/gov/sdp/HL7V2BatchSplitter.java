@@ -9,8 +9,11 @@ import java.util.ListIterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.cdc.gov.sdp.model.SDPMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 import ca.uhn.hl7v2.HL7Exception;
 
@@ -27,7 +30,7 @@ public class HL7V2BatchSplitter {
 		String batch = inMessage.getBody(String.class);
 		List<Message> messages = new ArrayList<Message>();
 		int messageCount = 0;
-
+		SDPMessage sdpMsg = new Gson().fromJson((String)inMessage.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class);
 		List<List<String>> fhs = readFHS(batch);
 		for (Iterator<List<String>> iterator = fhs.iterator(); iterator.hasNext();) {
 			List<String> list = iterator.next();
@@ -41,11 +44,16 @@ public class HL7V2BatchSplitter {
 					Iterator<String> headerKeys = inMessage.getHeaders().keySet().iterator();
 					while (headerKeys.hasNext()) {
 						String key = headerKeys.next();
-						message.setHeader(key, inMessage.getHeader(key));
+						if (!SDPMessage.SDP_MESSAGE_HEADER.equals(key)) {
+							message.setHeader(key, inMessage.getHeader(key));
+						}
 					}
-					message.setHeader(CBR.BATCH, true);
-					message.setHeader(CBR.BATCH_INDEX, messageCount);
-					message.setHeader(CBR.ID, inMessage.getHeader(CBR.ID).toString() + "_" + messageCount);
+					//TODO: Set batch id
+					sdpMsg.setBatch(true);
+					sdpMsg.setBatchIndex(messageCount);
+					sdpMsg.setId(sdpMsg.getId() + "_" + messageCount);
+					message.setHeader(CBR.ID, sdpMsg.getId());
+					message.setHeader(SDPMessage.SDP_MESSAGE_HEADER, new Gson().toJson(sdpMsg));
 					LOG.debug(message.getHeader(CBR.ID).toString());
 					LOG.debug(hl7);
 					message.setBody(hl7);
