@@ -14,6 +14,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
@@ -56,7 +57,6 @@ public class AphlS3ComponentTest {
 	private final String input_file_path = "src/test/resources/" + file_name;
 	private final String output_file_path = "test/" + file_name;
 
-	private final String S3_KEY_HEADER = "CamelAwsS3Key";
 	private final String s3ObjectKey = "TRY";
 
 	@Test
@@ -70,7 +70,7 @@ public class AphlS3ComponentTest {
 		Exchange exchange = new DefaultExchange(camelContext);
 		Message msg = new DefaultMessage();
 
-		msg.setHeader(S3_KEY_HEADER, s3ObjectKey);
+		msg.setHeader(S3Constants.KEY, s3ObjectKey);
 		msg.setBody(expected_content);
 		exchange.setIn(msg);
 
