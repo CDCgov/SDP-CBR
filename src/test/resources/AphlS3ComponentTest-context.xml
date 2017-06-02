@@ -12,32 +12,14 @@
   <!-- Define a traditional camel context here -->
   <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties" location="application.properties"/>
-    <route id="aphls3_tr">
-      <from id="_from1" uri="file:test/"/>
-      <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-        <simple trim="false">TRY</simple>
-      </setHeader>
-      <doTry id="_doTry1">
-        <camel:process id="testProcess1" ref="aimsHeaderProcessor"/>
+    <route id="aphls3_test_route">
+      <from id="from_test" uri="direct:aphls3"/>
+      <doTry id="_doTry">
         <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
-        <doCatch id="_doCatch1">
-          <exception>java.lang.Exception</exception>
-          <log id="_log2" message="EXCEPTION \n ${exception.stacktrace}"/>
-        </doCatch>
-      </doTry>
-    </route>
-     <route id="aphls3_tr2">
-      <from id="_from2" uri="direct:aphls3/"/>
-      <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key2">
-        <simple trim="false">ArbitraryKey</simple>
-      </setHeader>
-      <doTry id="_doTry2">
-        <camel:process id="testProcess2" ref="aimsHeaderProcessor"/>
-        <to id="_to_s3_2" uri="aphl-s3://{{aims.url}}"/>
-        <to id="_to_m" uri="mock:foo"/>
+        <to id="_to_mock" uri="mock:foo"/>
         <doCatch id="_doCatch2">
           <exception>java.lang.Exception</exception>
-          <log id="_log3" message="EXCEPTION \n ${exception.stacktrace}"/>
+          <log id="_log1" message="EXCEPTION \n ${exception.stacktrace}"/>
         </doCatch>
       </doTry>
     </route>
