@@ -22,7 +22,7 @@
     <property name="location" value="classpath:application.properties"/>
   </bean>
   <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
-  <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+  <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
   <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
   <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
   <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
