@@ -1,8 +1,7 @@
-package org.cdc.gov.sdp;
+package org.cdc.gov.sdp.aphl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,7 +10,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws.s3.S3Constants;
-import org.apache.camel.component.aws.s3.S3Producer;
 import org.cdc.gov.sdp.model.SDPMessage;
 
 import com.google.gson.Gson;
@@ -31,27 +29,29 @@ public class AIMSHeaderProcessor implements Processor {
 	private String sender = "";
 	private String protocol = "";
 	private String encryptionType = "";
-	
+
+	@Override
 	public void process(Exchange exchange) {
 		Message in = exchange.getIn();
 		Map<String, String> aimsHeaders = new HashMap<String, String>();
-		SDPMessage sdpMsg = new Gson().fromJson((String)in.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class);
+		SDPMessage sdpMsg = new Gson().fromJson((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class);
 		in.setHeader(S3Constants.S3_HEADERS, aimsHeaders);
 		aimsHeaders.put(AIMSPlatformSender, sdpMsg.getSender());
 		aimsHeaders.put(AIMSPlatformRecipient, sdpMsg.getRecipient());
-		aimsHeaders.put(AIMSPlatformSenderProject, stringOrNull(getProject((String) in.getHeader(AIMSPlatformSenderProject))));
-		aimsHeaders.put(AIMSPlatformSenderProtocol, stringOrNull(getProtocol((String) in.getHeader(AIMSPlatformSenderProtocol))));
+		aimsHeaders.put(AIMSPlatformSenderProject,
+				stringOrNull(getProject((String) in.getHeader(AIMSPlatformSenderProject))));
+		aimsHeaders.put(AIMSPlatformSenderProtocol,
+				stringOrNull(getProtocol((String) in.getHeader(AIMSPlatformSenderProtocol))));
 		aimsHeaders.put(AIMSPlatformSenderEncryptionType,
-				 stringOrNull(getEncryptionType((String) in.getHeader(AIMSPlatformSenderEncryptionType))));
-		aimsHeaders.put( AIMSPlatformMessageId, sdpMsg.getId());
-		aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String)in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
-		
+				stringOrNull(getEncryptionType((String) in.getHeader(AIMSPlatformSenderEncryptionType))));
+		aimsHeaders.put(AIMSPlatformMessageId, sdpMsg.getId());
+		aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
+
 		aimsHeaders.values().removeIf(Objects::isNull);
 	}
-	
-	
-	private String stringOrNull(Object v){
-		return v == null? null :v.toString();
+
+	private String stringOrNull(Object v) {
+		return v == null ? null : v.toString();
 	}
 
 	private String urlEncodeUTF8(String s) {
@@ -63,7 +63,7 @@ public class AIMSHeaderProcessor implements Processor {
 	}
 
 	private String urlEncodeUTF8(Map<String, ?> map) {
-		if(map == null){
+		if (map == null) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -72,9 +72,8 @@ public class AIMSHeaderProcessor implements Processor {
 				sb.append("&");
 			}
 			Object value = entry.getValue();
-			String v = value == null? "null" : urlEncodeUTF8(value.toString());
-			sb.append(String.format("%s=%s", urlEncodeUTF8(entry.getKey().toString()),
-					v));
+			String v = value == null ? "null" : urlEncodeUTF8(value.toString());
+			sb.append(String.format("%s=%s", urlEncodeUTF8(entry.getKey().toString()), v));
 		}
 		return sb.toString();
 	}

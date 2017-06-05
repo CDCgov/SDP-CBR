@@ -34,7 +34,7 @@
         <property name="password" value="${sdplog.jdbc.password}"/>
     </bean>
     <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
-    <bean class="org.cdc.gov.sdp.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+    <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
     <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
     <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
     <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
@@ -117,11 +117,12 @@
             <from id="_from3" uri="sql:{{foodNet.queue.sqlRead}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
                 <simple trim="false"> ${in.header.CBR_ID} 
-			</simple>
+			          </simple>
             </setHeader>
             <doTry id="_doTry1">
                 <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-                <to id="_to_s3" uri="aws-s3://{{aims.bucketName}}?amazonS3Endpoint={{aims.S3Url}}&amp;accessKey={{aims.AccessKey}}&amp;secretKey={{aims.SecretAccessKey}}"/>
+                <!-- to id="_to_s3" uri="aws-s3://{{aims.bucketName}}?amazonS3Endpoint={{aims.S3Url}}&amp;accessKey={{aims.AccessKey}}&amp;secretKey={{aims.SecretAccessKey}}"/-->
+                <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
                 <doCatch id="_doCatch1">
                     <exception>java.lang.Exception</exception>
                     <log id="_log2" message="EXCEPTIPN \n ${exception.stacktrace}"/>
