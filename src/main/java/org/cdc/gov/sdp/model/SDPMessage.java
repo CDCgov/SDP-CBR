@@ -1,13 +1,17 @@
 package org.cdc.gov.sdp.model;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.springframework.beans.BeanUtils;
 
 /**
  * SDP-CBR message
  * @author ECOLE
  *
  */
-public class SDPMessage {
+public class SDPMessage implements Cloneable{
 	
 	public final static String SDP_MESSAGE_HEADER = "SDP_MESSAGE_HEADER";
 
@@ -168,5 +172,22 @@ public class SDPMessage {
 		this.source_received_time = source_received_time;
 	}
 
+
+	public SDPMessage clone() {
+		
+		SDPMessage msg = new SDPMessage();
+		BeanUtils.copyProperties(this, msg);
+		// make sure this has a hash of its own so if things change they only effect the single instance and not any of the clones
+		// or vise versa 
+		Map newAtts = new HashMap();
+		for (Iterator iterator = source_attributes.keySet().iterator(); iterator.hasNext();) {
+			Object key = iterator.next();
+			newAtts.put(key, source_attributes.get(key));
+		}
+		msg.setSourceAttributes(newAtts);
+		return msg;
+	}
+
+	
 	
 }
