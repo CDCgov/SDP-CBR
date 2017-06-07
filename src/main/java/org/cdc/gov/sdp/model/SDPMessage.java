@@ -190,6 +190,9 @@ public class SDPMessage implements Cloneable {
 		this.source_received_time = source_received_time;
 	}
 
+	/**
+	 * Create a copy of the object
+	 */
 	public SDPMessage clone() {
 
 		SDPMessage msg = new SDPMessage();
