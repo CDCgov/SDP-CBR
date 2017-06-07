@@ -22,9 +22,14 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.cdc.gov.sdp.CBR;
+import org.cdc.gov.sdp.model.SDPMessage;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+
+import com.google.gson.Gson;
+import com.mysql.jdbc.log.Log;
 
 public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	private String tableName;
@@ -65,8 +70,8 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		this.jdbcTemplate = new JdbcTemplate(ds);
 		this.tableName = tn;
 
-		this.query = "SELECT * FROM " + tableName + " WHERE attempts = 0 and status = 'queued'";
-		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed' where id=?";
+		this.query = "SELECT * FROM " + tableName + " WHERE  status != 'sent'";
+		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed', attempts=attempts+1 where id=? ";
 		this.onConsume = "UPDATE " + tableName + " SET status = 'sent' where id=?";
 		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
 	}
@@ -159,13 +164,33 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		Message msg = exchange.getIn();
 		Map<String, Object> new_headers = msg.getHeaders();
 		HashMap<String, Object> data_hash = (HashMap<String, Object>) data;
-
-		for (String header : data_hash.keySet()) {
-			new_headers.put(header, data_hash.get(header));
+		// cbr_id, source, source_id, source_attributes , batch, batch_index,
+		// payload, cbr_recevied_time, sender, recipient, attempts, status,
+		// created_at, updated_at
+		Gson gson = new Gson();
+		SDPMessage sdpMsg = new SDPMessage();
+		sdpMsg.setBatch(data_hash.get("batch") != null && ((String) data_hash.get("batch")).equalsIgnoreCase("true"));
+		// sdpMsg.setBatchId(data_hash.get("batch_id"));
+		String index = (String) data_hash.get("batch_index");
+		if (index != null) {
+			sdpMsg.setBatchIndex(Integer.parseInt(index));
 		}
-
-		msg.setBody(data);
-		msg.setHeaders(new_headers);
+		sdpMsg.setCbrReceivedTime((String) data_hash.get("cbr_received_time"));
+		sdpMsg.setId((String) data_hash.get("cbr_id"));
+		sdpMsg.setPayload((String) data_hash.get("payload"));
+		sdpMsg.setRecipient((String) data_hash.get("recipient"));
+		sdpMsg.setSender((String) data_hash.get("sender"));
+		sdpMsg.setSource((String) data_hash.get("source"));
+		String atts = (String) data_hash.get("source_attributes");
+		if (atts != null) {
+			sdpMsg.setSourceAttributes(new Gson().fromJson(atts, HashMap.class));
+		}
+		sdpMsg.setSourceId((String) data_hash.get("source_id"));
+		sdpMsg.setSourceReceivedTime((String) data_hash.get("source_received_time"));
+		msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMsg));
+		msg.setHeader(CBR.CBR_ID, sdpMsg.getId());
+		msg.setHeader("recordId", data_hash.get("id"));
+		msg.setBody(sdpMsg.getPayload());
 
 		return exchange;
 	}
@@ -204,7 +229,8 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				// we should rollback
 				Exception cause = exchange.getException();
 				if (cause != null) {
-					throw cause;
+//					throw cause;
+					log.error("Error Processing message",cause);
 				} else {
 					throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
 				}
@@ -218,7 +244,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				if (data != null && sql != null) {
 					Message b = exchange.getIn();
 					Map<String, Object> h = exchange.getIn().getHeaders();
-					String hid = exchange.getIn().getHeader("id").toString();
+					String hid = exchange.getIn().getHeader("recordId").toString();
 					Integer rid = new Integer(hid);
 					int updateCount = jdbcTemplate.execute(sql, new ocPreparedStatementCallback<Integer>(rid));
 				}

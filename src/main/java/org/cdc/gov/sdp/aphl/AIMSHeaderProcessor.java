@@ -45,9 +45,10 @@ public class AIMSHeaderProcessor implements Processor {
 		aimsHeaders.put(AIMSPlatformSenderEncryptionType,
 				stringOrNull(getEncryptionType((String) in.getHeader(AIMSPlatformSenderEncryptionType))));
 		aimsHeaders.put(AIMSPlatformMessageId, sdpMsg.getId());
-		aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
+		//aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
 
 		aimsHeaders.values().removeIf(Objects::isNull);
+		in.setBody( ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
 	}
 
 	private String stringOrNull(Object v) {
