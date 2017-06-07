@@ -222,6 +222,12 @@
 			<artifactId>httpclient-osgi</artifactId>
 			<version>4.5.3</version>
 		</dependency>
+    <!-- Spring-Cloud-Kubernetes -->
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>spring-cloud-kubernetes-core</artifactId>
+    </dependency>
+    
 	</dependencies>
 	<build>
 		<defaultGoal>spring-boot:run</defaultGoal>
