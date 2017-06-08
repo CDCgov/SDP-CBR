@@ -22,10 +22,7 @@
     <property name="location" value="classpath:application.properties"/>
   </bean>
   <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
-  <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
-  <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
   <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
-  <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route id="_route1">
       <from id="_from1" uri="direct:start"/>
@@ -33,17 +30,17 @@
       <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
         <method beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
           method="split" trim="false"/>
-        <to id="_to1" uri="direct:test2"/>
+        <to id="_to1" uri="direct:producer_test"/>
       </split>
     </route>
-    <route id="_route2">
-      <from id="_from2" uri="direct:test2"/>
-      <to id="queue_component_test1" uri="sdpqueue:push?dataSource=nndssDataSource&amp;tableName=message_queue"/>
-      <to id="_to2" uri="mock:foo"/>
+    <route id="producer_test_route">
+      <from id="producer_from" uri="direct:producer_test"/>
+      <to id="producer_to" uri="sdpqueue:push?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
+      <to id="producer_mock_to" uri="mock:mock_endpoint"/>
     </route>
-    <route id="_route3">
-      <from id="_from3" uri="sdpqueue:junkdata?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
-      <to id="_to3" uri="mock:foo"/>
+    <route id="consumer_test_route">
+      <from id="consumer_from" uri="sdpqueue:pull?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
+      <to id="consumer_mock_to" uri="mock:mock_endpoint"/>
     </route>
   </camelContext>
 </beans>

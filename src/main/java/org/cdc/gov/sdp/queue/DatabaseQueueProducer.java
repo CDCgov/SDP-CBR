@@ -3,7 +3,6 @@ package org.cdc.gov.sdp.queue;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -22,7 +21,7 @@ import com.google.gson.Gson;
  * The producer reads data from the message headers and stores it in the
  * provided datasource and table. Note that the column structure is currently
  * hardcoded.
- * 
+ *
  * @author Betsy Cole
  */
 public class DatabaseQueueProducer extends DefaultProducer {
@@ -30,10 +29,23 @@ public class DatabaseQueueProducer extends DefaultProducer {
 	private static Logger logger = LogManager.getLogger("SDPQueueLogger");
 
 	private String queueInsertCommand;
+	private String queueTableCreateCommand;
 	private DataSource queueDataSource;
+	private Connection queueConnection;
+	private PreparedStatement ps;
+	private boolean tableCreated = false;
 
 	public DatabaseQueueProducer(Endpoint endpoint, String uri, DataSource ds, String tableName) {
 		super(endpoint);
+
+		queueTableCreateCommand = "CREATE TABLE IF NOT EXISTS " + tableName + " (id bigserial primary key,"
+				+ "cbr_id varchar(255) NOT NULL, source varchar(255) NOT NULL, source_id varchar(255) NOT NULL,"
+				+ "source_attributes text default NULL, batch boolean default false, batch_index int default 0,"
+				+ "payload text NOT NULL, cbr_recevied_time varchar (255) NOT NULL, cbr_delivered_time varchar (255) default NULL,"
+				+ "sender varchar (255) default NULL, recipient varchar (255) default NULL, errorCode varchar (255) default NULL,"
+				+ "errorMessage varchar (255) default NULL, attempts int  default 0, status varchar (255) default 'queued',"
+				+ "created_at varchar (255) default NULL, updated_at varchar (255) default NULL)";
+
 		queueInsertCommand = "INSERT INTO " + tableName
 				+ " (cbr_id, source, source_id, source_attributes , batch, batch_index, payload, cbr_recevied_time, sender, recipient,  attempts, status, created_at, updated_at) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -50,8 +62,22 @@ public class DatabaseQueueProducer extends DefaultProducer {
 		Connection queueConnection = null;
 		PreparedStatement ps = null;
 		try {
-			queueConnection = queueDataSource.getConnection();
-			ps = queueConnection.prepareStatement(this.queueInsertCommand);
+			if (queueConnection == null) {
+				queueConnection = queueDataSource.getConnection();
+			}
+
+			if (!tableCreated) {
+				PreparedStatement makeDbIfNeeded = queueConnection.prepareStatement(this.queueTableCreateCommand);
+				String thing = makeDbIfNeeded.toString();
+				System.out.println(thing);
+				makeDbIfNeeded.executeUpdate();
+				tableCreated = true;
+			}
+
+			if (ps == null) {
+				ps = queueConnection.prepareStatement(this.queueInsertCommand);
+			}
+
 			Map<String, Object> source_headers = exchange.getIn().getHeaders();
 
 			// :#CBR_ID, :#SOURCE, :#SOURCE_ID, :#SOURCE_ATTRIBUTES, :#BATCH,
@@ -80,10 +106,10 @@ public class DatabaseQueueProducer extends DefaultProducer {
 			logger.error("An error occured when attempting to log to the SDP Log");
 			e.printStackTrace();
 		} finally {
-			if(ps != null){
+			if (ps != null) {
 				ps.close();
 			}
-			if(queueConnection != null){
+			if (queueConnection != null) {
 				queueConnection.close();
 			}
 		}
