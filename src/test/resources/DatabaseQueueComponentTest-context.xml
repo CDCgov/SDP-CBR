@@ -35,11 +35,11 @@
     </route>
     <route id="producer_test_route">
       <from id="producer_from" uri="direct:producer_test"/>
-      <to id="producer_to" uri="sdpqueue:push?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
+      <to id="producer_to" uri="sdpqueue:message_queue?dataSource=sdpqDataSource"/>
       <to id="producer_mock_to" uri="mock:mock_endpoint"/>
     </route>
     <route id="consumer_test_route">
-      <from id="consumer_from" uri="sdpqueue:pull?dataSource=sdpqDataSource&amp;tableName=message_queue"/>
+      <from id="consumer_from" uri="sdpqueue:message_queue?dataSource=sdpqDataSource"/>
       <to id="consumer_mock_to" uri="mock:mock_endpoint"/>
     </route>
   </camelContext>
