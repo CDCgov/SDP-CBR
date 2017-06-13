@@ -7,7 +7,7 @@
 	<artifactId>sdp-cbr</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>Surveillance Data Platform Content Based Routing SDP-CBR</name>
-	<description>Spring Boot example running a Camel route defined in XML</description>
+	<description>SDP-CBR Spring Boot Camel route defined in XML</description>
 	<properties>
 		<hapi.version.stable>2.2</hapi.version.stable>
 		<spring-boot.version>1.4.1.RELEASE</spring-boot.version>
