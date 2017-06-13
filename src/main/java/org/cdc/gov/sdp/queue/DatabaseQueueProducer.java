@@ -29,22 +29,12 @@ public class DatabaseQueueProducer extends DefaultProducer {
 	private static Logger logger = LogManager.getLogger("SDPQueueLogger");
 
 	private String queueInsertCommand;
-	private String queueTableCreateCommand;
 	private DataSource queueDataSource;
 	private Connection queueConnection;
 	private PreparedStatement ps;
-	private boolean tableCreated = false;
 
 	public DatabaseQueueProducer(Endpoint endpoint, String uri, DataSource ds, String tableName) {
 		super(endpoint);
-
-		queueTableCreateCommand = "CREATE TABLE IF NOT EXISTS " + tableName + " (id bigserial primary key,"
-				+ "cbr_id varchar(255) NOT NULL, source varchar(255) NOT NULL, source_id varchar(255) NOT NULL,"
-				+ "source_attributes text default NULL, batch boolean default false, batch_index int default 0,"
-				+ "payload text NOT NULL, cbr_recevied_time varchar (255) NOT NULL, cbr_delivered_time varchar (255) default NULL,"
-				+ "sender varchar (255) default NULL, recipient varchar (255) default NULL, errorCode varchar (255) default NULL,"
-				+ "errorMessage varchar (255) default NULL, attempts int  default 0, status varchar (255) default 'queued',"
-				+ "created_at varchar (255) default NULL, updated_at varchar (255) default NULL)";
 
 		queueInsertCommand = "INSERT INTO " + tableName
 				+ " (cbr_id, source, source_id, source_attributes , batch, batch_index, payload, cbr_recevied_time, sender, recipient,  attempts, status, created_at, updated_at) "
@@ -64,14 +54,6 @@ public class DatabaseQueueProducer extends DefaultProducer {
 		try {
 			if (queueConnection == null) {
 				queueConnection = queueDataSource.getConnection();
-			}
-
-			if (!tableCreated) {
-				PreparedStatement makeDbIfNeeded = queueConnection.prepareStatement(this.queueTableCreateCommand);
-				String thing = makeDbIfNeeded.toString();
-				System.out.println(thing);
-				makeDbIfNeeded.executeUpdate();
-				tableCreated = true;
 			}
 
 			if (ps == null) {
