@@ -46,10 +46,16 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 	}
 
 	public void createIfNotExists(DataSource ds, String tableName) throws Exception {
-		Connection conn = ds.getConnection();
-		PreparedStatement ps = conn.prepareStatement(getCreateCommand(tableName));
-		ps.executeUpdate();
-		conn.close();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement(getCreateCommand(tableName));
+			ps.executeUpdate();
+		} finally {
+			ps.close();
+			conn.close();
+		}
 	}
 
 	@Override
