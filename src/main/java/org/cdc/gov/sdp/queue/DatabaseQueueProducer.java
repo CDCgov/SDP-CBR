@@ -30,8 +30,6 @@ public class DatabaseQueueProducer extends DefaultProducer {
 
 	private String queueInsertCommand;
 	private DataSource queueDataSource;
-	private Connection queueConnection;
-	private PreparedStatement ps;
 
 	public DatabaseQueueProducer(Endpoint endpoint, String uri, DataSource ds, String tableName) {
 		super(endpoint);
@@ -52,13 +50,8 @@ public class DatabaseQueueProducer extends DefaultProducer {
 		Connection queueConnection = null;
 		PreparedStatement ps = null;
 		try {
-			if (queueConnection == null) {
-				queueConnection = queueDataSource.getConnection();
-			}
-
-			if (ps == null) {
-				ps = queueConnection.prepareStatement(this.queueInsertCommand);
-			}
+			queueConnection = queueDataSource.getConnection();
+			ps = queueConnection.prepareStatement(this.queueInsertCommand);
 
 			Map<String, Object> source_headers = exchange.getIn().getHeaders();
 
