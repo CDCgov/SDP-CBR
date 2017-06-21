@@ -53,8 +53,12 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 			ps = conn.prepareStatement(getCreateCommand(tableName));
 			ps.executeUpdate();
 		} finally {
-			ps.close();
-			conn.close();
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
