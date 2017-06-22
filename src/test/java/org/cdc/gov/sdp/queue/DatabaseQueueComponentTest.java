@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -25,9 +24,7 @@ import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.BootstrapWith;
@@ -42,8 +39,8 @@ public class DatabaseQueueComponentTest {
 	@Autowired
 	protected CamelContext camelContext;
 
-	@EndpointInject(uri = "mock:foo")
-	protected MockEndpoint foo;
+	@EndpointInject(uri = "mock:mock_endpoint")
+	protected MockEndpoint mock_endpoint;
 
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
@@ -61,10 +58,10 @@ public class DatabaseQueueComponentTest {
 		String tableName = "message_queue";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
-		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337 AND status='sent'";
-		check_sent = "SELECT (id, status) FROM " + tableName + " WHERE id=1337";
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
 		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
 		String get_count = "select * from " + tableName;
+
 		int initial_count = 0;
 
 		try {
@@ -72,7 +69,7 @@ public class DatabaseQueueComponentTest {
 			int rows_affected = jdbcTemplate.update(create_dummy_data);
 			assertEquals(1, rows_affected);
 
-			foo.expectedMessageCount(rows_affected);
+			mock_endpoint.expectedMessageCount(rows_affected);
 			MockEndpoint.assertIsSatisfied(camelContext);
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
@@ -87,18 +84,24 @@ public class DatabaseQueueComponentTest {
 	@Test
 	@DirtiesContext
 	public void testQueueProducer() throws Exception {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(
-				(DataSource) camelContext.getRegistry().lookupByName("nndssDataSource"));
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String delete_test_entries = "delete from message_queue where SOURCE_ID='testQueueProducer_rec'";
+		String query_queue = "select * from message_queue where SOURCE_ID='testQueueProducer_rec'";
+		String query_queue_for_batch_zero = "select * from message_queue where SOURCE_ID='testQueueProducer_rec' AND BATCH_INDEX=0";
+		String source_file = "src/test/resources/BatchTest_GenV2_2msgs.txt";
+
 		try {
 			Exchange exchange = new DefaultExchange(camelContext);
 			Message msg = new DefaultMessage();
 
-			Map map = new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("recordId", "testQueueProducer_rec");
 			map.put("messageId", "testQueueProducer_msg");
 			map.put("payloadName", "Name");
-			map.put("payloadBinaryContent", readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
-			map.put("payloadTextContent", readFile("src/test/resources/BatchTest_GenV2_2msgs.txt"));
+			map.put("payloadBinaryContent", readFile(source_file));
+			map.put("payloadTextContent", readFile(source_file));
 			map.put("localFileName", "file??");
 			map.put("service", "service");
 			map.put("action", "action");
@@ -110,18 +113,20 @@ public class DatabaseQueueComponentTest {
 
 			exchange.setIn(msg);
 
-			foo.expectedMessageCount(3);
+			mock_endpoint.expectedMessageCount(3);
 			template.send(exchange);
+
 			MockEndpoint.assertIsSatisfied(camelContext);
-			List lst = jdbcTemplate.queryForList("select * from message_queue where SOURCE_ID='testQueueProducer_rec'");
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(query_queue);
 			assertEquals(3, lst.size());
-			lst = jdbcTemplate.queryForList(
-					"select * from message_queue where SOURCE_ID='testQueueProducer_rec' AND BATCH_INDEX=0");
+
+			lst = jdbcTemplate.queryForList(query_queue_for_batch_zero);
 			assertEquals(1, lst.size());
 		} finally {
-			jdbcTemplate.update("delete from message_queue where SOURCE_ID='testQueueProducer_rec'");
+			jdbcTemplate.update(delete_test_entries);
 
-			List lst = jdbcTemplate.queryForList("select * from message_queue where SOURCE_ID='testQueueProducer_rec'");
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(query_queue);
 			assertEquals(0, lst.size());
 		}
 	}
