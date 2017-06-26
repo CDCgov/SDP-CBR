@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+	<!-- START SNIPPET: e1 -->
+	<!-- repository for the idempotent consumer -->
+	<bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor" />
+	<bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg" />
+	<!-- Define a traditional camel context here -->
+	<camelContext id="camel" trace="false"
+		xmlns="http://camel.apache.org/schema/spring">
+		<route id="_route1">
+			<from id="_from1" uri="direct:start" />
+			<process id="setHeaders" ref="myProcessor" />
+			<camel:when id="_when1">
+                <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+				<split id="batchSplitter" parallelProcessing="false"
+					strategyRef="agg">
+					<method beanType="org.cdc.gov.sdp.HL7V2BatchSplitter" method="split"
+						trim="false" />
+					<to id="_to1" uri="direct:hapi" />
+					<to id="_to2" uri="mock:mock_endpoint" />
+				</split>
+			</camel:when>
+            <camel:otherwise id="_otherwise1">
+				<to id="_to3" uri="direct:hapi" />
+                <to id="_to4" uri="mock:mock_endpoint"/>
+            </camel:otherwise>
+		</route>
+	</camelContext>
+</beans>
