@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -70,7 +71,7 @@ public class DatabaseQueueComponentTest {
 			assertEquals(1, rows_affected);
 
 			mock_endpoint.expectedMessageCount(rows_affected);
-			MockEndpoint.assertIsSatisfied(camelContext);
+			MockEndpoint.assertIsSatisfied(camelContext, 16, TimeUnit.SECONDS);
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());

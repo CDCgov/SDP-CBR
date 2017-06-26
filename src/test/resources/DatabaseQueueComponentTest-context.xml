@@ -39,7 +39,7 @@
       <to id="producer_mock_to" uri="mock:mock_endpoint"/>
     </route>
     <route id="consumer_test_route">
-      <from id="consumer_from" uri="sdpqueue:message_queue?dataSource=sdpqDataSource"/>
+      <from id="consumer_from" uri="sdpqueue:message_queue?dataSource=sdpqDataSource&amp;delay=15&amp;initialDelay=15"/>
       <to id="consumer_mock_to" uri="mock:mock_endpoint"/>
     </route>
   </camelContext>

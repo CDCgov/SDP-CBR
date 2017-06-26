@@ -65,12 +65,15 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 	@Override
 	protected Endpoint createEndpoint(String uri, String tableName, Map<String, Object> parameters) throws Exception {
 		DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
+		int delay = this.getAndRemoveParameter(parameters, "delay", Integer.class, 1);
+		int initialDelay = this.getAndRemoveParameter(parameters, "initialDelay", Integer.class, 1);
+
 		if (ds == null) {
 			throw new IllegalArgumentException("DataSource must be configured");
 		}
 		this.createIfNotExists(ds, tableName);
 
-		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName);
+		DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName, delay, initialDelay);
 
 		return endpoint;
 	}
