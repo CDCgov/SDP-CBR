@@ -12,8 +12,9 @@
     </bean>
     <camelContext id="camelContext-06e68a1a-58d8-48f7-8348-f79c7362486c" xmlns="http://camel.apache.org/schema/spring">
         <route id="_route1">
-            <from id="_from1" uri="direct:start"/>
-            <to id="_to1" uri="mock:foo"/>
+            <from id="_from1" uri="direct:phinms"/>
+            <to id="_to_phinms" uri="phinms:message_inq?dataSource=phinMSDataSource"/>
+            <to id="_to1" uri="mock:phinmsDb"/>
         </route>
     </camelContext>
 </beans>
