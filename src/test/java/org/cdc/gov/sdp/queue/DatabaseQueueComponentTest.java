@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -43,12 +42,15 @@ public class DatabaseQueueComponentTest {
 	@EndpointInject(uri = "mock:mock_endpoint")
 	protected MockEndpoint mock_endpoint;
 
+	@EndpointInject(uri = "mock:mock_endpoint2")
+	protected MockEndpoint mock_endpoint2;
+
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
 
 	@Test
 	@DirtiesContext
-	public void testQueueConsumer() throws Exception {
+	public void testInitialDelayQueueConsumer_Fail() throws Exception {
 		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
@@ -71,7 +73,119 @@ public class DatabaseQueueComponentTest {
 			assertEquals(1, rows_affected);
 
 			mock_endpoint.expectedMessageCount(rows_affected);
-			MockEndpoint.assertIsSatisfied(camelContext, 16, TimeUnit.SECONDS);
+			mock_endpoint.setResultWaitTime(5 * 1000);
+			mock_endpoint.assertIsNotSatisfied();
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+			assertEquals(1, lst.size());
+		} finally {
+			jdbcTemplate.update(clear_dummy_data);
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+			assertEquals(initial_count, lst.size());
+		}
+	}
+
+	@Test
+	@DirtiesContext
+	public void testInitialDelayQueueConsumer_Pass() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+		String col_val = minimum_required_headers
+				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+				+ new Date(System.currentTimeMillis()) + "')";
+		String tableName = "message_queue";
+
+		String create_dummy_data = "INSERT into " + tableName + col_val;
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
+		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
+		String get_count = "select * from " + tableName;
+
+		int initial_count = 0;
+
+		try {
+			initial_count = jdbcTemplate.queryForList(get_count).size();
+			int rows_affected = jdbcTemplate.update(create_dummy_data);
+			assertEquals(1, rows_affected);
+
+			mock_endpoint.expectedMessageCount(rows_affected);
+			// using 6.75 seconds because the wait time isn't exactly 7 seconds
+			mock_endpoint.setResultMinimumWaitTime(6750);
+			mock_endpoint.assertIsSatisfied();
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+			assertEquals(1, lst.size());
+		} finally {
+			jdbcTemplate.update(clear_dummy_data);
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+			assertEquals(initial_count, lst.size());
+		}
+	}
+
+	@Test
+	@DirtiesContext
+	public void testDelayedQueueConsumer_Fail() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+		String col_val = minimum_required_headers
+				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+				+ new Date(System.currentTimeMillis()) + "')";
+		String tableName = "message_queue_two";
+
+		String create_dummy_data = "INSERT into " + tableName + col_val;
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
+		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
+		String get_count = "select * from " + tableName;
+
+		int initial_count = 0;
+
+		try {
+			initial_count = jdbcTemplate.queryForList(get_count).size();
+			int rows_affected = jdbcTemplate.update(create_dummy_data);
+			assertEquals(1, rows_affected);
+
+			mock_endpoint2.expectedMessageCount(rows_affected);
+			mock_endpoint2.setResultWaitTime(1 * 1000);
+			mock_endpoint2.assertIsNotSatisfied();
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+			assertEquals(1, lst.size());
+		} finally {
+			jdbcTemplate.update(clear_dummy_data);
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+			assertEquals(initial_count, lst.size());
+		}
+	}
+
+	@Test
+	@DirtiesContext
+	public void testDelayedQueueConsumer_Pass() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+		String col_val = minimum_required_headers
+				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+				+ new Date(System.currentTimeMillis()) + "')";
+		String tableName = "message_queue_two";
+
+		String create_dummy_data = "INSERT into " + tableName + col_val;
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
+		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
+		String get_count = "select * from " + tableName;
+
+		int initial_count = 0;
+
+		try {
+			initial_count = jdbcTemplate.queryForList(get_count).size();
+			int rows_affected = jdbcTemplate.update(create_dummy_data);
+			assertEquals(1, rows_affected);
+
+			mock_endpoint2.expectedMessageCount(rows_affected);
+			mock_endpoint2.assertIsSatisfied();
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());
