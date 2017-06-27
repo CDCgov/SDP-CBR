@@ -47,28 +47,16 @@ public class HL7FiltersTest extends SDPTestBase {
 
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
+
+	@Produce(uri = "direct:start_fn")
+	protected ProducerTemplate template2;
 	
-	private static boolean routeConfigured = false;
+	@Produce(uri = "direct:start_preg")
+	protected ProducerTemplate template3;
 	
-	@Before
-	public void setUp() throws Exception {
-		if (!routeConfigured) {
-			camelContext.addRoutes(new RouteBuilder() {
-				@Override
-				public void configure() {
-					from("direct:hapi")
-		            .convertBodyTo(String.class)
-		            .transform().simple("${in.body.trim()}")
-				      .filter(terser("/.PID-5-1").isEqualTo("SMITH"))
-				      .to("mock:mock_endpoint_smith");
-				}
-			});
-			routeConfigured = true;
-		}
-	}
 	
 	@Test
-	public void testHapiFiltersPID1() throws InterruptedException, IOException {
+	public void testHapiFiltersLastName() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
 		mockEndpointSmith.reset();
 		mockEndpointSmith.expectedMessageCount(0);
@@ -101,7 +89,7 @@ public class HL7FiltersTest extends SDPTestBase {
 	}
 	
 	@Test
-	public void testHapiFiltersPID0001() throws InterruptedException, IOException {
+	public void testHapiFiltersLastNameSmith() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
 		mockEndpointSmith.reset();
 		String sourceFile = "src/test/resources/hl7v2.txt";
@@ -132,17 +120,70 @@ public class HL7FiltersTest extends SDPTestBase {
 		mockEndpointAll.assertIsSatisfied();
 		mockEndpointSmith.assertIsSatisfied();
 	}
-	
-//	@Override
-//	protected RouteBuilder createRouteBuilder() {
-//		// Run during setup before the test, builds the route
-//		return new RouteBuilder() {
-//			@Override
-//			public void configure() {
-//				from("direct:start").to("mock:mock_endpoint");
-//			}
-//		};
-//	}
-	
 
+	@Test
+	public void testHapiFiltersFoodNet() throws InterruptedException, IOException {
+		mockEndpointAll.reset();
+		mockEndpointSmith.reset();
+		String sourceFile = "src/test/resources/BatchTest_GenV2_2msgs.txt";
+		Exchange exchange = new DefaultExchange(camelContext);
+		Message msg = new DefaultMessage();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("recordId", "testQueueProducer_rec");
+		map.put("messageId", "testQueueProducer_msg");
+		map.put("payloadName", "Name");
+		map.put("payloadBinaryContent", readFile(sourceFile));
+		map.put("payloadTextContent", readFile(sourceFile));
+		map.put("localFileName", "file??");
+		map.put("service", "service");
+		map.put("action", "action");
+		map.put("arguments", "arge");
+		map.put("fromPartyId", "testQueueProducer");
+		map.put("messageRecipient", "recipient");
+		map.put("receivedTime", new Date().toString());
+		msg.setBody(map);
+
+		exchange.setIn(msg);
+
+		mockEndpointSmith.expectedMessageCount(1);
+		mockEndpointAll.expectedMessageCount(3);
+		template2.send(exchange);
+
+		mockEndpointAll.assertIsSatisfied();
+		mockEndpointSmith.assertIsSatisfied();
+	}
+
+	@Test
+	public void testHapiFilterOBXPregnancy() throws InterruptedException, IOException {
+		mockEndpointAll.reset();
+		mockEndpointSmith.reset();
+		String sourceFile = "src/test/resources/BatchTest_GenV2_2msgs.txt";
+		Exchange exchange = new DefaultExchange(camelContext);
+		Message msg = new DefaultMessage();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("recordId", "testQueueProducer_rec");
+		map.put("messageId", "testQueueProducer_msg");
+		map.put("payloadName", "Name");
+		map.put("payloadBinaryContent", readFile(sourceFile));
+		map.put("payloadTextContent", readFile(sourceFile));
+		map.put("localFileName", "file??");
+		map.put("service", "service");
+		map.put("action", "action");
+		map.put("arguments", "arge");
+		map.put("fromPartyId", "testQueueProducer");
+		map.put("messageRecipient", "recipient");
+		map.put("receivedTime", new Date().toString());
+		msg.setBody(map);
+
+		exchange.setIn(msg);
+
+		mockEndpointAll.expectedMessageCount(3);
+		mockEndpointSmith.expectedMessageCount(3);
+		template3.send(exchange);
+
+		mockEndpointAll.assertIsSatisfied();
+		mockEndpointSmith.assertIsSatisfied();
+	}
 }
