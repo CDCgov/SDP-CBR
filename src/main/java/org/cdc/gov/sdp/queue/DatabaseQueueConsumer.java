@@ -75,7 +75,8 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		this.onConsume = "UPDATE " + tableName + " SET status = 'sent' where id=?";
 		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
 
-		this.setDelay(delay * 1000);// Converting from milliseconds to seconds
+		// Converting from seconds to milliseconds
+		this.setDelay(delay * 1000);
 		this.setInitialDelay(initialDelay * 1000);
 	}
 

@@ -45,6 +45,9 @@ public class DatabaseQueueComponentTest {
 	@EndpointInject(uri = "mock:mock_endpoint2")
 	protected MockEndpoint mock_endpoint2;
 
+	@EndpointInject(uri = "mock:mock_endpoint3")
+	protected MockEndpoint mock_endpoint3;
+
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
 
@@ -58,7 +61,7 @@ public class DatabaseQueueComponentTest {
 		String col_val = minimum_required_headers
 				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
 				+ new Date(System.currentTimeMillis()) + "')";
-		String tableName = "message_queue";
+		String tableName = "message_queue_two";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
 		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
@@ -72,9 +75,9 @@ public class DatabaseQueueComponentTest {
 			int rows_affected = jdbcTemplate.update(create_dummy_data);
 			assertEquals(1, rows_affected);
 
-			mock_endpoint.expectedMessageCount(rows_affected);
-			mock_endpoint.setResultWaitTime(5 * 1000);
-			mock_endpoint.assertIsNotSatisfied();
+			mock_endpoint2.expectedMessageCount(rows_affected);
+			mock_endpoint2.setResultWaitTime(5 * 1000);
+			mock_endpoint2.assertIsNotSatisfied();
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());
@@ -95,7 +98,7 @@ public class DatabaseQueueComponentTest {
 		String col_val = minimum_required_headers
 				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
 				+ new Date(System.currentTimeMillis()) + "')";
-		String tableName = "message_queue";
+		String tableName = "message_queue_two";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
 		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
@@ -109,10 +112,10 @@ public class DatabaseQueueComponentTest {
 			int rows_affected = jdbcTemplate.update(create_dummy_data);
 			assertEquals(1, rows_affected);
 
-			mock_endpoint.expectedMessageCount(rows_affected);
+			mock_endpoint2.expectedMessageCount(rows_affected);
 			// using 6.75 seconds because the wait time isn't exactly 7 seconds
-			mock_endpoint.setResultMinimumWaitTime(6750);
-			mock_endpoint.assertIsSatisfied();
+			mock_endpoint2.setResultMinimumWaitTime(6750);
+			mock_endpoint2.assertIsSatisfied();
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());
@@ -133,7 +136,7 @@ public class DatabaseQueueComponentTest {
 		String col_val = minimum_required_headers
 				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
 				+ new Date(System.currentTimeMillis()) + "')";
-		String tableName = "message_queue_two";
+		String tableName = "message_queue_three";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
 		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
@@ -147,9 +150,9 @@ public class DatabaseQueueComponentTest {
 			int rows_affected = jdbcTemplate.update(create_dummy_data);
 			assertEquals(1, rows_affected);
 
-			mock_endpoint2.expectedMessageCount(rows_affected);
-			mock_endpoint2.setResultWaitTime(1 * 1000);
-			mock_endpoint2.assertIsNotSatisfied();
+			mock_endpoint3.expectedMessageCount(rows_affected);
+			mock_endpoint3.setResultWaitTime(1 * 1000);
+			mock_endpoint3.assertIsNotSatisfied();
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());
@@ -170,7 +173,7 @@ public class DatabaseQueueComponentTest {
 		String col_val = minimum_required_headers
 				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
 				+ new Date(System.currentTimeMillis()) + "')";
-		String tableName = "message_queue_two";
+		String tableName = "message_queue_three";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
 		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
@@ -184,8 +187,44 @@ public class DatabaseQueueComponentTest {
 			int rows_affected = jdbcTemplate.update(create_dummy_data);
 			assertEquals(1, rows_affected);
 
-			mock_endpoint2.expectedMessageCount(rows_affected);
-			mock_endpoint2.assertIsSatisfied();
+			mock_endpoint3.expectedMessageCount(rows_affected);
+			mock_endpoint3.assertIsSatisfied();
+
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+			assertEquals(1, lst.size());
+		} finally {
+			jdbcTemplate.update(clear_dummy_data);
+			List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+			assertEquals(initial_count, lst.size());
+		}
+	}
+
+	@Test
+	@DirtiesContext
+	public void testQueueConsumer() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+		String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+		String col_val = minimum_required_headers
+				+ " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+				+ new Date(System.currentTimeMillis()) + "')";
+		String tableName = "message_queue";
+
+		String create_dummy_data = "INSERT into " + tableName + col_val;
+		String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
+		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
+		String get_count = "select * from " + tableName;
+
+		int initial_count = 0;
+
+		try {
+			initial_count = jdbcTemplate.queryForList(get_count).size();
+			int rows_affected = jdbcTemplate.update(create_dummy_data);
+			assertEquals(1, rows_affected);
+
+			mock_endpoint.expectedMessageCount(rows_affected);
+			mock_endpoint.assertIsSatisfied();
 
 			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
 			assertEquals(1, lst.size());
