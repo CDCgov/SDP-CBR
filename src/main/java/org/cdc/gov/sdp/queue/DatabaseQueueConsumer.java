@@ -29,7 +29,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 
 import com.google.gson.Gson;
-import com.mysql.jdbc.log.Log;
 
 public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	private String tableName;
@@ -65,7 +64,8 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 
 	}
 
-	public DatabaseQueueConsumer(Endpoint endpoint, DataSource ds, Processor processor, String tn) {
+	public DatabaseQueueConsumer(Endpoint endpoint, DataSource ds, Processor processor, String tn, int delay,
+			int initialDelay) {
 		super(endpoint, processor);
 		this.jdbcTemplate = new JdbcTemplate(ds);
 		this.tableName = tn;
@@ -74,6 +74,10 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed', attempts=attempts+1 where id=? ";
 		this.onConsume = "UPDATE " + tableName + " SET status = 'sent' where id=?";
 		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
+
+		// Converting from seconds to milliseconds
+		this.setDelay(delay * 1000);
+		this.setInitialDelay(initialDelay * 1000);
 	}
 
 	@Override
@@ -229,8 +233,8 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				// we should rollback
 				Exception cause = exchange.getException();
 				if (cause != null) {
-//					throw cause;
-					log.error("Error Processing message",cause);
+					// throw cause;
+					log.error("Error Processing message", cause);
 				} else {
 					throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
 				}
