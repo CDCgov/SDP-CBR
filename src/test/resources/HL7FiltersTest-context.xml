@@ -31,42 +31,26 @@
         </route>
         <route id="_testHL7RouteLastName">
             <from id="_tHRfrom1" uri="direct:hl71"/>
-            <setHeader headerName="HL7FilterField" >
-            	<constant>/.PID-5-1</constant>
+            <setHeader headerName="HL7Filter" id="_setHeader1">
+                <constant>PID-5-1 EQUALS SMITH</constant>
             </setHeader>
-            <setHeader headerName="HL7FilterValue" >
-            	<constant>SMITH</constant>
-            </setHeader>
-            <filter>
-            	<method 
-            		beanType="org.cdc.gov.sdp.CamelUtils" 
-            		method="filterEquals"
-            		/>
-	            <to uri="mock:mock_endpoint_smith"/>
-	        </filter>
-	        <removeHeader headerName="HL7FilterField"/>
-	        <removeHeader headerName="HL7FilterValue"/>
+            <filter id="_filter1">
+                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <to id="_to5" uri="mock:mock_endpoint_smith"/>
+            </filter>
+            <removeHeader headerName="HL7Filter" id="_removeHeader1"/>
         </route>
-        
         <route id="_testHL7RouteNotCalifornia">
             <from id="_tHRCalfrom1" uri="direct:hl7NotCA"/>
-            <setHeader headerName="HL7FilterField" >
-            	<constant>/.PID-11-4</constant>
+            <setHeader headerName="HL7Filter" id="_setHeader3">
+                <constant>/.PID-11-4 NOT_EQUALS CA</constant>
             </setHeader>
-            <setHeader headerName="HL7FilterValue" >
-            	<constant>CA</constant>
-            </setHeader>
-            <filter>
-            	<method 
-            		beanType="org.cdc.gov.sdp.CamelUtils" 
-            		method="filterNotEquals"
-            		/>
-	            <to uri="mock:mock_endpoint_not_ca"/>
-	        </filter>
-	        <removeHeader headerName="HL7FilterField"/>
-	        <removeHeader headerName="HL7FilterValue"/>
+            <filter id="_filter2">
+                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <to id="_to6" uri="mock:mock_endpoint_not_ca"/>
+            </filter>
+            <removeHeader headerName="HL7Filter" id="_removeHeader3"/>
         </route>
-        
         <route id="_route3">
             <from id="_from3" uri="direct:start_preg"/>
             <process id="setHeaders3" ref="myProcessor"/>
@@ -87,24 +71,16 @@
         </route>
         <route id="_testHL7RoutePregnant">
             <from id="_tHRPregfrom1" uri="direct:hl7Preg"/>
-            <setHeader headerName="HL7FilterField" >
-            	<constant>/.OBSERVATION(*)/OBX-3-2</constant>
+            <setHeader headerName="HL7Filter" id="_setHeader5">
+                <constant>*(OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy)</constant>
             </setHeader>
-            <setHeader headerName="HL7FilterValue" >
-            	<constant>Pregnancy</constant>
-            </setHeader>
-            <filter>
-            	<method 
-            		beanType="org.cdc.gov.sdp.CamelUtils" 
-            		method="filterContainsWithRepetitions"
-            		/>
-	            <to uri="mock:mock_endpoint_smith"/>
-	        </filter>
-	        <removeHeader headerName="HL7FilterField"/>
-	        <removeHeader headerName="HL7FilterValue"/>
+            <filter id="_filter3">
+                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <to id="_to7" uri="mock:mock_endpoint_smith"/>
+            </filter>
+            <removeHeader headerName="HL7Filter" id="_removeHeader5"/>
         </route>
-        
-         <route id="_route2">
+        <route id="_route2">
             <from id="_from2" uri="direct:start_fn"/>
             <process id="setHeaders2" ref="myProcessor"/>
             <camel:when id="_when2">
@@ -124,21 +100,14 @@
         </route>
         <route id="_testHL7RouteFoodNet">
             <from id="_tHRFN1" uri="direct:hl7FN"/>
-            <setHeader headerName="HL7FilterField" >
-            	<constant>/.MSH-21(*)-1</constant>
+            <setHeader headerName="HL7Filter" id="_setHeader7">
+                <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
             </setHeader>
-            <setHeader headerName="HL7FilterValue" >
-            	<constant>FDD_MMG_V1.0</constant>
-            </setHeader>
-            <filter>
-            	<method 
-            		beanType="org.cdc.gov.sdp.CamelUtils" 
-            		method="filterEqualsWithRepetitions"
-            		/>
-	            <to uri="mock:mock_endpoint_smith"/>
-	        </filter>
-	        <removeHeader headerName="HL7FilterField"/>
-	        <removeHeader headerName="HL7FilterValue"/>
+            <filter id="_filter4">
+                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <to id="_to8" uri="mock:mock_endpoint_smith"/>
+            </filter>
+            <removeHeader headerName="HL7Filter" id="_removeHeader7"/>
         </route>
     </camelContext>
 </beans>

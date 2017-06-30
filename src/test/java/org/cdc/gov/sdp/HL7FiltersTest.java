@@ -40,7 +40,7 @@ public class HL7FiltersTest extends SDPTestBase {
 	protected CamelContext camelContext;
 
 	@EndpointInject(uri = "mock:mock_endpoint_smith")
-	protected MockEndpoint mockEndpointSmith;
+	protected MockEndpoint mockEndpointFiltered;
 
 	@EndpointInject(uri = "mock:mock_endpoint")
 	protected MockEndpoint mockEndpointAll;
@@ -49,17 +49,17 @@ public class HL7FiltersTest extends SDPTestBase {
 	protected ProducerTemplate template;
 
 	@Produce(uri = "direct:start_fn")
-	protected ProducerTemplate template2;
+	protected ProducerTemplate templateFN;
 	
 	@Produce(uri = "direct:start_preg")
-	protected ProducerTemplate template3;
+	protected ProducerTemplate templatePreg;
 	
 	
 	@Test
 	public void testHapiFiltersLastName() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
-		mockEndpointSmith.reset();
-		mockEndpointSmith.expectedMessageCount(0);
+		mockEndpointFiltered.reset();
+		mockEndpointFiltered.expectedMessageCount(0);
 		mockEndpointAll.expectedMessageCount(3);
 		String sourceFile = "src/test/resources/BatchTest_GenV2_2msgs.txt";
 		Exchange exchange = new DefaultExchange(camelContext);
@@ -85,13 +85,13 @@ public class HL7FiltersTest extends SDPTestBase {
 		template.send(exchange);
 
 		mockEndpointAll.assertIsSatisfied();
-		mockEndpointSmith.assertIsSatisfied();
+		mockEndpointFiltered.assertIsSatisfied();
 	}
 	
 	@Test
 	public void testHapiFiltersLastNameSmith() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
-		mockEndpointSmith.reset();
+		mockEndpointFiltered.reset();
 		String sourceFile = "src/test/resources/hl7v2.txt";
 		Exchange exchange = new DefaultExchange(camelContext);
 		Message msg = new DefaultMessage();
@@ -113,18 +113,18 @@ public class HL7FiltersTest extends SDPTestBase {
 
 		exchange.setIn(msg);
 
-		mockEndpointSmith.expectedMessageCount(1);
+		mockEndpointFiltered.expectedMessageCount(1);
 		mockEndpointAll.expectedMessageCount(1);
 		template.send(exchange);
 
 		mockEndpointAll.assertIsSatisfied();
-		mockEndpointSmith.assertIsSatisfied();
+		mockEndpointFiltered.assertIsSatisfied();
 	}
 
 	@Test
 	public void testHapiFiltersFoodNet() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
-		mockEndpointSmith.reset();
+		mockEndpointFiltered.reset();
 		String sourceFile = "src/test/resources/BatchTest_GenV2_2msgs.txt";
 		Exchange exchange = new DefaultExchange(camelContext);
 		Message msg = new DefaultMessage();
@@ -146,18 +146,18 @@ public class HL7FiltersTest extends SDPTestBase {
 
 		exchange.setIn(msg);
 
-		mockEndpointSmith.expectedMessageCount(1);
+		mockEndpointFiltered.expectedMessageCount(1);
 		mockEndpointAll.expectedMessageCount(3);
-		template2.send(exchange);
+		templateFN.send(exchange);
 
 		mockEndpointAll.assertIsSatisfied();
-		mockEndpointSmith.assertIsSatisfied();
+		mockEndpointFiltered.assertIsSatisfied();
 	}
 
 	@Test
 	public void testHapiFilterOBXPregnancy() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
-		mockEndpointSmith.reset();
+		mockEndpointFiltered.reset();
 		String sourceFile = "src/test/resources/BatchTest_GenV2_2msgs.txt";
 		Exchange exchange = new DefaultExchange(camelContext);
 		Message msg = new DefaultMessage();
@@ -180,10 +180,10 @@ public class HL7FiltersTest extends SDPTestBase {
 		exchange.setIn(msg);
 
 		mockEndpointAll.expectedMessageCount(3);
-		mockEndpointSmith.expectedMessageCount(3);
-		template3.send(exchange);
+		mockEndpointFiltered.expectedMessageCount(3);
+		templatePreg.send(exchange);
 
 		mockEndpointAll.assertIsSatisfied();
-		mockEndpointSmith.assertIsSatisfied();
+		mockEndpointFiltered.assertIsSatisfied();
 	}
 }
