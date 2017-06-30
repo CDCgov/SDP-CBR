@@ -1,4 +1,4 @@
-# Spring-Boot and Camel XML QuickStart
+# Surveillance Data Platform Content Based Routing (SDP-CBR)
 
 This example demonstrates how to configure Camel routes in Spring Boot via a Spring XML configuration file.
 
@@ -6,17 +6,17 @@ The application utilizes the Spring [`@ImportResource`](http://docs.spring.io/sp
 
 ### Building
 
-The example can be built with
+The application can be built with the following command
 
-    mvn clean install
+    mvn clean package
 
-### Running the example in OpenShift
+### Running the application in OpenShift
 
 It is assumed that:
 - OpenShift platform is already running, if not you can find details how to [Install OpenShift at your site](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
 - Your system is configured for Fabric8 Maven Workflow, if not you can find a [Get Started Guide](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/)
 
-The example can be built and run on OpenShift using a single goal:
+The application can be built and run on OpenShift using a single goal:
 
     mvn fabric8:deploy
 
@@ -42,5 +42,15 @@ Then create the quickstart template:
 
     oc create -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-xml-template.json
 
-Now when you use "Add to Project" button in the OpenShift console, you should see a template for this quickstart. 
+Now when you use "Add to Project" button in the OpenShift console, you should see a template for this quickstart.
 
+
+### Running the application locally
+
+The maven command to build the application described above produces an all-in-one jar file that can be run locally.  The jar file is created in the target directory and can be run with the following comand.
+
+     java -jar target/sdp-cbr-1.0.0-SNAPSHOT.jar
+
+When running locally the application can be configured through extenal properties files according as provided by the spring boot framework.  Information on this external configuration can be found at the following location. https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-profile-specific-properties
+
+The base properties for the application are contained in the src/main/resources/application.properties file.  This file is basically a template for fields that will need to be filled out in order for the routes to run.  Please review the file in order to understand the configuration parameters that are required.
