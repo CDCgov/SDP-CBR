@@ -34,8 +34,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration(locations = { "/PhinMSDBTest-context.xml" })
-@PropertySource("/application.properties")
+@ContextConfiguration(locations = { "classpath:PhinMSDBTest-context.xml" })
+@PropertySource("classpath:application.properties")
 public class PhinMSDBTest {
 	
 	@Autowired
