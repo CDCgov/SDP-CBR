@@ -29,11 +29,18 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 	private DataSource dataSource;
 	@UriParam(description = "Sets the table in which the data will be stored.")
 	private String tableName;
+	@UriParam(description = "Delay (in seconds) between polls.")
+	private int delay;
+	@UriParam(description = "InitialDelay (in seconds) before first poll.")
+	private int initialDelay;
 
-	public DatabaseQueueEndpoint(String uri, Component component, DataSource ds, String tableName) {
+	public DatabaseQueueEndpoint(String uri, Component component, DataSource ds, String tableName, int delay,
+			int initialDelay) {
 		super(uri, component);
 		this.dataSource = ds;
 		this.tableName = tableName;
+		this.delay = delay;
+		this.initialDelay = initialDelay;
 	}
 
 	@Override
@@ -48,7 +55,7 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
-		return new DatabaseQueueConsumer(this, dataSource, processor, tableName);
+		return new DatabaseQueueConsumer(this, dataSource, processor, tableName, delay, initialDelay);
 	}
 
 	private String outputClass = "String";// TODO this wont always be a string,
