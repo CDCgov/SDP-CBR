@@ -32,8 +32,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration(locations = { "/DatabaseQueueComponentTest-context.xml" })
-@PropertySource("/application.properties")
+@ContextConfiguration(locations = { "classpath:DatabaseQueueComponentTest-context.xml" })
+@PropertySource("classpath:application.properties")
 public class DatabaseQueueComponentTest {
 
 	@Autowired
