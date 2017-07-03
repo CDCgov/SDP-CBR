@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration(locations = { "/LogComponentTest-context.xml" })
+@ContextConfiguration(locations = { "classpath:LogComponentTest-context.xml" })
 public class LogComponentTest {
 
 	@Autowired

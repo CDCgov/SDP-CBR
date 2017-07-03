@@ -36,8 +36,8 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration(locations = { "/AphlS3ComponentTest-context.xml" })
-@PropertySource("/application.properties")
+@ContextConfiguration(locations = { "classpath:AphlS3ComponentTest-context.xml" })
+@PropertySource("classpath:application.properties")
 public class AphlS3ComponentTest {
 	@Autowired
 	protected CamelContext camelContext;
