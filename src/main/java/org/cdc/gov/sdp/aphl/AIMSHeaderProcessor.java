@@ -11,10 +11,13 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.cdc.gov.sdp.model.SDPMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
 public class AIMSHeaderProcessor implements Processor {
+	private static final Logger LOG = LoggerFactory.getLogger(AIMSHeaderProcessor.class);
 
 	public static String AIMSPlatformSender = "AIMSPlatformSender";
 	public static String AIMSPlatformRecipient = "AIMSPlatformRecipient";
@@ -45,10 +48,11 @@ public class AIMSHeaderProcessor implements Processor {
 		aimsHeaders.put(AIMSPlatformSenderEncryptionType,
 				stringOrNull(getEncryptionType((String) in.getHeader(AIMSPlatformSenderEncryptionType))));
 		aimsHeaders.put(AIMSPlatformMessageId, sdpMsg.getId());
-		//aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
+		// aimsHeaders.put(SDPMessage.SDP_MESSAGE_HEADER, ((String)
+		// in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
 
 		aimsHeaders.values().removeIf(Objects::isNull);
-		in.setBody( ((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
+		in.setBody((in.getHeader(SDPMessage.SDP_MESSAGE_HEADER)));
 	}
 
 	private String stringOrNull(Object v) {
@@ -59,6 +63,7 @@ public class AIMSHeaderProcessor implements Processor {
 		try {
 			return URLEncoder.encode(s, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
+			LOG.error("Unsupported Encoding", e);
 			throw new UnsupportedOperationException(e);
 		}
 	}

@@ -130,6 +130,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 						return rows;
 					}
 				} catch (Exception e) {
+					log.error("Could not process batch.", e);
 					throw ObjectHelper.wrapRuntimeCamelException(e);
 				} finally {
 					closeResultSet(rs);
@@ -236,6 +237,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 					// throw cause;
 					log.error("Error Processing message", cause);
 				} else {
+					log.error("Error processing exchange");
 					throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
 				}
 			}
@@ -254,8 +256,10 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				}
 			} catch (Exception e) {
 				if (breakBatchOnConsumeFail) {
+					log.error("Failed to consume, breaking out of batch", e);
 					throw e;
 				} else {
+					log.error("Failed to consume, but carrying on", e);
 					handleException("Error executing onConsume/onConsumeFailed query" + sql, e);
 				}
 			}
@@ -270,6 +274,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 			}
 		} catch (Exception e) {
 			if (breakBatchOnConsumeFail) {
+				log.error("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
 				throw e;
 			} else {
 				handleException("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
