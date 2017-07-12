@@ -9,13 +9,6 @@
   <bean
     class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
   <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
-  <bean class="org.apache.commons.dbcp.BasicDataSource"
-    destroy-method="close" id="sdplogDataSource">
-    <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-    <property name="url" value="jdbc:sqlserver://fakephin.mitre.org:1433;databaseName=PHIN"/>
-    <property name="username" value="sa"/>
-    <property name="password" value="bob"/>
-  </bean>
   <!-- Define a traditional camel context here -->
   <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties" location="application.properties"/>
@@ -26,7 +19,6 @@
         <to id="_to_mock" uri="mock:foo"/>
         <doCatch id="_doCatch2">
           <exception>java.lang.Exception</exception>
-          <to id="try_log" uri="sdplog:${exception.stacktrace}?dataSource=sdplogDataSource"/>
           <log id="_log1" message="EXCEPTION \n ${exception.stacktrace}"/>
         </doCatch>
       </doTry>

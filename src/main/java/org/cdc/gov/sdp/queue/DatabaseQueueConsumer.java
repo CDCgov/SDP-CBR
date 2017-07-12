@@ -227,6 +227,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 			try {
 				getProcessor().process(exchange);
 			} catch (Exception e) {
+				log.error("Failed to process the current exchange", e);
 				exchange.setException(e);
 			}
 
@@ -273,8 +274,9 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				// ocPreparedStatementCallback<Integer>(rid));
 			}
 		} catch (Exception e) {
+			log.error("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
 			if (breakBatchOnConsumeFail) {
-				log.error("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
+				log.info("Breaking out of batch processing due to exception", e);
 				throw e;
 			} else {
 				handleException("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
