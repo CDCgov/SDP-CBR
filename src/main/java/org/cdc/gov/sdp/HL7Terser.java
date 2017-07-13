@@ -25,7 +25,9 @@ public class HL7Terser {
 		String filter = (String) exchange.getIn().getHeader("HL7Filter");
 		boolean passed = processTerm(filter.trim(), exchange);
 
-		LOG.info("Exchange " + (passed ? "PASSED" : "FAILED") + " the filter:" + filter);
+		LOG.info("Exchange " + exchange.getIn().getHeader(CBR.ID) + " " + (passed ? "PASSED" : "FAILED")
+				+ " the filter:" + filter);
+
 		return passed;
 	}
 
