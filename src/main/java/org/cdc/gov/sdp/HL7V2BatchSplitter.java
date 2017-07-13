@@ -30,12 +30,14 @@ public class HL7V2BatchSplitter {
 		String batch = inMessage.getBody(String.class);
 		List<Message> messages = new ArrayList<Message>();
 		int messageCount = 0;
+		int batchCount = 0;
 		SDPMessage sdpMsg = new Gson().fromJson((String) inMessage.getHeader(SDPMessage.SDP_MESSAGE_HEADER),
 				SDPMessage.class);
 		List<List<String>> fhs = readFHS(batch);
 		for (Iterator<List<String>> iterator = fhs.iterator(); iterator.hasNext();) {
 			List<String> list = iterator.next();
 			List<List<String>> batches = readBatches(list);
+			LOG.debug("NUMBER OF BATCHES " + batches.size());
 			for (Iterator<List<String>> batchIter = batches.iterator(); batchIter.hasNext();) {
 				List<String> batchList = batchIter.next();
 				List<String> batchMessages = readMessages(batchList);
@@ -50,9 +52,8 @@ public class HL7V2BatchSplitter {
 							message.setHeader(key, inMessage.getHeader(key));
 						}
 					}
-					
-					// TODO: Set batch id
 					newSdpMsg.setBatch(true);
+					newSdpMsg.setBatchId(sdpMsg.getId() + "_batch_" + batchCount);
 					newSdpMsg.setBatchIndex(messageCount);
 					newSdpMsg.setId(sdpMsg.getId() + "_" + messageCount);
 					newSdpMsg.setPayload(hl7);
@@ -65,6 +66,7 @@ public class HL7V2BatchSplitter {
 					messages.add(message);
 					messageCount++;
 				}
+				batchCount++;
 			}
 
 		}
