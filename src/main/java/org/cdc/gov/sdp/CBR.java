@@ -29,6 +29,10 @@ public interface CBR {
 	 * batch will have index 0.
 	 */
 	String BATCH_INDEX = "BATCH_INDEX";
+	/*
+	 * The identifier of the individual batch within a message.
+	 */
+	String BATCH_ID = "BATCH_ID";
 
 	/* The CBR assigned message identifier. */
 	String ID = "ID";
@@ -50,7 +54,7 @@ public interface CBR {
 
 	/*
 	 * The time the message was received by the CBR service
-	 * 
+	 *
 	 */
 	String CBR_RECEIVED_TIME = "CBR_RECEIVED_TIME";
 	/*
