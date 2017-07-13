@@ -17,6 +17,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +26,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 @UriEndpoint(scheme = "sdpqueue", title = "SDPQueue", syntax = "sdpqueue", label = "database,sql,queue")
 public class DatabaseQueueEndpoint extends DefaultEndpoint {
+	private static final Logger LOG = LoggerFactory.getLogger(DatabaseQueueEndpoint.class);
 
 	@UriParam(description = "Sets the DataSource to use to communicate with the database.")
 	private DataSource dataSource;
@@ -85,6 +88,7 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 					rowMapper);
 			List<Map<String, Object>> data = mapper.extractData(rs);
 			if (data.size() > 1) {
+				LOG.error("Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
 				throw new SQLDataException(
 						"Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
 			} else if (data.size() == 1) {
@@ -102,6 +106,7 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 			RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
 			List<?> data = mapper.extractData(rs);
 			if (data.size() > 1) {
+				LOG.error("Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
 				throw new SQLDataException(
 						"Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
 			} else if (data.size() == 1) {

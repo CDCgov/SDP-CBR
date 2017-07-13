@@ -30,30 +30,22 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.component.aws.ec2.EC2Constants;
 import org.apache.camel.component.aws.s3.S3Configuration;
 import org.apache.camel.component.aws.s3.S3Constants;
-import org.apache.camel.component.aws.s3.S3Operations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.AccessControlList;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.CopyObjectResult;
-import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -97,6 +89,7 @@ public class AphlS3Producer extends DefaultProducer {
 		if (obj instanceof File) {
 			filePayload = (File) obj;
 		} else {
+			LOG.error("aphl-s3: MultiPart upload requires a File input.");
 			throw new InvalidArgumentException("aphl-s3: MultiPart upload requires a File input.");
 		}
 
@@ -159,6 +152,7 @@ public class AphlS3Producer extends DefaultProducer {
 			uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
 		} catch (Exception e) {
+			LOG.error("Multi-part upload failed, aborting", e);
 			getEndpoint().getS3Client().abortMultipartUpload(new AbortMultipartUploadRequest(
 					getConfiguration().getBucketName(), keyName, initResponse.getUploadId()));
 			throw e;
@@ -222,7 +216,7 @@ public class AphlS3Producer extends DefaultProducer {
 		LOG.info("Received result [{}]", putObjectResult.getETag());
 
 		Message message = getMessageForResponse(exchange);
-		//LOG.info(message.getBody(String.class));
+		// LOG.info(message.getBody(String.class));
 		message.setHeader(S3Constants.E_TAG, putObjectResult.getETag());
 		if (putObjectResult.getVersionId() != null) {
 			message.setHeader(S3Constants.VERSION_ID, putObjectResult.getVersionId());
@@ -235,7 +229,6 @@ public class AphlS3Producer extends DefaultProducer {
 			FileUtil.deleteFile(filePayload);
 		}
 	}
-
 
 	private ObjectMetadata determineMetadata(final Exchange exchange) {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -300,6 +293,7 @@ public class AphlS3Producer extends DefaultProducer {
 	private String determineKey(final Exchange exchange) {
 		String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
 		if (key == null) {
+			LOG.error("AWS S3 Key header missing.");
 			throw new IllegalArgumentException("AWS S3 Key header missing.");
 		}
 		return key;

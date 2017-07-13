@@ -7,8 +7,11 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LogComponent extends UriEndpointComponent {
+	private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
 	public LogComponent() {
 		super(LogEndpoint.class);
@@ -31,6 +34,7 @@ public class LogComponent extends UriEndpointComponent {
 		DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
 
 		if (ds == null) {
+			LOG.error("Datasource must be configured");
 			throw new IllegalArgumentException("DataSource must be configured");
 		}
 		LogEndpoint endpoint = new LogEndpoint(uri, this, ds, remaining);

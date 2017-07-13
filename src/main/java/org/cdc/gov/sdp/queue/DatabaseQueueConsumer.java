@@ -130,6 +130,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 						return rows;
 					}
 				} catch (Exception e) {
+					log.error("Could not process batch.", e);
 					throw ObjectHelper.wrapRuntimeCamelException(e);
 				} finally {
 					closeResultSet(rs);
@@ -226,6 +227,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 			try {
 				getProcessor().process(exchange);
 			} catch (Exception e) {
+				log.error("Failed to process the current exchange", e);
 				exchange.setException(e);
 			}
 
@@ -236,6 +238,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 					// throw cause;
 					log.error("Error Processing message", cause);
 				} else {
+					log.error("Error processing exchange");
 					throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
 				}
 			}
@@ -254,8 +257,10 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				}
 			} catch (Exception e) {
 				if (breakBatchOnConsumeFail) {
+					log.error("Failed to consume, breaking out of batch", e);
 					throw e;
 				} else {
+					log.error("Failed to consume, but carrying on", e);
 					handleException("Error executing onConsume/onConsumeFailed query" + sql, e);
 				}
 			}
@@ -269,7 +274,9 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 				// ocPreparedStatementCallback<Integer>(rid));
 			}
 		} catch (Exception e) {
+			log.error("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
 			if (breakBatchOnConsumeFail) {
+				log.info("Breaking out of batch processing due to exception", e);
 				throw e;
 			} else {
 				handleException("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);

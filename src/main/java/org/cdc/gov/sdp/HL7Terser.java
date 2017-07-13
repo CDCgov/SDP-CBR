@@ -4,31 +4,38 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ValueBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HL7Terser {
+	private static final Logger LOG = LoggerFactory.getLogger(HL7Terser.class);
 
 	private enum HL7Operation {
 		EQUALS, CONTAINS, STARTS_WITH, MINIMUM, MAXIMUM
 
 	}
-	
+
 	private enum LogicalOperation {
 		AND, OR
 	}
 
 	private static final int MAX_REP = 100;
-	
+
 	public boolean filter(Exchange exchange) {
 		String filter = (String) exchange.getIn().getHeader("HL7Filter");
-		
-		return processTerm(filter.trim(), exchange);
+		boolean passed = processTerm(filter.trim(), exchange);
+
+		LOG.info("Exchange " + exchange.getIn().getHeader(CBR.ID) + " " + (passed ? "PASSED" : "FAILED")
+				+ " the filter:" + filter);
+
+		return passed;
 	}
 
 	private boolean applyLogicalOperation(String logicalOperator, String term1, String term2, Exchange ex) {
 		LogicalOperation op = LogicalOperation.valueOf(logicalOperator);
 		switch (op) {
 		case AND:
-			return processTerm(term1, ex) && processTerm(term2, ex); 
+			return processTerm(term1, ex) && processTerm(term2, ex);
 		case OR:
 			return processTerm(term1, ex) || processTerm(term2, ex);
 		}
@@ -37,8 +44,8 @@ public class HL7Terser {
 
 	public boolean processTerm(String filter, Exchange exchange) {
 		if (filter.startsWith("*(")) {
-			assert(filter.charAt(filter.length()-1) == ')');
-			String term = filter.substring(2, filter.length()-1);
+			assert (filter.charAt(filter.length() - 1) == ')');
+			String term = filter.substring(2, filter.length() - 1);
 			return processRepetitions(term, exchange);
 		}
 		if (filter.startsWith("[")) {
@@ -53,7 +60,7 @@ public class HL7Terser {
 		String expression = terms[0].startsWith("/.") ? terms[0] : "/." + terms[0];
 		String operationStr = terms[1];
 		String value = terms[2];
-		
+
 		ValueBuilder terserExpression = org.apache.camel.component.hl7.HL7.terser(expression);
 		if (operationStr.startsWith("NOT_")) {
 			inverse = true;
@@ -70,7 +77,7 @@ public class HL7Terser {
 		int endOfFirstTerm = -1;
 		int startOfSecondTerm = -1;
 		int endOfSecondTerm = -1;
-		
+
 		int openBracketCount = 0;
 		int closeBracketCount = 0;
 		for (int i = 0; i < filter.length(); i++) {
@@ -80,36 +87,36 @@ public class HL7Terser {
 			} else if (c == ']') {
 				closeBracketCount++;
 			}
-			
+
 			if (openBracketCount == closeBracketCount) {
 				endOfFirstTerm = i;
 				break;
 			}
 		}
-		
+
 		openBracketCount = 0;
 		closeBracketCount = 0;
 		for (int i = endOfFirstTerm + 2; i < filter.length(); i++) {
 			char c = filter.charAt(i);
 			if (c == '[') {
 				if (startOfSecondTerm == -1) {
-					startOfSecondTerm = i+1;
+					startOfSecondTerm = i + 1;
 				}
 				openBracketCount++;
 			} else if (c == ']') {
 				closeBracketCount++;
 			}
-			
+
 			if (openBracketCount == closeBracketCount && openBracketCount != 0) {
 				endOfSecondTerm = i;
 				break;
 			}
 		}
-		
-		String term1 = filter.substring(1,endOfFirstTerm);
+
+		String term1 = filter.substring(1, endOfFirstTerm);
 		String logicalOperator = filter.substring(endOfFirstTerm + 1, startOfSecondTerm - 1).trim();
 		String term2 = filter.substring(startOfSecondTerm, endOfSecondTerm);
-		return applyLogicalOperation(logicalOperator,term1,term2, exchange);
+		return applyLogicalOperation(logicalOperator, term1, term2, exchange);
 	}
 
 	private boolean processRepetitions(String term, Exchange exchange) {

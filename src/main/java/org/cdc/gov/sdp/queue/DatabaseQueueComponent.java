@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component for handing messages within a defined database structure. The table
@@ -18,6 +20,7 @@ import org.apache.camel.impl.UriEndpointComponent;
  * @author Betsy Cole
  */
 public class DatabaseQueueComponent extends UriEndpointComponent {
+	private static final Logger LOG = LoggerFactory.getLogger(DatabaseQueueComponent.class);
 
 	public DatabaseQueueComponent() {
 		super(DatabaseQueueEndpoint.class);
@@ -69,6 +72,7 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 		int initialDelay = this.getAndRemoveParameter(parameters, "initialDelay", Integer.class, 1);
 
 		if (ds == null) {
+			LOG.error("DataSource must be configured");
 			throw new IllegalArgumentException("DataSource must be configured");
 		}
 		this.createIfNotExists(ds, tableName);
