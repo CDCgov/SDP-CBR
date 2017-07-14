@@ -49,6 +49,22 @@ The application utilizes the Spring [`@ImportResource`](http://docs.spring.io/sp
 The application can be built with the following command
 
     mvn clean package
+	
+### Databases
+
+The application depends on a number of databases and connections in order to run.  All databases are defined in the application properties, which should be configured for the environment.  
+
+Required databases for deployment are the phinMsDataSource and sdpqDataSource.  The phinMsDataSource should have the table message_inq, which can be created in SQLServer using the script at main/db/MSSQL_message_inq.sql.  The other tables will be created as needed by the application.
+	
+### Testing
+
+The application unit tests can be run with the following command
+
+	mvn test
+	
+In order for the tests to succeed, the test datasources must be properly configured.  All test datasources are specified in the test properties file at src/test/resources/application.properties.  If any of the datasources are not configured, the tests will fail.
+
+Required databases for tests are nndssDataSource, sdpqDataSource, and phinMsDataSource.  The phinMsDataSource should have the table message_inq, which can be created in SQLServer using the script at main/db/MSSQL_message_inq.sql.  The other tables will be created as needed by the application.
 
 ### Running the application in OpenShift
 
