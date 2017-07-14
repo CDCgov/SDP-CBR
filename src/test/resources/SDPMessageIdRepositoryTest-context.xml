@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tag::example[] -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="nndssDataSource" primary="true">
+        <property name="driverClassName" value="${nndss.jdbc.driverClassName}"/>
+        <property name="url" value="${nndss.jdbc.url}"/>
+        <property name="username" value="${nndss.jdbc.username}"/>
+        <property name="password" value="${nndss.jdbc.password}"/>
+    </bean>
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="sdpqDataSource">
+        <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+        <property name="url" value="${sdpq.jdbc.url}"/>
+        <property name="username" value="${sdpq.jdbc.username}"/>
+        <property name="password" value="${sdpq.jdbc.password}"/>
+    </bean>
+    <bean
+        class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
+        <property name="location" value="classpath:application.properties"/>
+    </bean>
+    <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
+    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="idRepo">
+    	<constructor-arg ref="sdpqDataSource"/>
+    	<constructor-arg value="testID"/>
+    	<constructor-arg value="testIdTable"/>
+    </bean>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="_route1">
+            <from id="_from1" uri="direct:start"/>
+            <process id="setHeaders" ref="myProcessor"/>
+                <to id="_to1" uri="direct:idempotence"/>
+        </route>
+        <route id="foodNetFilter">
+            <from id="_from2" uri="direct:idempotence"/>
+            <idempotentConsumer id="_idempotentConsumer" messageIdRepositoryRef="idRepo">
+                <header>CBR_ID</header>
+                <to id="_target" uri="mock:idempotence"/>
+            </idempotentConsumer>
+        </route>
+    </camelContext>
+</beans>
+<!-- end::example[] -->

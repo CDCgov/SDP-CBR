@@ -21,6 +21,7 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 			throw new IllegalArgumentException("Invalid table name.");
 		} else {
 			this.tableName = tableName;
+			setDataSource(ds);
 			createIfNotExists();
 		}
 	}
@@ -81,7 +82,7 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("DELETE FROM " + tableName + " where message_id=?");
-			ps.setString(0, arg0);
+			ps.setString(1, arg0);
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO: Log something.
@@ -107,9 +108,10 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("INSERT INTO " + tableName + " (message_id) values(?)");
-			ps.setString(0, arg0);
+			ps.setString(1, arg0);
 			ps.executeUpdate();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			// TODO: Log something.
 		} finally {
 			try {
@@ -133,8 +135,10 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("SELECT count(*) from " + tableName + " where message_id=?");
+			ps.setString(1, arg0);
 			ResultSet rs = ps.executeQuery();
-			return rs.getInt(0);
+			rs.next();
+			return rs.getInt(1);
 		} catch (SQLException e) {
 			// TODO: Log something.
 		} finally {

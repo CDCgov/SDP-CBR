@@ -20,7 +20,8 @@ public class PhinMSTransformer implements Processor {
 		String recordId = myMap.get("recordId").toString();
 
 		Message msg = exchange.getIn();
-		msg.setBody(myMap.remove("payloadTextContent"));
+		myMap.remove("payloadTextContent");
+		msg.setBody(myMap);
 
 		SDPMessage sdpMessage = new SDPMessage();
 		sdpMessage.setBatch(false);
