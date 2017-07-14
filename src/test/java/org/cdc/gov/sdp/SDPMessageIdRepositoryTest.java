@@ -49,11 +49,6 @@ public class SDPMessageIdRepositoryTest extends SDPTestBase {
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
 
-	// @BeforeClass
-	// public void setUp() {
-	//
-	// }
-	//
 	@Test
 	public void testIdempotenceOverShutdown() throws InterruptedException, IOException {
 		String sourceFile = "src/test/resources/hl7v2.txt";
@@ -114,8 +109,7 @@ public class SDPMessageIdRepositoryTest extends SDPTestBase {
 		exchange.setIn(msg);
 		template.send(exchange);
 
-		// Confirm it was delivered -- only one set of three should have gone
-		// through.
+		// Confirm it was NOT delivered -- id in memory before starting.
 		MockEndpoint.assertIsSatisfied(camelContext);
 	}
 
@@ -154,7 +148,7 @@ public class SDPMessageIdRepositoryTest extends SDPTestBase {
 		exchange.setIn(msg);
 		template.send(exchange);
 
-		// Confirm it was delivered -- only one set of three should have gone
+		// Confirm it was delivered -- only one of two should have gone
 		// through.
 		MockEndpoint.assertIsSatisfied(camelContext);
 	}
