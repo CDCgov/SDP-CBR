@@ -9,8 +9,12 @@ import java.util.regex.Pattern;
 import javax.sql.DataSource;
 
 import org.apache.camel.processor.idempotent.jdbc.AbstractJdbcMessageIdRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SDPMessageIdRepository.class);
 
 	final String tableName;
 
@@ -35,7 +39,7 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					"CREATE TABLE IF NOT EXISTS " + tableName + " (message_id varchar(255) primary key)");
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO: Log something.
+			LOG.error("Cannot initialize -- SQL error creating table.", e);
 		} finally {
 			try {
 				if (ps != null) {
@@ -45,7 +49,6 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO: Log something.
 			}
 		}
 	}
@@ -59,7 +62,7 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 			ps = conn.prepareStatement("DELETE FROM " + tableName);
 			return ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO: Log something.
+			LOG.error("Cannot delete from " + tableName, e);
 		} finally {
 			try {
 				if (ps != null) {
@@ -69,23 +72,22 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO: Log something.
 			}
 		}
 		return 0;
 	}
 
 	@Override
-	protected int delete(String arg0) {
+	protected int delete(String messageId) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("DELETE FROM " + tableName + " where message_id=?");
-			ps.setString(1, arg0);
+			ps.setString(1, messageId);
 			return ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO: Log something.
+			LOG.error("Cannot delete from " + tableName + " with message_id " + messageId, e);
 		} finally {
 			try {
 				if (ps != null) {
@@ -95,24 +97,22 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO: Log something.
 			}
 		}
 		return 0;
 	}
 
 	@Override
-	protected int insert(String arg0) {
+	protected int insert(String messageId) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("INSERT INTO " + tableName + " (message_id) values(?)");
-			ps.setString(1, arg0);
+			ps.setString(1, messageId);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			// TODO: Log something.
+			LOG.error("Cannot insert " + messageId + " into " + tableName, e);
 		} finally {
 			try {
 				if (ps != null) {
@@ -122,25 +122,24 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO: Log something.
 			}
 		}
 		return 0;
 	}
 
 	@Override
-	protected int queryForInt(String arg0) {
+	protected int queryForInt(String messageId) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = getDataSource().getConnection();
 			ps = conn.prepareStatement("SELECT count(*) from " + tableName + " where message_id=?");
-			ps.setString(1, arg0);
+			ps.setString(1, messageId);
 			ResultSet rs = ps.executeQuery();
 			rs.next();
 			return rs.getInt(1);
 		} catch (SQLException e) {
-			// TODO: Log something.
+			LOG.error("Cannot select from " + tableName, e);
 		} finally {
 			try {
 				if (ps != null) {
@@ -150,7 +149,6 @@ public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<Stri
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO: Log something.
 			}
 		}
 		return 0;
