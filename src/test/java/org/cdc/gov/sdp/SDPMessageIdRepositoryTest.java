@@ -108,7 +108,9 @@ public class SDPMessageIdRepositoryTest extends SDPTestBase {
 		// Resend
 		exchange = new DefaultExchange(camelContext);
 		msg = new DefaultMessage();
-		msg.setBody(new HashMap(map));
+		map = new HashMap(map);
+		map.put("payloadTextContent", readFile(sourceFile));
+		msg.setBody(map);
 		exchange.setIn(msg);
 		template.send(exchange);
 
