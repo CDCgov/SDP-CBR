@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component for handing messages within a defined database structure. The table
@@ -18,6 +20,7 @@ import org.apache.camel.impl.UriEndpointComponent;
  * @author Betsy Cole
  */
 public class DatabaseQueueComponent extends UriEndpointComponent {
+	private static final Logger LOG = LoggerFactory.getLogger(DatabaseQueueComponent.class);
 
 	public DatabaseQueueComponent() {
 		super(DatabaseQueueEndpoint.class);
@@ -38,7 +41,7 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 	public String getCreateCommand(String tableName) {
 		return ("CREATE TABLE IF NOT EXISTS " + tableName + " (id bigserial primary key,"
 				+ "cbr_id varchar(255) NOT NULL, source varchar(255) NOT NULL, source_id varchar(255) NOT NULL,"
-				+ "source_attributes text default NULL, batch boolean default false, batch_index int default 0,"
+				+ "source_attributes text default NULL, batch boolean default false, batch_index int default 0, batch_id varchar(255),"
 				+ "payload text NOT NULL, cbr_recevied_time varchar (255) NOT NULL, cbr_delivered_time varchar (255) default NULL,"
 				+ "sender varchar (255) default NULL, recipient varchar (255) default NULL, errorCode varchar (255) default NULL,"
 				+ "errorMessage varchar (255) default NULL, attempts int  default 0, status varchar (255) default 'queued',"
@@ -69,6 +72,7 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
 		int initialDelay = this.getAndRemoveParameter(parameters, "initialDelay", Integer.class, 1);
 
 		if (ds == null) {
+			LOG.error("DataSource must be configured");
 			throw new IllegalArgumentException("DataSource must be configured");
 		}
 		this.createIfNotExists(ds, tableName);

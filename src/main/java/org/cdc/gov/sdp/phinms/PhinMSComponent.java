@@ -7,8 +7,11 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PhinMSComponent extends UriEndpointComponent {
+	private static final Logger LOG = LoggerFactory.getLogger(PhinMSComponent.class);
 
 	public PhinMSComponent() {
 		super(PhinMSEndpoint.class);
@@ -31,6 +34,7 @@ public class PhinMSComponent extends UriEndpointComponent {
 		DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
 
 		if (ds == null) {
+			LOG.error("DataSource must be configured");
 			throw new IllegalArgumentException("DataSource must be configured");
 		}
 		PhinMSEndpoint endpoint = new PhinMSEndpoint(uri, this, ds, tableName);

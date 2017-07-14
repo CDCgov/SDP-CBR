@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 
 /**
  * SDP-CBR message
- * 
+ *
  * @author ECOLE
  *
  */
@@ -18,9 +18,8 @@ public class SDPMessage implements Cloneable {
 
 	/**
 	 * Whether the message is a batch message and has been split into individual
-	 * messages. If it is a batch
-	 * mehttps://www.amazon.com/Josie-Marks/e/B00YFPK5IIssage and has not been
-	 * split this will be false.
+	 * messages. If it is a batch message and has not been split this will be
+	 * false.
 	 */
 	private boolean batch;
 
@@ -28,7 +27,7 @@ public class SDPMessage implements Cloneable {
 	 * The identifier of the individual batch within a message. If the batch
 	 * does not contain an identifier this field will be empty.
 	 */
-	private boolean batch_id;
+	private String batch_id;
 
 	/**
 	 * If the message is a batch message and has been split this will contain
@@ -102,11 +101,11 @@ public class SDPMessage implements Cloneable {
 		this.batch = batch;
 	}
 
-	public boolean isBatchId() {
+	public String getBatchId() {
 		return batch_id;
 	}
 
-	public void setBatchId(boolean batch_id) {
+	public void setBatchId(String batch_id) {
 		this.batch_id = batch_id;
 	}
 
@@ -193,6 +192,7 @@ public class SDPMessage implements Cloneable {
 	/**
 	 * Create a copy of the object
 	 */
+	@Override
 	public SDPMessage clone() {
 
 		SDPMessage msg = new SDPMessage();

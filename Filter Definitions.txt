@@ -1,0 +1,26 @@
+Filter descriptions are designed to be flexible and extensible.
+
+A filter can specify any number of terms, specify operations, and group them dynamically with logical AND and OR operators.  It can search in any repetition of a segment, field, or component, and it can search for multiple terms in the same repetition.
+
+The set of available operations are:
+EQUALS, CONTAINS, STARTS_WITH, MINIMUM, MAXIMUM
+
+Any operation can be modified with a NOT transformation, matching only if the condition is not satisfied:
+NOT_EQUALS, NOT_CONTAINS, NOT_STARTS_WITH, NOT_MINIMUM, NOT_MAXIMUM
+
+The syntax for a simple filter is <TERM> <OPERATION> <VALUE>.
+
+PID-5-1 EQUALS Jones		Matches patients with the last name Jones
+PID-7-1 MAXIMUM 19700101	Matches patients born after 1970
+PID-11-4 NOT_EQUALS CA		Matches patients who do not reside in California
+
+To combine two filters, wrap each term in square brackets and place a logical operator between the terms.  Square brackets can be nested to combine logical operations and any number of terms.
+
+[PID-7-1 MAXIMUM 19700101] OR [PID-8-1 EQUALS F]	Matches patients who are either female or born after 1970.
+[[PID-11-4 EQUALS CA] OR [PID-11-4 EQUALS OR]] AND [PID-8-1 EQUALS F]		Matches female patients who live in California.
+
+For segments, fields, or components that may be repeated, a filter can specify that any repetition may match by wrapping the repetition instance in *() and using the asterisk in place of a repetition number.  One or more filter terms in the complex term can be contained in the repetition.
+
+*([OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy])  	Any repetition of the OBSERVATION/OBX-3-2 component contains the word "Pregnancy"
+*([OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy] AND [OBSERVATION(*)/OBX-5-1 EQUALS N])  	The SAME repetition of the OBSERVATION group matches a pregnancy status of "N".
+*([OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy]) AND *([OBSERVATION(*)/OBX-5-1 EQUALS N])	Any repetition of the OBSERVATION/OBX-3-2 component contains the word "Pregnancy" and also any repetition of the OBX-5-1 component is N.  These may not be the same repetition.
