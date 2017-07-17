@@ -94,4 +94,3 @@ The maven command to build the application described above produces an all-in-on
 When running locally the application can be configured through extenal properties files according as provided by the spring boot framework.  Information on this external configuration can be found at the following location. https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-profile-specific-properties
 
 The base properties for the application are contained in the src/main/resources/application.properties file.  This file is basically a template for fields that will need to be filled out in order for the routes to run.  Please review the file in order to understand the configuration parameters that are required.
-
