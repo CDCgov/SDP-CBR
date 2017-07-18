@@ -26,15 +26,10 @@
     <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
     <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="foodNetIDRepo">
     	<constructor-arg ref="sdpqDataSource"/>
-    	<constructor-arg ref="foodNetIds"/>
-    	<constructor-arg value="foodnet_message_ids"/>
+    	<constructor-arg value="foodNetIds"/>
+    	<constructor-arg value="foodnetMessageIds"/>
     </bean>
-   <!-- repository for the idempotent consumer -->
-   <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="nndssIDRepo">
-    	<constructor-arg ref="sdpqDataSource"/>
-    	<constructor-arg ref="nndssIDs"/>
-    	<constructor-arg value="nndss_message_ids"/>
-    </bean>
+
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <!-- and the redelivery policy is a profile where we can configure it -->
@@ -67,7 +62,6 @@
             <from id="_from1" uri="direct:multicast"/>
             <multicast id="_multicast2">
                 <to id="_to31" uri="direct:foodNetFilter"/>
-                <to id="_to41" uri="direct:nndssQueue"/>
             </multicast>
         </route>
         <route id="foodNetFilter">
@@ -91,17 +85,7 @@
                 <log id="fnf_log" message="EXCEPTION \n ${exception.stacktrace}"/>
             </onException>
         </route>
-        <route id="nndssQueue">
-            <from id="foodNetFrom" uri="direct:nndssQueue"/>
-            <idempotentConsumer id="_idempotentConsumer1" messageIdRepositoryRef="nndssIDRepo">
-                <header>CBR_ID</header>
-                <to id="_to4" uri="sdpqueue:{{nndss.queue}}"/>
-            </idempotentConsumer>
-            <onException id="_onException3">
-                <exception>java.lang.Exception</exception>
-                <log id="nndss_log" message="EXCEPTION \n ${exception.stacktrace}"/>
-            </onException>
-        </route>
+
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
@@ -110,12 +94,12 @@
             </setHeader>
             <doTry id="_doTry1">
                 <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-                <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
-            </doTry>
+                <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/> 
             <doCatch id="fnr_doCatch1">
                 <exception>java.lang.Exception</exception>
                 <log id="fnr_log" message="EXCEPTION \n ${exception.stacktrace}"/>
             </doCatch>
+            </doTry>
         </route>
     </camelContext>
 </beans>
