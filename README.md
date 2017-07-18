@@ -111,3 +111,6 @@ When running locally the application can be configured through extenal propertie
 
 The base properties for the application are contained in the src/main/resources/application.properties file.  This file is basically a template for fields that will need to be filled out in order for the routes to run.  Please review the file in order to understand the configuration parameters that are required.
 
+# Filtering on HL7 message contents
+
+The HL7Terser is designed to allow for complex filter parameters to be defined via the routes in the [camel-context.xml](src/main/resources/spring/camel-context.xml) file.  For more information on filter syntax, please review the syntax instruction in [Definitions.txt](Filter Definitions.txt).
