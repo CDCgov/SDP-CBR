@@ -21,9 +21,9 @@
         class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
         <property name="location" value="classpath:application.properties"/>
     </bean>
-    <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
-    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
-    <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="idRepo">
+    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="gov.cdc.sdp.cbr.SDPMessageIdRepository" id="idRepo">
     	<constructor-arg ref="sdpqDataSource"/>
     	<constructor-arg value="testID"/>
     	<constructor-arg value="testIdTable"/>

@@ -1,1 +1,1 @@
-class=org.cdc.gov.sdp.log.LogComponent
+class=gov.cdc.sdp.cbr.log.LogComponent

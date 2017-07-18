@@ -8,7 +8,7 @@
   <!-- repository for the idempotent consumer -->
   <bean
     class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="nndssIDRepo"/>
-  <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+  <bean class="gov.cdc.sdp.cbr.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
   <!-- Define a traditional camel context here -->
   <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties" location="application.properties"/>

@@ -19,15 +19,15 @@
         <property name="username" value="${sdpqDataSource.jdbc.username}"/>
         <property name="password" value="${sdpqDataSource.jdbc.password}"/>
     </bean>
-    <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
-    <bean class="org.cdc.gov.sdp.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
-    <bean class="org.cdc.gov.sdp.JSONTransformer" id="jsonTransformer"/>
-    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
-    <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
-    <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="foodNetIDRepo">
+    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
+    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="gov.cdc.sdp.cbr.HTTP4Transformer" id="httpTransformer"/>
+    <bean class="gov.cdc.sdp.cbr.SDPMessageIdRepository" id="foodNetIDRepo">
     	<constructor-arg ref="sdpqDataSource"/>
     	<constructor-arg value="foodNetIds"/>
-    	<constructor-arg value="foodnetMessageIds"/>
+    	<constructor-arg value="foodnetMessageIds"/>   
     </bean>
 
     <!-- Define a traditional camel context here -->
@@ -44,7 +44,7 @@
                     <camel:split id="batchSplitter"
                         parallelProcessing="false" strategyRef="agg">
                         <camel:method
-                            beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                            beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                             method="split" trim="false"/>
                         <to id="_to1" uri="direct:multicast"/>
                     </camel:split>
@@ -74,7 +74,7 @@
                 </setHeader>
                 <unmarshal id="_unmarshal1" ref="hl7"/>
                 <filter id="foodNetFilter">
-                    <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                    <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
                     <marshal id="_marshal1" ref="hl7"/>
                     <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
                     <to id="foodNetQueue" uri="sdpqueue:{{foodNet.queue}}"/>
