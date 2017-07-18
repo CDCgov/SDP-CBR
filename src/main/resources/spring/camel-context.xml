@@ -25,13 +25,13 @@
     <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
     <bean class="org.cdc.gov.sdp.HTTP4Transformer" id="httpTransformer"/>
     <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="foodNetIDRepo">
-    	<constructor-arg ref="nndssDataSource"/>
+    	<constructor-arg ref="sdpqDataSource"/>
     	<constructor-arg ref="foodNetIds"/>
     	<constructor-arg value="foodnet_message_ids"/>
     </bean>
    <!-- repository for the idempotent consumer -->
    <bean class="org.cdc.gov.sdp.SDPMessageIdRepository" id="nndssIDRepo">
-    	<constructor-arg ref="nndssDataSource"/>
+    	<constructor-arg ref="sdpqDataSource"/>
     	<constructor-arg ref="nndssIDs"/>
     	<constructor-arg value="nndss_message_ids"/>
     </bean>
