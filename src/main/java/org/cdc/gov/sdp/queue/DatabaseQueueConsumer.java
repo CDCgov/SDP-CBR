@@ -156,11 +156,28 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	}
 
 	private void addItemToQueue(Object item, Queue<DataHolder> answer) {
-		Exchange exchange = createExchange(item);
+		Exchange exchange = null;
 		DataHolder holder = new DataHolder();
-		holder.exchange = exchange;
-		holder.data = item;
-		answer.add(holder);
+		try{
+			 exchange = createExchange(item);
+		}catch(RuntimeException re){
+			if(item != null){
+				HashMap<String, Object> data_hash = (HashMap<String, Object>) item;
+				log.error("Error creating exchange for "+this.tableName + " "+data_hash.get("id"), re);
+				Integer rid = new Integer(data_hash.get("id").toString());
+				jdbcTemplate.execute(this.onConsumeFailed, new ocPreparedStatementCallback<Integer>(rid));
+				return;
+			}
+			else{
+				log.error("Error creating exchange");
+			}
+			
+		}
+			
+			holder.exchange = exchange;
+			holder.data = item;
+			answer.add(holder);
+		
 	}
 
 	// @SuppressWarnings("unchecked")
