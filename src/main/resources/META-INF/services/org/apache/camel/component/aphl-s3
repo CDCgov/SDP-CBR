@@ -1,1 +1,1 @@
-class=org.cdc.gov.sdp.aphl.AphlS3Component
+class=gov.cdc.sdp.cbr.aphl.AphlS3Component

@@ -6,9 +6,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
     <!-- START SNIPPET: e1 -->
     <!-- repository for the idempotent consumer -->
-    <bean class="org.cdc.gov.sdp.PhinMSTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
     <bean class="org.apache.camel.component.hl7.HL7" id="hl7"/>
-    <bean class="org.cdc.gov.sdp.ArrayListAggregationStrategy" id="agg"/>
+    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <route id="_route1">
@@ -18,7 +18,7 @@
                 <camel:simple>body.trim().startsWith("FHS")</camel:simple>
                 <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
                     <method
-                        beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                         method="split" trim="false"/>
                     <to id="_to1" uri="direct:hl71"/>
                     <to id="_to2" uri="mock:mock_endpoint"/>
@@ -35,7 +35,7 @@
                 <constant>PID-5-1 EQUALS SMITH</constant>
             </setHeader>
             <filter id="_filter1">
-                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
                 <to id="_to5" uri="mock:mock_endpoint_smith"/>
             </filter>
             <removeHeader headerName="HL7Filter" id="_removeHeader1"/>
@@ -46,7 +46,7 @@
                 <constant>/.PID-11-4 NOT_EQUALS CA</constant>
             </setHeader>
             <filter id="_filter2">
-                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
                 <to id="_to6" uri="mock:mock_endpoint_not_ca"/>
             </filter>
             <removeHeader headerName="HL7Filter" id="_removeHeader3"/>
@@ -58,7 +58,7 @@
                 <camel:simple>body.trim().startsWith("FHS")</camel:simple>
                 <split id="batchSplitter3" parallelProcessing="false" strategyRef="agg">
                     <method
-                        beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                         method="split" trim="false"/>
                     <to id="_to31" uri="direct:hl7Preg"/>
                     <to id="_to32" uri="mock:mock_endpoint"/>
@@ -75,7 +75,7 @@
                 <constant>*(OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy)</constant>
             </setHeader>
             <filter id="_filter3">
-                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
                 <to id="_to7" uri="mock:mock_endpoint_smith"/>
             </filter>
             <removeHeader headerName="HL7Filter" id="_removeHeader5"/>
@@ -87,7 +87,7 @@
                 <camel:simple>body.trim().startsWith("FHS")</camel:simple>
                 <split id="batchSplitter2" parallelProcessing="false" strategyRef="agg">
                     <method
-                        beanType="org.cdc.gov.sdp.HL7V2BatchSplitter"
+                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                         method="split" trim="false"/>
                     <to id="_to21" uri="direct:hl7FN"/>
                     <to id="_to22" uri="mock:mock_endpoint"/>
@@ -104,7 +104,7 @@
                 <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
             </setHeader>
             <filter id="_filter4">
-                <method beanType="org.cdc.gov.sdp.HL7Terser" method="filter"/>
+                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
                 <to id="_to8" uri="mock:mock_endpoint_smith"/>
             </filter>
             <removeHeader headerName="HL7Filter" id="_removeHeader7"/>
