@@ -1,7 +1,5 @@
 package gov.cdc.sdp.cbr;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,14 +11,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +24,6 @@ import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
 import gov.cdc.sdp.cbr.common.SDPTestBase;
-
-import static org.apache.camel.component.hl7.HL7.terser;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
@@ -52,11 +45,47 @@ public class HL7FiltersTest extends SDPTestBase {
 
 	@Produce(uri = "direct:start_fn")
 	protected ProducerTemplate templateFN;
-	
+
 	@Produce(uri = "direct:start_preg")
 	protected ProducerTemplate templatePreg;
-	
-	
+
+	@Test
+	public void modelFailure() throws Exception {
+		mockEndpointAll.reset();
+		mockEndpointAll.expectedMessageCount(0);
+
+		String[] sourceFiles = { "src/test/resources/BatchTest_no_FHS.txt", "src/test/resources/BatchTest_no_BHS.txt",
+				"src/test/resources/BatchTest_no_FTS.txt", "src/test/resources/BatchTest_no_BTS.txt",
+				"src/test/resources/BatchTest_bad_FHS.txt", "src/test/resources/BatchTest_bad_BHS.txt",
+				"src/test/resources/BatchTest_bad_FHS.txt", "src/test/resources/BatchTest_bad_BTS.txt",
+				"src/test/resources/BatchTest_bad_FTS.txt", "src/test/resources/BatchTest_MSH_issues.txt" };
+
+		Exchange exchange = new DefaultExchange(camelContext);
+		Message msg = new DefaultMessage();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("recordId", "testQueueProducer_rec");
+		map.put("messageId", "testQueueProducer_msg");
+		map.put("payloadName", "Name");
+		map.put("localFileName", "file??");
+		map.put("service", "service");
+		map.put("action", "action");
+		map.put("arguments", "arge");
+		map.put("fromPartyId", "testQueueProducer");
+		map.put("messageRecipient", "recipient");
+
+		for (String sourceFile : sourceFiles) {
+			map.put("payloadBinaryContent", readFile(sourceFile));
+			map.put("payloadTextContent", readFile(sourceFile));
+			map.put("receivedTime", new Date().toString());
+			msg.setBody(map);
+			exchange.setIn(msg);
+			template.send(exchange);
+		}
+
+		mockEndpointAll.assertIsSatisfied();
+	}
+
 	@Test
 	public void testHapiFiltersLastName() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
@@ -89,7 +118,7 @@ public class HL7FiltersTest extends SDPTestBase {
 		mockEndpointAll.assertIsSatisfied();
 		mockEndpointFiltered.assertIsSatisfied();
 	}
-	
+
 	@Test
 	public void testHapiFiltersLastNameSmith() throws InterruptedException, IOException {
 		mockEndpointAll.reset();
