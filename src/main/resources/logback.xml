@@ -5,7 +5,7 @@
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 	    <file>sdp_console.log</file>
 	    <encoder>
-	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''}%n</pattern>
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%nn</pattern>
 	    </encoder>
 	</appender>
 
@@ -13,7 +13,7 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''}%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
     </encoder>
   </appender>
 
