@@ -141,7 +141,6 @@ public class AphlS3Producer extends DefaultProducer {
 						.withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition)
 						.withFile(filePayload).withPartSize(partSize);
 
-				// LOG.trace("Uploading part [{}] for {}", part, keyName);
 				partETags.add(getEndpoint().getS3Client().uploadPart(uploadRequest).getPartETag());
 
 				filePosition += partSize;
@@ -209,15 +208,10 @@ public class AphlS3Producer extends DefaultProducer {
 			// PutObjectRequest#setAccessControlList for more details
 			putObjectRequest.setAccessControlList(acl);
 		}
-		// LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest,
-		// exchange);
 
 		PutObjectResult putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest);
 
-		// LOG.info("Received result [{}]", putObjectResult.getETag());
-
 		Message message = getMessageForResponse(exchange);
-		// LOG.info(message.getBody(String.class));
 		message.setHeader(S3Constants.E_TAG, putObjectResult.getETag());
 		if (putObjectResult.getVersionId() != null) {
 			message.setHeader(S3Constants.VERSION_ID, putObjectResult.getVersionId());
