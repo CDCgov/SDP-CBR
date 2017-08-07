@@ -88,6 +88,45 @@ public class PhinMSDBTest {
 		}
 	}
 	
+
+	@Test
+	public void testPhinMSProducerMultiLine() {
+		JdbcTemplate jdbcTemplate = null;
+		int count = -1;
+		try {
+			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("phinMSDataSource");
+			jdbcTemplate = new JdbcTemplate(ds);
+			
+			count = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class);
+		
+			String fileName = "phinms_input_multi.csv";
+			String inputFilePath = "src/test/resources/" + fileName;
+			Exchange exchange = new DefaultExchange(camelContext);
+			Message msg = new DefaultMessage();
+			String expected_content = readFile(inputFilePath);
+			msg.setBody(expected_content);
+			exchange.setIn(msg);
+			phinMSDb.expectedMessageCount(1);
+			template.send(exchange);
+			MockEndpoint.assertIsSatisfied(camelContext);
+			int countDelta = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class) - count;
+			
+			assertEquals(13, countDelta);
+		} catch (IOException e) {
+			fail("Could not read input file");
+		} catch (InterruptedException e) {
+			fail("Interrupted Exception thrown");
+		} finally {
+			if (jdbcTemplate != null) {
+				jdbcTemplate.execute("DELETE from message_inq where fromPartyId='TEST'");
+
+				if (count > 0) {
+					assertEquals(count, (int)jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class));
+				}
+			}
+		}
+	}
+	
 	
 	private String readFile(String file) throws IOException {
 		return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
