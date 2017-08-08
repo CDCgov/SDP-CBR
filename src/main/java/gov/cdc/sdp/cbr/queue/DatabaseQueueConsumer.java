@@ -73,7 +73,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 
 		this.query = "SELECT * FROM " + tableName + " WHERE  status != 'sent'";
 		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed', attempts=attempts+1 where id=? ";
-		this.onConsume = "UPDATE " + tableName + " SET status = 'sent' where id=?";
+		this.onConsume = "UPDATE " + tableName + " SET status = 'sent',  payload='' where id=?";
 		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
 
 		// Converting from seconds to milliseconds
