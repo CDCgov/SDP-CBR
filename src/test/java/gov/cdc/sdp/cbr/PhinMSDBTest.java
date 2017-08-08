@@ -52,6 +52,7 @@ public class PhinMSDBTest {
 
 	@Test
 	public void testPhinMSProducer() {
+		MockEndpoint.resetMocks(camelContext);
 		JdbcTemplate jdbcTemplate = null;
 		int count = -1;
 		try {
@@ -91,6 +92,7 @@ public class PhinMSDBTest {
 
 	@Test
 	public void testPhinMSProducerMultiLine() {
+		MockEndpoint.resetMocks(camelContext);
 		JdbcTemplate jdbcTemplate = null;
 		int count = -1;
 		try {
