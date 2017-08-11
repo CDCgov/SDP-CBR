@@ -1,5 +1,15 @@
 package gov.cdc.sdp.cbr;
 
+import static org.junit.Assert.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+
+import javax.sql.DataSource;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -9,10 +19,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -20,9 +34,9 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration(locations = { "/EmailOnException.xml" })
-@PropertySource("/application.properties")
-public class EmailOnExceptionTest extends SDPTestBase {
+@ContextConfiguration(locations = { "classpath:EmailOnException.xml" })
+@PropertySource("classpath:application.properties")
+public class EmailOnExceptionTest {
 
 	@Autowired
 	protected CamelContext camelContext;
@@ -33,12 +47,140 @@ public class EmailOnExceptionTest extends SDPTestBase {
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
 
+	@Before
+	public void setup() throws SQLException {
+		mockEndpoint.reset();
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS testdb (recordId bigserial primary key,"
+					+ " status varchar (255) default 'new', routing varchar (255));");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	@After
+	public void tearDown() throws SQLException {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("DROP TABLE testdb;");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
 	@Test
 	public void noS3AtUriTest() throws Exception {
 		mockEndpoint.expectedMessageCount(1);
 		Exchange exchange = new DefaultExchange(camelContext);
 		template.send(exchange);
 		mockEndpoint.assertIsSatisfied();
+	}
+	
+	@Test
+	public void consumeFailedTest() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		mockEndpoint.expectedMessageCount(1);
+		mockEndpoint.setAssertPeriod(5000);
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("INSERT INTO testdb (status, routing) values('new', 'error');");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		mockEndpoint.assertIsSatisfied();
+		
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("SELECT * from testdb;");
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				String status = rs.getString("status");
+				assertEquals("consumeFailed", status);
+				count++;
+			}
+			assertEquals(1,count);
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	@Test
+	public void consumeSuccessTest() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		mockEndpoint.expectedMessageCount(1);
+		mockEndpoint.setAssertPeriod(5000);
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("INSERT INTO testdb (status, routing) values('new', 'success');");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		mockEndpoint.assertIsSatisfied();
+		
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("SELECT * from testdb;");
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				String status = rs.getString("status");
+				assertEquals("consumed", status);
+				count++;
+			}
+			assertEquals(1,count);
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
 	}
 
 }
