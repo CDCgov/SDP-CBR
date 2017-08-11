@@ -55,6 +55,9 @@
             </camel:choice>
             <onException id="_onException1">
                 <exception>java.lang.Exception</exception>
+                <handled>
+	                <constant>false</constant>
+	            </handled>
                 <log id="mvps_log" message="EXCEPTION \n ${exception.stacktrace}"/>
             </onException>
         </route>
@@ -82,6 +85,9 @@
             </idempotentConsumer>
             <onException id="_onException2">
                 <exception>java.lang.Exception</exception>
+                <handled>
+	                <constant>false</constant>
+	            </handled>
                 <log id="fnf_log" message="EXCEPTION \n ${exception.stacktrace}"/>
             </onException>
         </route>
@@ -97,6 +103,9 @@
                 <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/> 
             <doCatch id="fnr_doCatch1">
                 <exception>java.lang.Exception</exception>
+                    <handled>
+		                <constant>false</constant>
+		            </handled>
                 <log id="fnr_log" message="EXCEPTION \n ${exception.stacktrace}"/>
             </doCatch>
             </doTry>
