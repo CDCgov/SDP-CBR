@@ -139,7 +139,6 @@ public class EmailOnExceptionTest {
 				conn.close();
 			}
 		}
-		mockEndpoint.assertIsSatisfied();
 		
 	}
 	
