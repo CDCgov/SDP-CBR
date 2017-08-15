@@ -42,16 +42,16 @@
             <log id="log_error" message="EXCEPTION \n ${exception.stacktrace}"/>
             <setHeader headerName="from">
 		        <simple>{{email.from}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setHeader headerName="to">
 		        <simple>{{email.to}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setHeader headerName="subject">
 		        <simple>{{email.subject}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setBody id="_onException_0">
 		      	<simple>${properties:email.default_body}${exception.message}</simple>
-		      </setBody>      
+		      </setBody>
 		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
         </onException>
     <route id="PhinMSRoute">
@@ -97,7 +97,7 @@
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-                <simple trim="true"> ${in.header.CBR_ID} 
+                <simple trim="true"> ${in.header.CBR_ID}
 			          </simple>
             </setHeader>
             <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
