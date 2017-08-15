@@ -59,8 +59,8 @@
                         <constant>false</constant>
                     </handled>
                     <log id="_log1" message="Got ${exception.message}"/>
-                    <process id="setheaders" ref="set_email_headers"/>
-                    <setHeader headerName="to" id="_setHeader1">
+                    <process id="setheaders2" ref="set_email_headers"/>
+                    <setHeader headerName="to" id="_setHeader2">
                         <simple>{{email.to}}</simple>
                     </setHeader>
                     <setBody id="_setBody2">

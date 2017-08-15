@@ -22,8 +22,10 @@ import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +38,7 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "classpath:EmailOnException.xml" })
 @PropertySource("classpath:application.properties")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EmailOnExceptionTest {
 
 	@Autowired
@@ -117,7 +120,6 @@ public class EmailOnExceptionTest {
 		}
 
 		mockEndpoint.assertIsSatisfied();
-		
 		try {
 			conn = ds.getConnection();
 			ps = conn.prepareStatement("SELECT * from testdb;");
@@ -137,6 +139,8 @@ public class EmailOnExceptionTest {
 				conn.close();
 			}
 		}
+		mockEndpoint.assertIsSatisfied();
+		
 	}
 	
 	@Test
