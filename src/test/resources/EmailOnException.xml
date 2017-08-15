@@ -22,24 +22,19 @@
       <exception>java.lang.Exception</exception>
       <handled>
         <constant>false</constant>
-      </handled>
-      
+      </handled>      
       <setHeader headerName="from">
         <simple>{{email.from}}</simple>
-      </setHeader>
-      
+      </setHeader>      
       <setHeader headerName="to">
         <simple>{{email.to}}</simple>
-      </setHeader>
-      
+      </setHeader>      
       <setHeader headerName="subject">
         <simple>{{email.subject}}</simple>
-      </setHeader>
-      
+      </setHeader>      
       <setBody id="_onException_0">
         <constant>{{email.default_body}}</constant>
-      </setBody>
-      
+      </setBody>      
       <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
       <to id="_to_mock" uri="mock:mock_endpoint"/>
     </onException>
