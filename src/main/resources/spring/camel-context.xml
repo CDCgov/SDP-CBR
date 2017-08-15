@@ -34,7 +34,26 @@
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
-            <camel:onException></camel:onException>
+        <onException id="_onException1">
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>false</constant>
+            </handled>
+            <log id="log_error" message="EXCEPTION \n ${exception.stacktrace}"/>
+            <setHeader headerName="from">
+		        <simple>{{email.from}}</simple>
+		      </setHeader>      
+		      <setHeader headerName="to">
+		        <simple>{{email.to}}</simple>
+		      </setHeader>      
+		      <setHeader headerName="subject">
+		        <simple>{{email.subject}}</simple>
+		      </setHeader>      
+		      <setBody id="_onException_0">
+		      	<simple>${properties:email.default_body}${exception.message}</simple>
+		      </setBody>      
+		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
+        </onException>
         <route id="MvpsPhinMSRoute">
             <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
@@ -53,13 +72,6 @@
                     <to id="_to2" uri="direct:multicast"/>
                 </camel:otherwise>
             </camel:choice>
-            <onException id="_onException1">
-                <exception>java.lang.Exception</exception>
-                <handled>
-                    <constant>false</constant>
-                </handled>
-                <log id="mvps_log" message="EXCEPTION \n ${exception.stacktrace}"/>
-            </onException>
         </route>
         <route id="Multicast">
             <from id="_from1" uri="direct:multicast"/>
@@ -83,13 +95,6 @@
                     <to id="foodNetQueue" uri="sdpqueue:{{foodNet.queue}}"/>
                 </filter>
             </idempotentConsumer>
-            <onException id="_onException2">
-                <exception>java.lang.Exception</exception>
-                <handled>
-                    <constant>false</constant>
-                </handled>
-                <log id="fnf_log" message="EXCEPTION \n ${exception.stacktrace}"/>
-            </onException>
         </route>
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
@@ -97,17 +102,8 @@
                 <simple trim="false"> ${in.header.CBR_ID} 
 			          </simple>
             </setHeader>
-            <doTry id="_doTry1">
-                <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-                <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
-                <doCatch id="fnr_doCatch1">
-                    <exception>java.lang.Exception</exception>
-                    <handled>
-                        <constant>false</constant>
-                    </handled>
-                    <log id="fnr_log" message="EXCEPTION \n ${exception.stacktrace}"/>
-                </doCatch>
-            </doTry>
+            <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
+            <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
         </route>
     </camelContext>
 </beans>

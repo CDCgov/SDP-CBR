@@ -38,7 +38,7 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "classpath:EmailOnException.xml" })
 @PropertySource("classpath:application.properties")
-public class EmailOnExceptionTest {
+public class EmailOnExceptionTest3 {
 	
 	Object lock = new Object();
 
@@ -94,14 +94,55 @@ public class EmailOnExceptionTest {
 			}
 		}
 	}
+
 	
 	@Test
-	public void noS3AtUriTest() throws Exception {
+	public void consumeSuccessTest() throws Exception {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
 		mockEndpoint.expectedMessageCount(1);
-		Exchange exchange = new DefaultExchange(camelContext);
-		template.send(exchange);
-		mockEndpoint.assertIsSatisfied();
+		mockEndpoint.setAssertPeriod(5000);
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("INSERT INTO testdb (status, routing) values('new', 'success');");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		synchronized(lock) {
+			mockEndpoint.assertIsSatisfied();
+		}
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("SELECT * from testdb;");
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				String status = rs.getString("status");
+				assertEquals("consumed", status);
+				count++;
+			}
+			assertEquals(1,count);
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		synchronized(lock) {
+			mockEndpoint.assertIsSatisfied();
+		}
 	}
-	
 
 }

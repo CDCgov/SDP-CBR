@@ -1,59 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:camel="http://camel.apache.org/schema/spring"
-  xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:jee="http://www.springframework.org/schema/jee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
-  <!-- START SNIPPET: e1 -->
-  <bean class="org.apache.commons.dbcp.BasicDataSource"
-    destroy-method="close" id="sdpqDataSource">
-    <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
-    <property name="url" value="${sdpq.jdbc.url}"/>
-    <property name="username" value="${sdpq.jdbc.username}"/>
-    <property name="password" value="${sdpq.jdbc.password}"/>
-  </bean>
-  <bean
-    class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
-    <property name="location" value="classpath:application.properties"/>
-  </bean>
-  <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
-    <propertyPlaceholder id="properties" location="application.properties"/>
-    <onException>
-      <exception>java.lang.Exception</exception>
-      <handled>
-        <constant>false</constant>
-      </handled>      
-      <setHeader headerName="from">
-        <simple>{{email.from}}</simple>
-      </setHeader>      
-      <setHeader headerName="to">
-        <simple>{{email.to}}</simple>
-      </setHeader>      
-      <setHeader headerName="subject">
-        <simple>{{email.subject}}</simple>
-      </setHeader>      
-      <setBody id="_onException_0">
-        <constant>{{email.default_body}}</constant>
-      </setBody>      
-      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
-      <to id="_to_mock" uri="mock:mock_endpoint"/>
-    </onException>
-    <route id="email_sending_test_route">
-      <from id="from_test" uri="direct:start"/>
-        <to id="_to_the_ether" uri="aphl-s3://there_is_no_S3_here"/>
-        <to id="_to_unreachable_endpoint" uri="mock:mock_endpoint"/>
-    </route>
-    <route id="email_sending_test_route_sql2">
-      <from id="from_test_sql2" uri="sql:select * from testdb where status='new'?dataSource=sdpqDataSource&amp;onConsume=update testdb set status='consumed' where recordId=:#recordId&amp;onConsumeFailed=update testdb set status='consumeFailed' where recordId=:#recordId"/>
-        <camel:choice id="_choice1">
-          <camel:when id="_when1">
-            <camel:simple>${in.body[routing]} contains 'success'</camel:simple>
-            <to id="_to_unreachable_endpoint2" uri="mock:mock_endpoint"/>
-          </camel:when>
-          <camel:otherwise id="_otherwise1">
-            <to id="_to_the_ether2" uri="aphl-s3://there_is_no_S3_here"/>
-          </camel:otherwise>
-        </camel:choice>
-    </route>
-  </camelContext>
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+    <!-- START SNIPPET: e1 -->
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="sdpqDataSource">
+        <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+        <property name="url" value="${sdpq.jdbc.url}"/>
+        <property name="username" value="${sdpq.jdbc.username}"/>
+        <property name="password" value="${sdpq.jdbc.password}"/>
+    </bean>
+    <bean
+        class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
+        <property name="location" value="classpath:application.properties"/>
+    </bean>
+    <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties" location="application.properties"/>
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>false</constant>
+            </handled>
+            <setHeader headerName="from">
+                <simple>{{email.from}}</simple>
+            </setHeader>
+            <setHeader headerName="to">
+                <simple>{{email.to}}</simple>
+            </setHeader>
+            <setHeader headerName="subject">
+                <simple>{{email.subject}}</simple>
+            </setHeader>
+            <setBody id="_onException_0">
+                <simple>${properties:email.default_body}${exception.message}</simple>
+            </setBody>
+            <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
+            <log message="Email sent!"></log>
+            <to id="_to_mock" uri="mock:mock_endpoint"/>
+        </onException>
+        <route id="email_sending_test_route">
+            <from id="from_test" uri="direct:start"/>
+            <to id="_to_the_ether" uri="aphl-s3://there_is_no_S3_here"/>
+            <to id="_to_unreachable_endpoint" uri="mock:mock_endpoint"/>
+        </route>
+        <route id="email_sending_test_route_sql2">
+            <from id="from_test_sql2" uri="sql:select * from testdb where status='new'?dataSource=sdpqDataSource&amp;onConsume=update testdb set status='consumed' where recordId=:#recordId&amp;onConsumeFailed=update testdb set status='consumeFailed' where recordId=:#recordId"/>
+            <camel:choice id="_choice1">
+                <camel:when id="_when1">
+                    <camel:simple>${in.body[routing]} contains 'success'</camel:simple>
+                    <to id="_to_unreachable_endpoint2" uri="mock:mock_endpoint"/>
+                </camel:when>
+                <camel:otherwise id="_otherwise1">
+                    <to id="_to_the_ether2" uri="aphl-s3://there_is_no_S3_here"/>
+                </camel:otherwise>
+            </camel:choice>
+        </route>
+    </camelContext>
 </beans>

@@ -38,7 +38,7 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "classpath:EmailOnException.xml" })
 @PropertySource("classpath:application.properties")
-public class EmailOnExceptionTest {
+public class EmailOnExceptionTest2 {
 	
 	Object lock = new Object();
 
@@ -53,7 +53,6 @@ public class EmailOnExceptionTest {
 
 	@Before
 	public void setup() throws SQLException {
-		synchronized(lock) {
 			mockEndpoint.reset();
 			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
 			Connection conn = null;
@@ -72,11 +71,9 @@ public class EmailOnExceptionTest {
 				}
 			}
 		}
-	}
 	
 	@After
 	public void tearDown() throws SQLException {
-		synchronized(lock) {
 			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
 			Connection conn = null;
 			PreparedStatement ps = null;
@@ -92,16 +89,55 @@ public class EmailOnExceptionTest {
 					conn.close();
 				}
 			}
-		}
 	}
 	
 	@Test
-	public void noS3AtUriTest() throws Exception {
+	public void consumeFailedTest() throws Exception {
+		
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
 		mockEndpoint.expectedMessageCount(1);
-		Exchange exchange = new DefaultExchange(camelContext);
-		template.send(exchange);
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("INSERT INTO testdb (status, routing) values('new', 'error');");
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		mockEndpoint.setResultWaitTime(20000);
+		mockEndpoint.setAssertPeriod(4000);
 		mockEndpoint.assertIsSatisfied();
+		try {
+			conn = ds.getConnection();
+			ps = conn.prepareStatement("SELECT * from testdb;");
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				String status = rs.getString("status");
+				assertEquals("consumeFailed", status);
+				count++;
+			}
+			assertEquals(1,count);
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		synchronized(lock) {
+			mockEndpoint.assertIsSatisfied();
+		}
+		
 	}
-	
 
 }
