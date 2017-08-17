@@ -28,7 +28,7 @@ public class PhinMSTransformer implements Processor {
 		sdpMessage.setBatchId(null);
 		sdpMessage.setBatchIndex(0);
 		sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
-		sdpMessage.setId("PHINMS_" + recordId);
+		sdpMessage.setId(exchange.getFromRouteId().toUpperCase() + "_" + recordId);
 		sdpMessage.setPayload(msg.getBody().toString());
 		sdpMessage.setRecipient((String) myMap.get("recipientId"));
 		sdpMessage.setSender((String) myMap.get("fromPartyId"));
