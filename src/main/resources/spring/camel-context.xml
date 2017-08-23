@@ -56,8 +56,8 @@
 		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
         </onException>
         -->
-        <route id="PhinMSRoute">
-            <from id="PHINMS" uri="sql:{{phinms.sql}}"/>
+        <route id="PHINMS">
+            <from id="cbr_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
