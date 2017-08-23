@@ -5,16 +5,16 @@
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 	    <file>sdp_console.log</file>
 	    <encoder>
-	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%nn</pattern>
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
 	    </encoder>
 	</appender>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
-    </encoder>
+  <!--   <encoder>
+      <pattern>%d{M:D HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
+    </encoder> -->
   </appender>
 
 
