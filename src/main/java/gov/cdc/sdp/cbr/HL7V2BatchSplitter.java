@@ -77,7 +77,7 @@ public class HL7V2BatchSplitter {
 
 	public List<List<String>> readFHS(String data) {
 		LOG.debug("SPLITTING FHS");
-		List<String> segments = Arrays.asList(data.split("\r?\n"));
+		List<String> segments = Arrays.asList(data.split("\\r\\n|\\n|\\r"));
 		LOG.debug("Number of segments = " + segments.size());
 		ListIterator<String> iter = segments.listIterator();
 		List<List<String>> fhs = new ArrayList<List<String>>();
