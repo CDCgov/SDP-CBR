@@ -99,7 +99,7 @@
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-                <simple trim="false"> ${in.header.CBR_ID} 
+                <simple trim="true"> ${in.header.CBR_ID} 
 			          </simple>
             </setHeader>
             <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
