@@ -34,6 +34,7 @@
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
+        <!--   
         <onException id="_onException1">
             <exception>java.lang.Exception</exception>
             <handled>
@@ -54,6 +55,7 @@
 		      </setBody>
 		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
         </onException>
+        -->
         <route id="PhinMSRoute">
             <from id="PHINMS" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
