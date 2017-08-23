@@ -15,6 +15,7 @@
     <encoder>
       <pattern>%d{HH:mm:ss.SSS}  [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
     </encoder>
+
   </appender>
 
 
