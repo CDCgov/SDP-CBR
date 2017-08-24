@@ -36,8 +36,8 @@ public class DatabaseQueueProducer extends DefaultProducer {
 		super(endpoint);
 
 		queueInsertCommand = "INSERT INTO " + tableName
-				+ " (cbr_id, source, source_id, source_attributes , batch, batch_index, payload, cbr_recevied_time, sender, recipient,  attempts, status, created_at, updated_at) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ " (cbr_id, source, source_id, source_attributes,batch,batch_index, batch_id, payload, cbr_recevied_time, sender, recipient,  attempts, status, created_at, updated_at) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?)";
 		queueDataSource = ds;
 	}
 
@@ -68,14 +68,15 @@ public class DatabaseQueueProducer extends DefaultProducer {
 			ps.setString(4, new Gson().toJson(sdpMsg.getSourceAttributes()));
 			ps.setBoolean(5, sdpMsg.isBatch());
 			ps.setInt(6, sdpMsg.getBatchIndex());
-			ps.setString(7, sdpMsg.getPayload());
-			ps.setString(8, sdpMsg.getCbrReceivedTime());
-			ps.setString(9, sdpMsg.getSender());
-			ps.setString(10, sdpMsg.getRecipient());
-			ps.setInt(11, 0);
-			ps.setString(12, "queued");
-			ps.setString(13, now.toString());
+			ps.setString(7, sdpMsg.getBatchId());
+			ps.setString(8, sdpMsg.getPayload());
+			ps.setString(9, sdpMsg.getCbrReceivedTime());
+			ps.setString(10, sdpMsg.getSender());
+			ps.setString(11, sdpMsg.getRecipient());
+			ps.setInt(12, 0);
+			ps.setString(13, "queued");
 			ps.setString(14, now.toString());
+			ps.setString(15, now.toString());
 
 			ps.executeUpdate();
 		} catch (Exception e) {

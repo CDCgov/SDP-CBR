@@ -41,7 +41,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 	private String onConsumeBatchComplete;
 
 	private String[] default_headers = { "id", "cbr_id", "source", "source_id", "source_attributes", "batch",
-			"batch_index", "payload", "cbr_recevied_time", "sender", "recipient", "attempts", "status", "created_at",
+			"batch_index", "batch_id", "payload", "cbr_recevied_time", "sender", "recipient", "attempts", "status", "created_at",
 			"updated_at" };
 
 	private boolean breakBatchOnConsumeFail = false;
@@ -198,6 +198,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		if (index != null) {
 			sdpMsg.setBatchIndex(Integer.parseInt(index));
 		}
+		sdpMsg.setBatchId((String)data_hash.get("batch_id"));
 		sdpMsg.setCbrReceivedTime((String) data_hash.get("cbr_received_time"));
 		sdpMsg.setId((String) data_hash.get("cbr_id"));
 		sdpMsg.setPayload((String) data_hash.get("payload"));
