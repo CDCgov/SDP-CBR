@@ -19,6 +19,7 @@ public class PhinMSTransformer implements Processor {
 		Gson gson = new Gson();
 
 		String recordId = myMap.get("recordId").toString();
+		String cbr_id = exchange.getFromRouteId().toUpperCase() + "_" + recordId;
 
 		Message msg = exchange.getIn();
 		msg.setBody(myMap.remove("payloadTextContent"));
@@ -28,7 +29,7 @@ public class PhinMSTransformer implements Processor {
 		sdpMessage.setBatchId(null);
 		sdpMessage.setBatchIndex(0);
 		sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
-		sdpMessage.setId("PHINMS_" + recordId);
+		sdpMessage.setId(cbr_id);
 		sdpMessage.setPayload(msg.getBody().toString());
 		sdpMessage.setRecipient((String) myMap.get("recipientId"));
 		sdpMessage.setSender((String) myMap.get("fromPartyId"));
@@ -38,7 +39,8 @@ public class PhinMSTransformer implements Processor {
 		sdpMessage.setSourceAttributes(myMap);
 
 		msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
-		msg.setHeader(CBR.CBR_ID, "PHINMS_" + recordId);
+		msg.setHeader(CBR.CBR_ID, cbr_id);
+		msg.setHeader(CBR.ID, cbr_id);
 		msg.setHeader("recordId", recordId);
 
 	}
