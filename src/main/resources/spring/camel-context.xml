@@ -101,7 +101,8 @@
 			          </simple>
             </setHeader>
             <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-            <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
+            
+           <!--  <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/> -->
         </route>
     </camelContext>
 </beans>
