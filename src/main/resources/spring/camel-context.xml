@@ -54,16 +54,14 @@
 		      </setBody>      
 		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
         </onException>
-        <route id="MvpsPhinMSRoute">
-            <from id="mvps_phinms" uri="sql:{{phinms.sql}}"/>
+    <route id="PhinMSRoute">
+      <from id="phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
                     <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                    <camel:split id="batchSplitter"
-                        parallelProcessing="false" strategyRef="agg">
-                        <camel:method
-                            beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+                    <camel:split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
+                        <camel:method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                             method="split" trim="false"/>
                         <to id="_to1" uri="direct:multicast"/>
                     </camel:split>
@@ -99,7 +97,7 @@
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-                <simple trim="false"> ${in.header.CBR_ID} 
+                <simple trim="true"> ${in.header.CBR_ID} 
 			          </simple>
             </setHeader>
             <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
