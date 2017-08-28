@@ -18,8 +18,9 @@ public class PhinMSTransformer implements Processor {
 		Map myMap = exchange.getIn().getBody(Map.class);
 		Gson gson = new Gson();
 
+		String exchg_src = exchange.getFromRouteId().toUpperCase();
 		String recordId = myMap.get("recordId").toString();
-		String cbr_id = exchange.getFromRouteId().toUpperCase() + "_" + recordId;
+		String cbr_id = exchg_src + "_" + recordId;
 
 		Message msg = exchange.getIn();
 		msg.setBody(myMap.remove("payloadTextContent"));
@@ -33,7 +34,7 @@ public class PhinMSTransformer implements Processor {
 		sdpMessage.setPayload(msg.getBody().toString());
 		sdpMessage.setRecipient((String) myMap.get("recipientId"));
 		sdpMessage.setSender((String) myMap.get("fromPartyId"));
-		sdpMessage.setSource("PHINMS");
+		sdpMessage.setSource(exchg_src);
 		sdpMessage.setSourceId(recordId);
 		sdpMessage.setSourceReceivedTime((String) myMap.get("receivedTime"));
 		sdpMessage.setSourceAttributes(myMap);
