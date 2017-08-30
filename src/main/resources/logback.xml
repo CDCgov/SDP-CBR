@@ -2,29 +2,28 @@
 <!DOCTYPE xml>
 <configuration>
 
-	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-	    <file>sdp_console.log</file>
-	    <encoder>
-	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
-	    </encoder>
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	  <file>sdp_console.log</file>
+	  <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+		  <fileNamePattern>sdp_console-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+		  <maxFileSize>100MB</maxFileSize>
+		  <maxHistory>14</maxHistory>
+		  <totalSizeCap>5GB</totalSizeCap>
+	  </rollingPolicy>
+	  <encoder>
+	   <pattern>%d{[yyyy-MM-dd : HH:mm:ss.SSS]} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
+	  </encoder>
 	</appender>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS}  [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
-    </encoder>
+	  <encoder>
+	   <pattern>%d{[yyyy-MM-dd : HH:mm:ss.SSS]} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
+	  </encoder>
   </appender>
 
-
-<!-- <logger name="org.apache.camel.component.sql" level="trace"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger> -->
   <root level="info">
-    <appender-ref ref="STDOUT" />
-    <appender-ref ref="FILE" />
+	  <appender-ref ref="STDOUT" />
+	  <appender-ref ref="FILE" />
   </root>
 
 </configuration>
