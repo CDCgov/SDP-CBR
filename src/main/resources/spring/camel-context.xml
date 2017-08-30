@@ -32,8 +32,9 @@
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <!-- and the redelivery policy is a profile where we can configure it -->
-        <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="100"
+        <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="1"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
+        <!--
         <onException id="_onException1">
             <exception>java.lang.Exception</exception>
             <handled>
@@ -42,20 +43,21 @@
             <log id="log_error" message="EXCEPTION \n ${exception.stacktrace}"/>
             <setHeader headerName="from">
 		        <simple>{{email.from}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setHeader headerName="to">
 		        <simple>{{email.to}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setHeader headerName="subject">
 		        <simple>{{email.subject}}</simple>
-		      </setHeader>      
+		      </setHeader>
 		      <setBody id="_onException_0">
 		      	<simple>${properties:email.default_body}${exception.message}</simple>
-		      </setBody>      
+		      </setBody>
 		      <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
         </onException>
-    <route id="PhinMSRoute">
-      <from id="phinms" uri="sql:{{phinms.sql}}"/>
+        -->
+        <route id="PHINMS">
+            <from id="cbr_phinms" uri="sql:{{phinms.sql}}"/>
             <camel:process id="setHeaders" ref="myProcessor"/>
             <camel:choice id="_choice1">
                 <camel:when id="_when1">
@@ -97,8 +99,7 @@
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-                <simple trim="true"> ${in.header.CBR_ID} 
-			          </simple>
+                <simple trim="true">${in.header.CBR_ID}</simple>
             </setHeader>
             <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
             <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>

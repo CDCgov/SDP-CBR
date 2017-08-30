@@ -71,7 +71,7 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 		this.jdbcTemplate = new JdbcTemplate(ds);
 		this.tableName = tn;
 
-		this.query = "SELECT * FROM " + tableName + " WHERE  status != 'sent'";
+		this.query = "SELECT * FROM " + tableName + " WHERE  status != 'sent' limit 100";
 		this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed', attempts=attempts+1 where id=? ";
 		this.onConsume = "UPDATE " + tableName + " SET status = 'sent',  payload='' where id=?";
 		this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
@@ -172,13 +172,13 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
 			else{
 				log.error("Error creating exchange");
 			}
-			
+
 		}
-			
+
 			holder.exchange = exchange;
 			holder.data = item;
 			answer.add(holder);
-		
+
 	}
 
 	// @SuppressWarnings("unchecked")
