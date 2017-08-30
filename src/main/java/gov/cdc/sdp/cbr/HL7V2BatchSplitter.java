@@ -1,5 +1,7 @@
 package gov.cdc.sdp.cbr;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -77,7 +79,9 @@ public class HL7V2BatchSplitter {
 
 	public List<List<String>> readFHS(String data) {
 		LOG.debug("SPLITTING FHS");
-		List<String> segments = Arrays.asList(data.split("\\r\\n|\\n|\\r"));
+    BufferedReader bf = new BufferedReader(new StringReader(data));
+		List<String> segments = bf.lines().collect(ArrayList::new, ArrayList::add,
+                                                ArrayList::addAll);
 		LOG.debug("Number of segments = " + segments.size());
 		ListIterator<String> iter = segments.listIterator();
 		List<List<String>> fhs = new ArrayList<List<String>>();
