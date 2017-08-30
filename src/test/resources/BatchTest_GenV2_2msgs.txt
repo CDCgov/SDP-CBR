@@ -1,7 +1,7 @@
 FHS|^~\&|^^|The Iowa Division ^2.16.840.1.114222.4.1.3635^ISO|^^|The Iowa Division ^2.16.840.1.114222.4.1.3635^ISO|39130010134019+0-32400000|||||
 BHS|^~\&|^^|The Iowa Division ^2.16.840.1.114222.4.1.3635^ISO|^^|The Iowa Division ^2.16.840.1.114222.4.1.3635^ISO|39130010134019+0-32400000|||||
 MSH|^~\&|SendAppName^2.16.840.1.114222.TBD^ISO|Sending-Facility^2.16.840.1.114222.TBD^ISO|PHINCDS^2.16.840.1.114222.4.3.2.10^ISO|PHIN^2.16.840.1.114222^ISO|20141225120030.1234-0500||ORU^R01^ORU_R01|TM_CN_TC01_GENV2|T|2.5.1|||||||||NOTF_ORU_v3.0^PHINProfileID^2.16.840.1.114222.4.10.3^ISO~Generic_MMG_V2.0^PHINMsgMapID^2.16.840.1.114222.4.10.4^ISO
-PID|1||LocalidDEM197^^^SendAppName&2.16.840.1.114222.GENv2&ISO||~^^^^^^S||19640502|F||2106-3^White^CDCREC^C^Caucasian^L~1002-5^American Indian or Alaska Native^CDCREC|^^^48&Texas&CDCREC^77018^^^^48201&Harris&CDCREC|||||||||||2135-2^Hispanic or Latino^CDCREC|||||||20140302
+PID|1||LocalidDEM197^^^SendAppName&2.16.840.1.114222.GENv2&ISO||~^^^^^^S||99999999|F||2106-3^White^CDCREC^C^Caucasian^L~1002-5^American Indian or Alaska Native^CDCREC|^^^48&Texas&CDCREC^77018^^^^48201&Harris&CDCREC|||||||||||2135-2^Hispanic or Latino^CDCREC|||||||20140302
 OBR|1|""|SAI^SendAppName^2.16.840.1.114222.TBD^ISO|68991-9^Epidemiologic Information^LN|||20140227170100|||||||||||||||20140227170100|||F||||||10440^Plague^NND
 OBX|1|ST|32624-9^Other Race Text^LN||Asian^Multi-Racial||||||F
 OBX|2|CWE|78746-5^Country of Birth^LN||USA^United States^ISO3166_1||||||F
