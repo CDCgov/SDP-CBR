@@ -31,6 +31,9 @@
     </bean>
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+				<dataFormats>
+				  <hl7 id="unvalidatedHl7" validate="false"/>
+				</dataFormats>
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="1"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
@@ -87,10 +90,10 @@
                 <setHeader headerName="HL7Filter" id="_setHeader7">
                     <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
                 </setHeader>
-                <unmarshal id="_unmarshal1" ref="hl7"/>
+                <unmarshal id="_unmarshal1" ref="unvalidatedHl7"/>
                 <filter id="foodNetFilter">
                     <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                    <marshal id="_marshal1" ref="hl7"/>
+                    <marshal id="_marshal1" ref="unvalidatedHl7"/>
                     <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
                     <to id="foodNetQueue" uri="sdpqueue:{{foodNet.queue}}"/>
                 </filter>

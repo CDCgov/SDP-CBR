@@ -1,113 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:camel="http://camel.apache.org/schema/spring"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:jee="http://www.springframework.org/schema/jee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
-    <!-- START SNIPPET: e1 -->
-    <!-- repository for the idempotent consumer -->
-    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
-    <bean class="org.apache.camel.component.hl7.HL7" id="hl7"/>
-    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
-    <!-- Define a traditional camel context here -->
-    <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
-        <route id="_route1">
-            <from id="_from1" uri="direct:start"/>
-            <process id="setHeaders" ref="myProcessor"/>
-            <camel:when id="_when1">
-                <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
-                    <method
-                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
-                        method="split" trim="false"/>
-                    <to id="_to1" uri="direct:hl71"/>
-                    <to id="_to2" uri="mock:mock_endpoint"/>
-                </split>
-            </camel:when>
-            <camel:otherwise id="_otherwise1">
-                <to id="_to3" uri="direct:hl71"/>
-                <to id="_to4" uri="mock:mock_endpoint"/>
-            </camel:otherwise>
-        </route>
-        <route id="_testHL7RouteLastName">
-            <from id="_tHRfrom1" uri="direct:hl71"/>
-            <setHeader headerName="HL7Filter" id="_setHeader1">
-                <constant>PID-5-1 EQUALS SMITH</constant>
-            </setHeader>
-            <filter id="_filter1">
-                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                <to id="_to5" uri="mock:mock_endpoint_smith"/>
-            </filter>
-            <removeHeader headerName="HL7Filter" id="_removeHeader1"/>
-        </route>
-        <route id="_testHL7RouteNotCalifornia">
-            <from id="_tHRCalfrom1" uri="direct:hl7NotCA"/>
-            <setHeader headerName="HL7Filter" id="_setHeader3">
-                <constant>/.PID-11-4 NOT_EQUALS CA</constant>
-            </setHeader>
-            <filter id="_filter2">
-                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                <to id="_to6" uri="mock:mock_endpoint_not_ca"/>
-            </filter>
-            <removeHeader headerName="HL7Filter" id="_removeHeader3"/>
-        </route>
-        <route id="_route3">
-            <from id="_from3" uri="direct:start_preg"/>
-            <process id="setHeaders3" ref="myProcessor"/>
-            <camel:when id="_when3">
-                <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                <split id="batchSplitter3" parallelProcessing="false" strategyRef="agg">
-                    <method
-                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
-                        method="split" trim="false"/>
-                    <to id="_to31" uri="direct:hl7Preg"/>
-                    <to id="_to32" uri="mock:mock_endpoint"/>
-                </split>
-            </camel:when>
-            <camel:otherwise id="_otherwise3">
-                <to id="_to33" uri="direct:hl7Preg"/>
-                <to id="_to34" uri="mock:mock_endpoint"/>
-            </camel:otherwise>
-        </route>
-        <route id="_testHL7RoutePregnant">
-            <from id="_tHRPregfrom1" uri="direct:hl7Preg"/>
-            <setHeader headerName="HL7Filter" id="_setHeader5">
-                <constant>*(OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy)</constant>
-            </setHeader>
-            <filter id="_filter3">
-                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                <to id="_to7" uri="mock:mock_endpoint_smith"/>
-            </filter>
-            <removeHeader headerName="HL7Filter" id="_removeHeader5"/>
-        </route>
-        <route id="_route2">
-            <from id="_from2" uri="direct:start_fn"/>
-            <process id="setHeaders2" ref="myProcessor"/>
-            <camel:when id="_when2">
-                <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                <split id="batchSplitter2" parallelProcessing="false" strategyRef="agg">
-                    <method
-                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
-                        method="split" trim="false"/>
-                    <to id="_to21" uri="direct:hl7FN"/>
-                    <to id="_to22" uri="mock:mock_endpoint"/>
-                </split>
-            </camel:when>
-            <camel:otherwise id="_otherwise2">
-                <to id="_to23" uri="direct:hl7FN"/>
-                <to id="_to24" uri="mock:mock_endpoint"/>
-            </camel:otherwise>
-        </route>
-        <route id="_testHL7RouteFoodNet">
-            <from id="_tHRFN1" uri="direct:hl7FN"/>
-            <setHeader headerName="HL7Filter" id="_setHeader7">
-                <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
-            </setHeader>
-            <filter id="_filter4">
-                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                <to id="_to8" uri="mock:mock_endpoint_smith"/>
-            </filter>
-            <removeHeader headerName="HL7Filter" id="_removeHeader7"/>
-        </route>
-    </camelContext>
+  xmlns:camel="http://camel.apache.org/schema/spring"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd                        ">
+  <!-- START SNIPPET: e1 -->
+  <!-- repository for the idempotent consumer -->
+  <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>  
+  <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+  <!-- Define a traditional camel context here -->
+  <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+    <dataFormats>
+      <hl7 id="unvalidatedHL7" validate="false"/>
+    </dataFormats>
+    <route id="_route1">
+      <from id="_from1" uri="direct:start"/>
+      <process id="setHeaders" ref="myProcessor"/>
+      <camel:when id="_when1">
+        <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+        <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
+          <method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+            method="split" trim="false"/>
+            <unmarshal id="test_unmarshalling" ref="unvalidatedHL7"/>
+            <marshal id="test_remarshalling" ref="unvalidatedHL7"/>
+          <to id="_to1" uri="direct:hl71"/>
+          <to id="_to2" uri="mock:mock_endpoint"/>
+        </split>
+      </camel:when>
+      <camel:otherwise id="_otherwise1">
+        <to id="_to3" uri="direct:hl71"/>
+        <to id="_to4" uri="mock:mock_endpoint"/>
+      </camel:otherwise>
+    </route>
+    <route id="_testHL7RouteLastName">
+      <from id="_tHRfrom1" uri="direct:hl71"/>
+      <setHeader headerName="HL7Filter" id="_setHeader1">
+        <constant>PID-5-1 EQUALS SMITH</constant>
+      </setHeader>
+      <filter id="_filter1">
+        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
+        <to id="_to5" uri="mock:mock_endpoint_smith"/>
+      </filter>
+      <removeHeader headerName="HL7Filter" id="_removeHeader1"/>
+    </route>
+    <route id="_testHL7RouteNotCalifornia">
+      <from id="_tHRCalfrom1" uri="direct:hl7NotCA"/>
+      <setHeader headerName="HL7Filter" id="_setHeader3">
+        <constant>/.PID-11-4 NOT_EQUALS CA</constant>
+      </setHeader>
+      <filter id="_filter2">
+        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
+        <to id="_to6" uri="mock:mock_endpoint_not_ca"/>
+      </filter>
+      <removeHeader headerName="HL7Filter" id="_removeHeader3"/>
+    </route>
+    <route id="_route3">
+      <from id="_from3" uri="direct:start_preg"/>
+      <process id="setHeaders3" ref="myProcessor"/>
+      <camel:when id="_when3">
+        <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+        <split id="batchSplitter3" parallelProcessing="false" strategyRef="agg">
+          <method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+            method="split" trim="false"/>
+          <to id="_to31" uri="direct:hl7Preg"/>
+          <to id="_to32" uri="mock:mock_endpoint"/>
+        </split>
+      </camel:when>
+      <camel:otherwise id="_otherwise3">
+        <to id="_to33" uri="direct:hl7Preg"/>
+        <to id="_to34" uri="mock:mock_endpoint"/>
+      </camel:otherwise>
+    </route>
+    <route id="_testHL7RoutePregnant">
+      <from id="_tHRPregfrom1" uri="direct:hl7Preg"/>
+      <setHeader headerName="HL7Filter" id="_setHeader5">
+        <constant>*(OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy)</constant>
+      </setHeader>
+      <filter id="_filter3">
+        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
+        <to id="_to7" uri="mock:mock_endpoint_smith"/>
+      </filter>
+      <removeHeader headerName="HL7Filter" id="_removeHeader5"/>
+    </route>
+    <route id="_route2">
+      <from id="_from2" uri="direct:start_fn"/>
+      <process id="setHeaders2" ref="myProcessor"/>
+      <camel:when id="_when2">
+        <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+        <split id="batchSplitter2" parallelProcessing="false" strategyRef="agg">
+          <method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+            method="split" trim="false"/>
+          <to id="_to21" uri="direct:hl7FN"/>
+          <to id="_to22" uri="mock:mock_endpoint"/>
+        </split>
+      </camel:when>
+      <camel:otherwise id="_otherwise2">
+        <to id="_to23" uri="direct:hl7FN"/>
+        <to id="_to24" uri="mock:mock_endpoint"/>
+      </camel:otherwise>
+    </route>
+    <route id="_testHL7RouteFoodNet">
+      <from id="_tHRFN1" uri="direct:hl7FN"/>
+      <setHeader headerName="HL7Filter" id="_setHeader7">
+        <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
+      </setHeader>
+      <filter id="_filter4">
+        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
+        <to id="_to8" uri="mock:mock_endpoint_smith"/>
+      </filter>
+      <removeHeader headerName="HL7Filter" id="_removeHeader7"/>
+    </route>
+  </camelContext>
 </beans>
