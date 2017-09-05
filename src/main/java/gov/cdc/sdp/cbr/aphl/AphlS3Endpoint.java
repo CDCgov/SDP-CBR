@@ -112,8 +112,6 @@ public class AphlS3Endpoint extends DefaultEndpoint {
 			clientConfiguration.setProxyPort(configuration.getProxyPort());
 			isClientConfigFound = true;
 		}
-		LOG.info("AWS ACCESS KEY " + configuration.getAccessKey());
-		LOG.info("AWS SECRET KEY " + configuration.getSecretKey());
 		if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
 			AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(),
 					configuration.getSecretKey());
