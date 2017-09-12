@@ -70,9 +70,15 @@
                             method="split" trim="false"/>
                         <to id="_to1" uri="direct:multicast"/>
                     </camel:split>
+					<setHeader headerName="errorMsg">
+						<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
+					</setHeader>
                 </camel:when>
                 <camel:otherwise id="_otherwise1">
                     <to id="_to2" uri="direct:multicast"/>
+					<setHeader headerName="errorMsg">
+						<simple>An error occurred.</simple>
+					</setHeader>
                 </camel:otherwise>
             </camel:choice>
         </route>
