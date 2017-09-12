@@ -20,9 +20,9 @@
         <property name="location" value="classpath:application.properties"/>
     </bean>
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    	<dataFormats>
-				  <hl7 id="unvalidatedHl7" validate="false"/>
-				</dataFormats>
+        <dataFormats>
+            <hl7 id="unvalidatedHl7" validate="false"/>
+        </dataFormats>
         <onException>
             <exception>java.lang.Exception</exception>
             <handled>
@@ -41,23 +41,27 @@
                         <camel:method
                             beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                             method="split" trim="false"/>
-                        <to uri="direct:error"/>
+                        <to id="_to1" uri="direct:error"/>
                     </camel:split>
                 </camel:when>
             </camel:choice>
-            <to uri="mock:endpoint"/>
+            
+			<setHeader headerName="errorMsg">
+				<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
+			</setHeader>
+            <to id="_to2" uri="mock:endpoint"/>
         </route>
         <route id="_route1">
             <from id="_from1" uri="direct:error"/>
             <setHeader headerName="HL7Filter" id="_setHeader7">
-                    <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
-                </setHeader>
-                <unmarshal id="_unmarshal1" ref="unvalidatedHl7"/>
-                <filter id="foodNetFilter">
-                    <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
-                    <marshal id="_marshal1" ref="unvalidatedHl7"/>
-                    <to id="_to_the_ether2" uri="aphl-s3://there_is_no_S3_here"/>
-                </filter>
+                <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
+            </setHeader>
+            <unmarshal id="_unmarshal1" ref="unvalidatedHl7"/>
+            <filter id="foodNetFilter">
+                <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter"/>
+                <marshal id="_marshal1" ref="unvalidatedHl7"/>
+                <to id="_to_the_ether2" uri="aphl-s3://there_is_no_S3_here"/>
+            </filter>
             <to id="_to3" uri="mock:split"/>
         </route>
     </camelContext>

@@ -77,6 +77,7 @@ public class SplitAndAggregateTest {
 		mockEndpoint.expectedMessageCount(1);
 		mockEndpoint.expectedHeaderReceived("ERROR_COUNT", 1);
 		mockEndpoint.expectedHeaderReceived("MSG_COUNT", 3);
+		mockEndpoint.expectedHeaderReceived("errorMsg", "1 of 3 messages failed.");
 		mockSplit.expectedMessageCount(2);
 		template.send(exchange);
 

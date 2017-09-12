@@ -36,7 +36,7 @@
                 <simple>${properties:email.default_body}${exception.message}</simple>
             </setBody>
             <to id="_to_email" uri="{{email.uri}}{{email.debugMode}}"/>
-            <log message="Email sent!"></log>
+            <log message="Email sent!"/>
             <to id="_to_mock" uri="mock:mock_endpoint"/>
         </onException>
         <route id="email_sending_test_route">
