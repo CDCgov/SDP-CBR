@@ -20,6 +20,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,16 @@ import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+
+import io.findify.s3mock.S3Mock;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
@@ -51,14 +59,39 @@ public class AphlS3ComponentTest {
 	private final String accessKey = "accessKey1";
 	private final String secretKey = "verySecretKey1";
 	private final String bucketName = "tradingpartners-east.sandbox.aimsplatform.com";/// AIMSPlatform
-	private final String s3url = "http://127.0.0.1:8000";
+	private final String s3url = "http://127.0.0.1:8001";
 
 	private final String file_name = "hl7v2.txt";
 	private final String input_file_path = "src/test/resources/" + file_name;
 	private final String output_file_path = "test/" + file_name;
 
 	private final String s3ObjectKey = "TRY";
+    private static S3Mock api;
+   
+	@BeforeClass
+    public static void runOnceBeforeClass() {
+		System.out.println("STARTING MOCK");
+		api = new S3Mock.Builder().withPort(8001).withFileBackend("/tmp/s3").build();
+	    api.start();
+	 
+	    EndpointConfiguration endpoint = new EndpointConfiguration("http://127.0.0.1:8001", "us-east-1");
+	    AmazonS3 client = AmazonS3ClientBuilder
+	      .standard()
+	      .withPathStyleAccessEnabled(true)  
+	      .withEndpointConfiguration(endpoint)
+	      .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))     
+	      .build();
 
+	    client.createBucket("tradingpartners-east.sandbox.aimsplatform.com");
+    }
+	
+    // Run once, e.g close connection, cleanup
+    @AfterClass
+    public static void runOnceAfterClass() {
+    	System.out.println("STOPPING MOCK");
+        api.stop();
+    }
+	
 	@Test
 	@DirtiesContext
 	public void testAphlS3Route() throws Exception {
@@ -82,9 +115,13 @@ public class AphlS3ComponentTest {
 
 		// Now to confirm it was delivered correctly...
 		// Establish connection to s3 instance (mock or legitimate)
-		AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-		AmazonS3 s3client = new AmazonS3Client(credentials);
-		s3client.setEndpoint(s3url);
+		EndpointConfiguration endpoint = new EndpointConfiguration("http://127.0.0.1:8001", "us-east-1");
+	    AmazonS3 s3client = AmazonS3ClientBuilder
+	      .standard()
+	      .withPathStyleAccessEnabled(true)  
+	      .withEndpointConfiguration(endpoint)
+	      .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))     
+	      .build();
 
 		// Get object and put in a test directory to easily examine it
 		s3client.getObject(new GetObjectRequest(bucketName, s3ObjectKey), new File(output_file_path));
