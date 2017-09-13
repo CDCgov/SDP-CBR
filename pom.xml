@@ -262,6 +262,13 @@
       <version>0.2.3</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>de.saly</groupId>
+      <artifactId>javamail-mock2-fullmock</artifactId>
+      <version>0.5-beta3</version>
+    </dependency>
+
   </dependencies>
   <build>
     <defaultGoal>spring-boot:run</defaultGoal>
