@@ -1,19 +1,13 @@
 package gov.cdc.sdp.cbr;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -26,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -47,7 +40,7 @@ public class SplitAndAggregateTest {
 
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
-	
+
 	@Test
 	public void testAggregation() throws IOException, InterruptedException {
 		mockEndpoint.reset();
@@ -83,7 +76,7 @@ public class SplitAndAggregateTest {
 
 		MockEndpoint.assertIsSatisfied(camelContext);
 	}
-	
+
 	private String readFile(String file) throws IOException {
 		return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
 	}
