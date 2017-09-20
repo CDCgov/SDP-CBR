@@ -70,7 +70,6 @@ public class AphlS3ComponentTest {
    
 	@BeforeClass
     public static void runOnceBeforeClass() {
-		System.out.println("STARTING MOCK");
 		api = new S3Mock.Builder().withPort(8001).withFileBackend("/tmp/s3").build();
 	    api.start();
 	 
@@ -88,7 +87,6 @@ public class AphlS3ComponentTest {
     // Run once, e.g close connection, cleanup
     @AfterClass
     public static void runOnceAfterClass() {
-    	System.out.println("STOPPING MOCK");
         api.stop();
     }
 	
