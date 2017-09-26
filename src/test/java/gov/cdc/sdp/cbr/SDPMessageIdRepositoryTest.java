@@ -39,122 +39,122 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 @PropertySource("classpath:application.properties")
 public class SDPMessageIdRepositoryTest extends SDPTestBase {
 
-	@Autowired
-	private CamelContext camelContext;
+    @Autowired
+    private CamelContext camelContext;
 
-	@EndpointInject(uri = "mock:idempotence")
-	protected MockEndpoint idempotenceEndpoint;
+    @EndpointInject(uri = "mock:idempotence")
+    protected MockEndpoint idempotenceEndpoint;
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
-	@Test
-	public void testIdempotenceOverShutdown() throws InterruptedException, IOException {
-		String sourceFile = "src/test/resources/hl7v2.txt";
+    @Test
+    public void testIdempotenceOverShutdown() throws InterruptedException, IOException {
+        String sourceFile = "src/test/resources/hl7v2.txt";
 
-		Connection c = null;
-		PreparedStatement ps = null;
-		try {
-			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
-			c = ds.getConnection();
-			ps = c.prepareStatement(
-					"INSERT INTO testIdTable (message_id) values('PHINMS_testIdempotenceInMemory_rec')");
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			fail("SQL EXCEPTION");
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (c != null) {
-					c.close();
-				}
-			} catch (SQLException e) {
-			}
+        Connection c = null;
+        PreparedStatement ps = null;
+        try {
+            DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+            c = ds.getConnection();
+            ps = c.prepareStatement(
+                    "INSERT INTO testIdTable (message_id) values('PHINMS_testIdempotenceInMemory_rec')");
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            fail("SQL EXCEPTION");
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (c != null) {
+                    c.close();
+                }
+            } catch (SQLException e) {
+            }
 
-		}
+        }
 
-		idempotenceEndpoint.expectedMessageCount(0);
+        idempotenceEndpoint.expectedMessageCount(0);
 
-		// Build content
-		Exchange exchange = new DefaultExchange(camelContext);
-		Message msg = new DefaultMessage();
+        // Build content
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message msg = new DefaultMessage();
 
-		Map<String, String> map = new HashMap<>();
-		map.put("recordId", "testIdempotenceInMemory_rec");
-		map.put("messageId", "testIdempotenceInMemory_msg");
-		map.put("payloadName", "Name");
-		map.put("payloadBinaryContent", readFile(sourceFile));
-		map.put("payloadTextContent", readFile(sourceFile));
-		map.put("localFileName", "file??");
-		map.put("service", "service");
-		map.put("action", "action");
-		map.put("arguments", "arge");
-		map.put("fromPartyId", "testIdempotenceInMemory");
-		map.put("messageRecipient", "recipient");
-		map.put("receivedTime", new Date().toString());
-		msg.setBody(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testIdempotenceInMemory_rec");
+        map.put("messageId", "testIdempotenceInMemory_msg");
+        map.put("payloadName", "Name");
+        map.put("payloadBinaryContent", readFile(sourceFile));
+        map.put("payloadTextContent", readFile(sourceFile));
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testIdempotenceInMemory");
+        map.put("messageRecipient", "recipient");
+        map.put("receivedTime", new Date().toString());
+        msg.setBody(map);
 
-		exchange.setIn(msg);
-		template.send(exchange);
+        exchange.setIn(msg);
+        template.send(exchange);
 
-		// Resend
-		exchange = new DefaultExchange(camelContext);
-		msg = new DefaultMessage();
-		map = new HashMap(map);
-		map.put("payloadTextContent", readFile(sourceFile));
-		msg.setBody(map);
-		exchange.setIn(msg);
-		template.send(exchange);
+        // Resend
+        exchange = new DefaultExchange(camelContext);
+        msg = new DefaultMessage();
+        map = new HashMap(map);
+        map.put("payloadTextContent", readFile(sourceFile));
+        msg.setBody(map);
+        exchange.setIn(msg);
+        template.send(exchange);
 
-		// Confirm it was NOT delivered -- id in memory before starting.
-		MockEndpoint.assertIsSatisfied(camelContext);
-	}
+        // Confirm it was NOT delivered -- id in memory before starting.
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
 
-	@Test
-	public void testIdempotenceInMemory() throws InterruptedException, IOException {
-		String sourceFile = "src/test/resources/hl7v2.txt";
+    @Test
+    public void testIdempotenceInMemory() throws InterruptedException, IOException {
+        String sourceFile = "src/test/resources/hl7v2.txt";
 
-		idempotenceEndpoint.expectedMessageCount(1);
+        idempotenceEndpoint.expectedMessageCount(1);
 
-		// Build content
-		Exchange exchange = new DefaultExchange(camelContext);
-		Message msg = new DefaultMessage();
+        // Build content
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message msg = new DefaultMessage();
 
-		Map<String, String> map = new HashMap<>();
-		map.put("recordId", "testIdempotenceInMemory_rec2");
-		map.put("messageId", "testIdempotenceInMemoryr_msg2");
-		map.put("payloadName", "Name");
-		map.put("payloadBinaryContent", readFile(sourceFile));
-		map.put("payloadTextContent", readFile(sourceFile));
-		map.put("localFileName", "file??");
-		map.put("service", "service");
-		map.put("action", "action");
-		map.put("arguments", "arge");
-		map.put("fromPartyId", "testIdempotenceInMemory");
-		map.put("messageRecipient", "recipient");
-		map.put("receivedTime", new Date().toString());
-		msg.setBody(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testIdempotenceInMemory_rec2");
+        map.put("messageId", "testIdempotenceInMemoryr_msg2");
+        map.put("payloadName", "Name");
+        map.put("payloadBinaryContent", readFile(sourceFile));
+        map.put("payloadTextContent", readFile(sourceFile));
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testIdempotenceInMemory");
+        map.put("messageRecipient", "recipient");
+        map.put("receivedTime", new Date().toString());
+        msg.setBody(map);
 
-		exchange.setIn(msg);
-		template.send(exchange);
+        exchange.setIn(msg);
+        template.send(exchange);
 
-		// Resend
-		exchange = new DefaultExchange(camelContext);
-		msg = new DefaultMessage();
-		msg.setBody(new HashMap(map));
-		exchange.setIn(msg);
-		template.send(exchange);
+        // Resend
+        exchange = new DefaultExchange(camelContext);
+        msg = new DefaultMessage();
+        msg.setBody(new HashMap(map));
+        exchange.setIn(msg);
+        template.send(exchange);
 
-		// Confirm it was delivered -- only one of two should have gone
-		// through.
-		MockEndpoint.assertIsSatisfied(camelContext);
-	}
+        // Confirm it was delivered -- only one of two should have gone
+        // through.
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
 
-	@After
-	public void tearDown() {
-		SDPMessageIdRepository idRepo = (SDPMessageIdRepository) camelContext.getRegistry().lookupByName("idRepo");
-		idRepo.delete();
-	}
+    @After
+    public void tearDown() {
+        SDPMessageIdRepository idRepo = (SDPMessageIdRepository) camelContext.getRegistry().lookupByName("idRepo");
+        idRepo.delete();
+    }
 }

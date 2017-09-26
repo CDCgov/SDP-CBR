@@ -30,39 +30,37 @@ import de.saly.javamail.mock2.MockMailbox;
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "classpath:EmailOnException.xml" })
 @PropertySource("classpath:application.properties")
-public class EmailOnExceptionTest extends BaseDBTest{
-	
-	Object lock = new Object();
-	String address = "cbr_errors@cdc.gov";
-	@Autowired
-	protected CamelContext camelContext;
+public class EmailOnExceptionTest extends BaseDBTest {
 
-	@EndpointInject(uri = "mock:mock_endpoint")
-	protected MockEndpoint mockEndpoint;
+    Object lock = new Object();
+    String address = "cbr_errors@cdc.gov";
+    @Autowired
+    protected CamelContext camelContext;
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @EndpointInject(uri = "mock:mock_endpoint")
+    protected MockEndpoint mockEndpoint;
 
-	@Before
-	public void setup() throws SQLException, IOException {
-		MockMailbox.resetAll();
-		synchronized (lock) {
-			mockEndpoint.reset();
-			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
-			super.setupDb(ds);
-		}
-	}
-	
-	
-	@Test
-	public void noS3AtUriTest() throws Exception {
-		assertEquals("Should be 0 messages in inbox", 0, MockMailbox.get(address).getInbox().getMessageCount() );
-		mockEndpoint.expectedMessageCount(1);
-		Exchange exchange = new DefaultExchange(camelContext);
-		template.send(exchange);
-		mockEndpoint.assertIsSatisfied();
-		assertEquals("Should be 1 message in inbox", 1, MockMailbox.get(address).getInbox().getMessageCount() );
-	}
-	
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
+    @Before
+    public void setup() throws SQLException, IOException {
+        MockMailbox.resetAll();
+        synchronized (lock) {
+            mockEndpoint.reset();
+            DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+            super.setupDb(ds);
+        }
+    }
+
+    @Test
+    public void noS3AtUriTest() throws Exception {
+        assertEquals("Should be 0 messages in inbox", 0, MockMailbox.get(address).getInbox().getMessageCount());
+        mockEndpoint.expectedMessageCount(1);
+        Exchange exchange = new DefaultExchange(camelContext);
+        template.send(exchange);
+        mockEndpoint.assertIsSatisfied();
+        assertEquals("Should be 1 message in inbox", 1, MockMailbox.get(address).getInbox().getMessageCount());
+    }
 
 }

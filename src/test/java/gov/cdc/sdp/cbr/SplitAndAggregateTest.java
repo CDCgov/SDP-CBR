@@ -29,55 +29,55 @@ import org.springframework.test.context.ContextConfiguration;
 @PropertySource("classpath:application.properties")
 public class SplitAndAggregateTest {
 
-	@Autowired
-	protected CamelContext camelContext;
+    @Autowired
+    protected CamelContext camelContext;
 
-	@EndpointInject(uri = "mock:endpoint")
-	protected MockEndpoint mockEndpoint;
+    @EndpointInject(uri = "mock:endpoint")
+    protected MockEndpoint mockEndpoint;
 
-	@EndpointInject(uri = "mock:split")
-	protected MockEndpoint mockSplit;
+    @EndpointInject(uri = "mock:split")
+    protected MockEndpoint mockSplit;
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
-	@Test
-	public void testAggregation() throws IOException, InterruptedException {
-		mockEndpoint.reset();
-		mockSplit.reset();
-		String source_file = "src/test/resources/BatchTest_GenV2_2msgs.txt";
+    @Test
+    public void testAggregation() throws IOException, InterruptedException {
+        mockEndpoint.reset();
+        mockSplit.reset();
+        String source_file = "src/test/resources/BatchTest_GenV2_2msgs.txt";
 
-		Exchange exchange = new DefaultExchange(camelContext);
-		Message msg = new DefaultMessage();
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message msg = new DefaultMessage();
 
-		Map<String, String> map = new HashMap<>();
-		map.put("recordId", "testQueueProducer_rec");
-		map.put("messageId", "testQueueProducer_msg");
-		map.put("payloadName", "Name");
-		map.put("payloadBinaryContent", readFile(source_file));
-		map.put("payloadTextContent", readFile(source_file));
-		map.put("localFileName", "file??");
-		map.put("service", "service");
-		map.put("action", "action");
-		map.put("arguments", "arge");
-		map.put("fromPartyId", "testQueueProducer");
-		map.put("messageRecipient", "recipient");
-		map.put("receivedTime", new Date().toString());
-		msg.setBody(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testQueueProducer_rec");
+        map.put("messageId", "testQueueProducer_msg");
+        map.put("payloadName", "Name");
+        map.put("payloadBinaryContent", readFile(source_file));
+        map.put("payloadTextContent", readFile(source_file));
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testQueueProducer");
+        map.put("messageRecipient", "recipient");
+        map.put("receivedTime", new Date().toString());
+        msg.setBody(map);
 
-		exchange.setIn(msg);
+        exchange.setIn(msg);
 
-		mockEndpoint.expectedMessageCount(1);
-		mockEndpoint.expectedHeaderReceived("ERROR_COUNT", 1);
-		mockEndpoint.expectedHeaderReceived("MSG_COUNT", 3);
-		mockEndpoint.expectedHeaderReceived("errorMsg", "1 of 3 messages failed.");
-		mockSplit.expectedMessageCount(2);
-		template.send(exchange);
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedHeaderReceived("ERROR_COUNT", 1);
+        mockEndpoint.expectedHeaderReceived("MSG_COUNT", 3);
+        mockEndpoint.expectedHeaderReceived("errorMsg", "1 of 3 messages failed.");
+        mockSplit.expectedMessageCount(2);
+        template.send(exchange);
 
-		MockEndpoint.assertIsSatisfied(camelContext);
-	}
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
 
-	private String readFile(String file) throws IOException {
-		return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
-	}
+    private String readFile(String file) throws IOException {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
+    }
 }

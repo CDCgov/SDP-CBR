@@ -10,8 +10,8 @@ import gov.cdc.sdp.cbr.model.SDPMessage;
 
 public class JSONTransformer implements Processor {
 
-	public void process(Exchange exchange) {
-		Message in = exchange.getIn();
-		in.setBody(new Gson().fromJson((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class));
-	}
+    public void process(Exchange exchange) {
+        Message in = exchange.getIn();
+        in.setBody(new Gson().fromJson((String) in.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class));
+    }
 }

@@ -31,57 +31,57 @@ import org.springframework.test.context.ContextConfiguration;
 @PropertySource("classpath:application.properties")
 public class DatabaseQueueParallelTest {
 
-	@Autowired
-	protected CamelContext camelContext;
+    @Autowired
+    protected CamelContext camelContext;
 
-	@EndpointInject(uri = "mock:mock_endpoint")
-	protected MockEndpoint mock_endpoint;
+    @EndpointInject(uri = "mock:mock_endpoint")
+    protected MockEndpoint mock_endpoint;
 
-	@EndpointInject(uri = "mock:mock_endpoint2")
-	protected MockEndpoint mock_endpoint2;
+    @EndpointInject(uri = "mock:mock_endpoint2")
+    protected MockEndpoint mock_endpoint2;
 
-	@EndpointInject(uri = "mock:mock_endpoint3")
-	protected MockEndpoint mock_endpoint3;
+    @EndpointInject(uri = "mock:mock_endpoint3")
+    protected MockEndpoint mock_endpoint3;
 
-	@Before
-	public void setUp() {
-		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+    @Before
+    public void setUp() {
+        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-		String minimum_required_headers = "(cbr_id, source, source_id, payload, cbr_recevied_time)";
-		String col_val = minimum_required_headers + " values ('cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
-				+ new Date(System.currentTimeMillis()) + "')";
-		String tableName = "message_queue";
+        String minimum_required_headers = "(cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String col_val = minimum_required_headers + " values ('cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+                + new Date(System.currentTimeMillis()) + "')";
+        String tableName = "message_queue";
 
-		String create_dummy_data = "INSERT into " + tableName + col_val;
+        String create_dummy_data = "INSERT into " + tableName + col_val;
 
-		for (int i = 0; i < 1000; i++) {
-			jdbcTemplate.update(create_dummy_data);
-		}
+        for (int i = 0; i < 1000; i++) {
+            jdbcTemplate.update(create_dummy_data);
+        }
 
-	}
+    }
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
-	@Test
-	@DirtiesContext
-	public void testQueueConsumer() throws Exception {
-		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-		String tableName = "message_queue";
+    @Test
+    @DirtiesContext
+    public void testQueueConsumer() throws Exception {
+        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        String tableName = "message_queue";
 
-		String clear_dummy_data = "DELETE FROM " + tableName + " WHERE cbr_id='cbr_1337'";
-		String check_sent = "SELECT * FROM " + tableName + " WHERE cbr_id='cbr_1337'";
-		try {
-			mock_endpoint.expectedMessageCount(1000);
-			mock_endpoint.setAssertPeriod(1000);
-			mock_endpoint.assertIsSatisfied();
-		} finally {
-			jdbcTemplate.update(clear_dummy_data);
-			List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
-			assertEquals(0, lst.size());
-		}
-	}
+        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE cbr_id='cbr_1337'";
+        String check_sent = "SELECT * FROM " + tableName + " WHERE cbr_id='cbr_1337'";
+        try {
+            mock_endpoint.expectedMessageCount(1000);
+            mock_endpoint.setAssertPeriod(1000);
+            mock_endpoint.assertIsSatisfied();
+        } finally {
+            jdbcTemplate.update(clear_dummy_data);
+            List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+            assertEquals(0, lst.size());
+        }
+    }
 
 }

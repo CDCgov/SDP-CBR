@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <configuration>
-  <property name="log_folder" value="./log_files"/>
+  <property name="log_folder" value="./log_files" />
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${log_folder}/sdp_console.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">

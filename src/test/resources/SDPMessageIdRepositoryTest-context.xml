@@ -2,38 +2,41 @@
 <!-- tag::example[] -->
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
 
   <bean class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close" id="sdpqDataSource">
-    <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
-    <property name="url" value="${sdpq.jdbc.url}"/>
-    <property name="username" value="${sdpq.jdbc.username}"/>
-    <property name="password" value="${sdpq.jdbc.password}"/>
+    <property name="driverClassName" value="${sdpq.jdbc.driverClassName}" />
+    <property name="url" value="${sdpq.jdbc.url}" />
+    <property name="username" value="${sdpq.jdbc.username}" />
+    <property name="password" value="${sdpq.jdbc.password}" />
   </bean>
-  
+
   <bean
-    class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
-    <property name="location" value="classpath:application.properties"/>
+    class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"
+    id="bridgePropertyPlaceholder">
+    <property name="location" value="classpath:application.properties" />
   </bean>
-  <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
-  <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+  <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor" />
+  <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg" />
   <bean class="gov.cdc.sdp.cbr.SDPMessageIdRepository" id="idRepo">
-    <constructor-arg ref="sdpqDataSource"/>
-    <constructor-arg value="testID"/>
-    <constructor-arg value="testIdTable"/>
+    <constructor-arg ref="sdpqDataSource" />
+    <constructor-arg value="testID" />
+    <constructor-arg value="testIdTable" />
   </bean>
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route id="PHINMS">
-      <from id="_from1" uri="direct:start"/>
-      <process id="setHeaders" ref="myProcessor"/>
-      <to id="_to1" uri="direct:idempotence"/>
+      <from id="_from1" uri="direct:start" />
+      <process id="setHeaders" ref="myProcessor" />
+      <to id="_to1" uri="direct:idempotence" />
     </route>
     <route id="foodNetFilter">
-      <from id="_from2" uri="direct:idempotence"/>
-      <idempotentConsumer id="_idempotentConsumer" messageIdRepositoryRef="idRepo">
+      <from id="_from2" uri="direct:idempotence" />
+      <idempotentConsumer id="_idempotentConsumer"
+        messageIdRepositoryRef="idRepo">
         <header>CBR_ID</header>
-        <to id="_target" uri="mock:idempotence"/>
+        <to id="_target" uri="mock:idempotence" />
       </idempotentConsumer>
     </route>
   </camelContext>
