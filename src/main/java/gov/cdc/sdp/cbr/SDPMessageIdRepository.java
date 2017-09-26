@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(SDPMessageIdRepository.class);
 
 	final String tableName;

@@ -1,6 +1,6 @@
 package gov.cdc.sdp.cbr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -19,13 +19,11 @@ import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.After;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
-import gov.cdc.sdp.cbr.SDPMessageIdRepository;
 import gov.cdc.sdp.cbr.common.SDPTestBase;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)

@@ -15,7 +15,7 @@ public class PhinMSEndpoint extends DefaultEndpoint {
 
 	@UriParam(description = "Sets the DataSource to use to communicate with the database.")
 	private DataSource dataSource;
-	
+
 	private String tableName;
 
 	public PhinMSEndpoint(String uri, Component component, DataSource ds, String tableName) {

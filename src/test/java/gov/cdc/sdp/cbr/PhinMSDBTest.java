@@ -1,15 +1,13 @@
 package gov.cdc.sdp.cbr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.sql.ResultSet;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -24,6 +22,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,8 @@ import org.springframework.test.context.ContextConfiguration;
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "classpath:PhinMSDBTest-context.xml" })
 @PropertySource("classpath:application.properties")
-public class PhinMSDBTest {
-	
+public class PhinMSDBTest extends BaseDBTest {
+
 	@Autowired
 	protected CamelContext camelContext;
 
@@ -46,9 +45,15 @@ public class PhinMSDBTest {
 
 	@Produce(uri = "direct:phinms")
 	protected ProducerTemplate template;
-	
+
 	private final String file_name = "phinms_input.csv";
 	private final String input_file_path = "src/test/resources/" + file_name;
+
+	@Before
+	public void setup() throws SQLException, IOException {
+		DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("phinMSDataSource");
+		super.setupDb(ds);
+	}
 
 	@Test
 	public void testPhinMSProducer() {
@@ -58,9 +63,9 @@ public class PhinMSDBTest {
 		try {
 			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("phinMSDataSource");
 			jdbcTemplate = new JdbcTemplate(ds);
-			
+
 			count = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class);
-			
+
 			Exchange exchange = new DefaultExchange(camelContext);
 			Message msg = new DefaultMessage();
 			String expected_content = readFile(input_file_path);
@@ -70,10 +75,10 @@ public class PhinMSDBTest {
 			template.send(exchange);
 			MockEndpoint.assertIsSatisfied(camelContext);
 			int linesInFile = getLinesInFile(input_file_path);
-			
+
 			int countDelta = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class) - count;
-			
-			assertEquals(linesInFile-1, countDelta);
+
+			assertEquals(linesInFile - 1, countDelta);
 		} catch (IOException e) {
 			fail("Could not read input file");
 		} catch (InterruptedException e) {
@@ -83,12 +88,12 @@ public class PhinMSDBTest {
 				jdbcTemplate.execute("DELETE from message_inq where fromPartyId='testPhinMS_Producer'");
 
 				if (count > 0) {
-					assertEquals(count, (int)jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class));
+					assertEquals(count,
+							(int) jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class));
 				}
 			}
 		}
 	}
-	
 
 	@Test
 	public void testPhinMSProducerMultiLine() {
@@ -98,9 +103,9 @@ public class PhinMSDBTest {
 		try {
 			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("phinMSDataSource");
 			jdbcTemplate = new JdbcTemplate(ds);
-			
+
 			count = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class);
-		
+
 			String fileName = "phinms_input_multi.csv";
 			String inputFilePath = "src/test/resources/" + fileName;
 			Exchange exchange = new DefaultExchange(camelContext);
@@ -112,7 +117,7 @@ public class PhinMSDBTest {
 			template.send(exchange);
 			MockEndpoint.assertIsSatisfied(camelContext);
 			int countDelta = jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class) - count;
-			
+
 			assertEquals(13, countDelta);
 		} catch (IOException e) {
 			fail("Could not read input file");
@@ -123,17 +128,17 @@ public class PhinMSDBTest {
 				jdbcTemplate.execute("DELETE from message_inq where fromPartyId='TEST'");
 
 				if (count > 0) {
-					assertEquals(count, (int)jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class));
+					assertEquals(count,
+							(int) jdbcTemplate.queryForObject("select count(*) from message_inq", Integer.class));
 				}
 			}
 		}
 	}
-	
-	
+
 	private String readFile(String file) throws IOException {
 		return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
 	}
-	
+
 	private int getLinesInFile(String file) throws IOException {
 		LineNumberReader lnr = null;
 		try {
@@ -146,4 +151,5 @@ public class PhinMSDBTest {
 				lnr.close();
 		}
 	}
+
 }

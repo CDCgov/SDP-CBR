@@ -1,7 +1,7 @@
 package gov.cdc.sdp.cbr.model;
 
 public class PhinMSSourceAttributes {
-	
+
 	public final static String RECORDID = "RECORDID";
 	public final static String MESSAGEID = "MESSAGEID";
 	public final static String PAYLOADNAME = "PAYLOADNAME";

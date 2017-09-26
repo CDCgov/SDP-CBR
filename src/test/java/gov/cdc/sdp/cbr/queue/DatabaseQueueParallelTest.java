@@ -2,9 +2,7 @@ package gov.cdc.sdp.cbr.queue;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,13 +10,9 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.Before;
@@ -28,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Repeat;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -56,19 +49,18 @@ public class DatabaseQueueParallelTest {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
 		String minimum_required_headers = "(cbr_id, source, source_id, payload, cbr_recevied_time)";
-		String col_val = minimum_required_headers
-				+ " values ('cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+		String col_val = minimum_required_headers + " values ('cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
 				+ new Date(System.currentTimeMillis()) + "')";
 		String tableName = "message_queue";
 
 		String create_dummy_data = "INSERT into " + tableName + col_val;
-		
-		for (int i=0; i<1000; i++) {
+
+		for (int i = 0; i < 1000; i++) {
 			jdbcTemplate.update(create_dummy_data);
 		}
 
 	}
-	
+
 	@Produce(uri = "direct:start")
 	protected ProducerTemplate template;
 

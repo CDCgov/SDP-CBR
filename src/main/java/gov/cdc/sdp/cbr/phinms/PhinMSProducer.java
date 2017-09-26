@@ -46,18 +46,18 @@ public class PhinMSProducer extends DefaultProducer {
 			if (connection == null) {
 				connection = phinMsDs.getConnection();
 			}
-			
+
 			CSVParser parser = CSVParser.parse((String) exchange.getIn().getBody(), CSVFormat.DEFAULT);
-			
-			List<CSVRecord> records = parser.getRecords();	
-			
+
+			List<CSVRecord> records = parser.getRecords();
+
 			if (records.size() == 0) {
 				logger.error("No contents in file.");
 				return;
 			}
 
 			CSVRecord headers = records.get(0);
-			
+
 			String sqlColumns = "";
 			String sqlFields = "";
 			int columnCount = 0;
@@ -82,9 +82,16 @@ public class PhinMSProducer extends DefaultProducer {
 						insertSql.setLong(j + 1, Long.parseLong(values.get(j)));
 						break;
 					case "payloadBinaryContent":
-						Blob blob = connection.createBlob();
-						blob.setBytes(1, values.get(j).getBytes());
-						insertSql.setBlob(j + 1, blob);
+						Blob blob = null;
+						try {
+							blob = connection.createBlob();
+							blob.setBytes(1, values.get(j).getBytes());
+							insertSql.setBlob(j + 1, blob);
+						} catch (java.sql.SQLFeatureNotSupportedException e) {
+							insertSql.setBytes(j + 1, values.get(j).getBytes());
+							log.warn("Error attempting to create blob data", e);
+						}
+
 						break;
 					case "payloadTextContent":
 						insertSql.setString(j + 1, values.get(j));

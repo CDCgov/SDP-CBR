@@ -21,7 +21,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelTestContextBootstrapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,7 +234,7 @@ public class DatabaseQueueComponentTest {
 			assertEquals(initial_count, lst.size());
 		}
 	}
-	
+
 	@Test
 	@DirtiesContext
 	public void testQueueProducer() throws Exception {

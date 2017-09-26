@@ -13,7 +13,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Test;
 
-import gov.cdc.sdp.cbr.HL7Terser;
 import gov.cdc.sdp.cbr.common.SDPTestBase;
 
 public class HL7TerserTest extends SDPTestBase {
