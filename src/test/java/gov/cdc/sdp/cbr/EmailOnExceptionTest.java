@@ -62,5 +62,4 @@ public class EmailOnExceptionTest extends BaseDBTest {
         mockEndpoint.assertIsSatisfied();
         assertEquals("Should be 1 message in inbox", 1, MockMailbox.get(address).getInbox().getMessageCount());
     }
-
 }
