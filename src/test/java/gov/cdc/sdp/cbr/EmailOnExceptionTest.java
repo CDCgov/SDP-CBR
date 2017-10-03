@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
+import de.saly.javamail.mock2.MockMailbox;
 import gov.cdc.sdp.cbr.common.SDPTestBase;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
@@ -41,7 +42,7 @@ import gov.cdc.sdp.cbr.common.SDPTestBase;
 public class EmailOnExceptionTest {
 	
 	Object lock = new Object();
-
+	String address = "cbr_errors@cdc.gov";
 	@Autowired
 	protected CamelContext camelContext;
 
@@ -53,6 +54,7 @@ public class EmailOnExceptionTest {
 
 	@Before
 	public void setup() throws SQLException {
+		MockMailbox.resetAll();
 		synchronized(lock) {
 			mockEndpoint.reset();
 			DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
@@ -97,10 +99,12 @@ public class EmailOnExceptionTest {
 	
 	@Test
 	public void noS3AtUriTest() throws Exception {
+		assertEquals("Should be 0 messages in inbox", 0, MockMailbox.get(address).getInbox().getMessageCount() );
 		mockEndpoint.expectedMessageCount(1);
 		Exchange exchange = new DefaultExchange(camelContext);
 		template.send(exchange);
 		mockEndpoint.assertIsSatisfied();
+		assertEquals("Should be 1 message in inbox", 1, MockMailbox.get(address).getInbox().getMessageCount() );
 	}
 	
 
