@@ -3,6 +3,7 @@ package gov.cdc.sdp.cbr.queue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,15 @@ import org.springframework.test.context.ContextConfiguration;
 @PropertySource("classpath:application.properties")
 public class DatabaseQueueComponentTest {
 
-    @Autowired
+    private static final String DELETE_FROM = "DELETE FROM ";
+
+	private static final String SELECT_FROM = "SELECT * FROM ";
+
+	private static final String HEADERS = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+
+	private static final String INSERT_INTO = "INSERT into ";
+
+	@Autowired
     protected CamelContext camelContext;
 
     @EndpointInject(uri = "mock:mock_endpoint")
@@ -48,25 +57,111 @@ public class DatabaseQueueComponentTest {
     @EndpointInject(uri = "mock:mock_endpoint3")
     protected MockEndpoint mock_endpoint3;
 
+    @EndpointInject(uri = "mock:mock_endpoint4")
+    protected MockEndpoint mock_endpoint4;
+    
+    @EndpointInject(uri = "mock:mock_endpoint5")
+    protected MockEndpoint mock_endpoint5;
+    
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
+    @Test
+    @DirtiesContext
+    public void testLimitedQueueConsumer_Pass() throws Exception {
+        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+        String minimum_required_headers = HEADERS;
+        String col_val = minimum_required_headers
+                + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
+                + new Date(System.currentTimeMillis()) + "')";
+        String tableName = "message_queue_four";
+
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
+
+        int initial_count = 0;
+
+        try {
+            initial_count = jdbcTemplate.queryForList(get_count).size();
+            int rows_affected = jdbcTemplate.update(create_dummy_data);
+            assertEquals(1, rows_affected);
+
+            mock_endpoint4.expectedMessageCount(rows_affected);
+            mock_endpoint4.assertIsSatisfied();
+
+            List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+            assertEquals(1, lst.size());
+        } finally {
+            jdbcTemplate.update(clear_dummy_data);
+            List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+            assertEquals(initial_count, lst.size());
+        }
+    }
+    
+    @Test
+    @DirtiesContext
+    public void testMaxAttemptsQueueConsumer_fail() throws Exception {
+        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+        String[] all_entries = new String[20];        
+        String tableName = "message_queue_five";
+                
+        for (int i = 0; i < 20; i++) {
+        	String content = HEADERS + " values ("+ i +", 'cbr_"+ i + "', 'mockland', 'mockland_"
+        	  + i + "', 'the payload', '" + new Date(System.currentTimeMillis()) + "')";
+        	all_entries[i] = INSERT_INTO + tableName + content;        	
+        }
+        String check_sent = SELECT_FROM + tableName + " WHERE status='sent'";
+        String check_unsent = SELECT_FROM + tableName + " WHERE status='queued'";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE source='mockland'";
+        String get_count = SELECT_FROM + tableName;
+
+        int initial_count = 0;
+
+        try {
+            initial_count = jdbcTemplate.queryForList(get_count).size();
+            int rows_affected = 0; 
+            int[] ra = jdbcTemplate.batchUpdate(all_entries);
+            for (int r : ra) {
+              rows_affected += r; 
+            }
+            assertEquals(20, rows_affected);
+
+            mock_endpoint5.expectedMessageCount(0);            
+            mock_endpoint5.assertIsSatisfied();
+
+            List<Map<String, Object>> lst = jdbcTemplate.queryForList(check_sent);
+            assertEquals(0, lst.size());
+            lst = jdbcTemplate.queryForList(check_unsent);
+            assertEquals(20, lst.size());
+        } finally {
+            jdbcTemplate.update(clear_dummy_data);
+            List<Map<String, Object>> lst = jdbcTemplate.queryForList(get_count);
+            assertEquals(initial_count, lst.size());
+        }
+    }
+    
     @Test
     @DirtiesContext
     public void testInitialDelayQueueConsumer_Fail() throws Exception {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String minimum_required_headers = HEADERS;
         String col_val = minimum_required_headers
                 + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
                 + new Date(System.currentTimeMillis()) + "')";
         String tableName = "message_queue_two";
 
-        String create_dummy_data = "INSERT into " + tableName + col_val;
-        String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
-        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
-        String get_count = "select * from " + tableName;
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
 
         int initial_count = 0;
 
@@ -94,16 +189,16 @@ public class DatabaseQueueComponentTest {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String minimum_required_headers = HEADERS;
         String col_val = minimum_required_headers
                 + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
                 + new Date(System.currentTimeMillis()) + "')";
         String tableName = "message_queue_two";
 
-        String create_dummy_data = "INSERT into " + tableName + col_val;
-        String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
-        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
-        String get_count = "select * from " + tableName;
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
 
         int initial_count = 0;
 
@@ -132,16 +227,16 @@ public class DatabaseQueueComponentTest {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String minimum_required_headers = HEADERS;
         String col_val = minimum_required_headers
                 + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
                 + new Date(System.currentTimeMillis()) + "')";
         String tableName = "message_queue_three";
 
-        String create_dummy_data = "INSERT into " + tableName + col_val;
-        String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
-        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
-        String get_count = "select * from " + tableName;
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
 
         int initial_count = 0;
 
@@ -169,16 +264,16 @@ public class DatabaseQueueComponentTest {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String minimum_required_headers = HEADERS;
         String col_val = minimum_required_headers
                 + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
                 + new Date(System.currentTimeMillis()) + "')";
         String tableName = "message_queue_three";
 
-        String create_dummy_data = "INSERT into " + tableName + col_val;
-        String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
-        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
-        String get_count = "select * from " + tableName;
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
 
         int initial_count = 0;
 
@@ -205,16 +300,16 @@ public class DatabaseQueueComponentTest {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        String minimum_required_headers = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
+        String minimum_required_headers = HEADERS;
         String col_val = minimum_required_headers
                 + " values (1337, 'cbr_1337', 'mockland', 'mockland_1', 'the payload', '"
                 + new Date(System.currentTimeMillis()) + "')";
         String tableName = "message_queue";
 
-        String create_dummy_data = "INSERT into " + tableName + col_val;
-        String check_sent = "SELECT * FROM " + tableName + " WHERE id=1337";
-        String clear_dummy_data = "DELETE FROM " + tableName + " WHERE id=1337";
-        String get_count = "select * from " + tableName;
+        String create_dummy_data = INSERT_INTO + tableName + col_val;
+        String check_sent = SELECT_FROM + tableName + " WHERE id=1337";
+        String clear_dummy_data = DELETE_FROM + tableName + " WHERE id=1337";
+        String get_count = SELECT_FROM + tableName;
 
         int initial_count = 0;
 
