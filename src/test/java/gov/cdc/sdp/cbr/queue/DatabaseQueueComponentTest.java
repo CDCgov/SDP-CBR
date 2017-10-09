@@ -90,6 +90,11 @@ public class DatabaseQueueComponentTest {
             int rows_affected = jdbcTemplate.update(create_dummy_data);
             assertEquals(1, rows_affected);
 
+            DatabaseQueueEndpoint endpoint100 = (DatabaseQueueEndpoint) camelContext.getRegistry().lookupByName("consumer_from");
+            DatabaseQueueEndpoint endpoint5 = (DatabaseQueueEndpoint) camelContext.getRegistry().lookupByName("limit_from");
+
+            assertEquals(endpoint100.getLimit(), 100);
+            assertEquals(endpoint5.getLimit(), 5);
             mock_endpoint4.expectedMessageCount(rows_affected);
             mock_endpoint4.assertIsSatisfied();
 

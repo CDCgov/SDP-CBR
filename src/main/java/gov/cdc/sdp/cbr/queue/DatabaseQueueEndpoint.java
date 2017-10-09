@@ -38,6 +38,11 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 	private int initialDelay;
 	@UriParam(description = "Limit of results returned by each poll.")
 	private int limit;
+
+	public int getLimit() {
+		return limit;
+	}
+
 	@UriParam(description = "Maximum times to attempt updating.")
 	private int maxAttempts;
 
