@@ -71,13 +71,12 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.tableName = tn;
 
-        this.query = "with batch as (SELECT * FROM " + tableName + " WHERE status = 'queued' AND attempts<="
-                + maxAttempts + " LIMIT " + limit + " FOR UPDATE SKIP LOCKED) UPDATE " + tableName
-                + " t SET status = 'sending' FROM batch WHERE t.id = batch.id RETURNING *;";
+        this.query = "with batch as (SELECT * FROM " + tableName + " WHERE status = 'queued' AND attempts<=" + maxAttempts + " LIMIT " + limit + " FOR UPDATE SKIP LOCKED) "
+                   + "UPDATE " + tableName + " t SET status = 'sending' FROM batch WHERE t.id = batch.id RETURNING *;";
 
-        this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'failed', attempts=attempts+1 where id=? ";
+        this.onConsumeFailed = "UPDATE " + tableName + " SET status = 'queued', attempts=attempts+1 where id=? status='sending'";
         this.onConsume = "UPDATE " + tableName + " SET status = 'sent',  payload='' where id=?";
-        this.onConsumeBatchComplete = "SELECT * FROM " + tableName;
+        this.onConsumeBatchComplete = "UPDATE " + tableName + " SET status= 'failed' WHERE status='sending' AND attempts>"+maxAttempts;
 
         // Converting from seconds to milliseconds
         this.setDelay(delay * 1000);
