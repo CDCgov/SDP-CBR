@@ -31,7 +31,7 @@
       <to id="producer_mock_to" uri="mock:mock_endpoint" />
     </route>
     <route id="consumer_test_route">
-      <from id="consumer_from" uri="sdpqueue:message_queue?dataSource=sdpqDataSource" />
+      <from id="consumer_from" uri="sdpqueue:message_queue?dataSource=sdpqDataSource&amp;limit=100&amp;maxAttempts=5" />
       <to id="consumer_mock_to" uri="mock:mock_endpoint" />
     </route>
     <route id="initially_delayed_consumer_test_route">
@@ -41,6 +41,14 @@
     <route id="delayed_consumer_test_route">
       <from id="delayed_consumer_from" uri="sdpqueue:message_queue_three?dataSource=sdpqDataSource&amp;delay=5&amp;initialDelay=0" />
       <to id="delayed_consumer_mock_to" uri="mock:mock_endpoint3" />
+    </route>
+        <route id="limited_consumer_test_route">
+      <from id="limit_from" uri="sdpqueue:message_queue_four?dataSource=sdpqDataSource&amp;limit=5" />
+      <to id="limit_mock_to" uri="mock:mock_endpoint4" />
+    </route>
+    <route id="maxattempts_consumer_test_route">
+      <from id="ma_from" uri="sdpqueue:message_queue_five?dataSource=sdpqDataSource&amp;maxAttempts=-1" />
+      <to id="ma_mock_to" uri="mock:mock_endpoint5" />
     </route>
   </camelContext>
 </beans>
