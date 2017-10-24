@@ -35,7 +35,7 @@
         <constant>PID-5-1 EQUALS SMITH</constant>
       </setHeader>
       <filter id="_filter1">
-        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter" />
+        <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter" />
         <to id="_to5" uri="mock:mock_endpoint_smith" />
       </filter>
       <removeHeader headerName="HL7Filter" id="_removeHeader1" />
@@ -46,7 +46,7 @@
         <constant>/.PID-11-4 NOT_EQUALS CA</constant>
       </setHeader>
       <filter id="_filter2">
-        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter" />
+        <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter" />
         <to id="_to6" uri="mock:mock_endpoint_not_ca" />
       </filter>
       <removeHeader headerName="HL7Filter" id="_removeHeader3" />
@@ -73,7 +73,7 @@
         <constant>*(OBSERVATION(*)/OBX-3-2 CONTAINS Pregnancy)</constant>
       </setHeader>
       <filter id="_filter3">
-        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter" />
+        <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter" />
         <to id="_to7" uri="mock:mock_endpoint_smith" />
       </filter>
       <removeHeader headerName="HL7Filter" id="_removeHeader5" />
@@ -100,7 +100,7 @@
         <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
       </setHeader>
       <filter id="_filter4">
-        <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter" />
+        <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter" />
         <to id="_to8" uri="mock:mock_endpoint_smith" />
       </filter>
       <removeHeader headerName="HL7Filter" id="_removeHeader7" />
