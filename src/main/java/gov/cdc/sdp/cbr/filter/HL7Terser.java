@@ -1,4 +1,4 @@
-package gov.cdc.sdp.cbr;
+package gov.cdc.sdp.cbr.filter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -6,6 +6,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ValueBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gov.cdc.sdp.cbr.CBR;
 
 public class HL7Terser {
     private static final Logger LOG = LoggerFactory.getLogger(HL7Terser.class);

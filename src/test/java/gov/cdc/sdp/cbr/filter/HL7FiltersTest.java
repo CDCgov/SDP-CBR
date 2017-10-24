@@ -1,4 +1,4 @@
-package gov.cdc.sdp.cbr;
+package gov.cdc.sdp.cbr.filter;
 
 import java.io.IOException;
 import java.util.Date;
