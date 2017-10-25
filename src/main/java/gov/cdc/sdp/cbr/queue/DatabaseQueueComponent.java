@@ -70,6 +70,8 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
         DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
         int delay = this.getAndRemoveParameter(parameters, "delay", Integer.class, 1);
         int initialDelay = this.getAndRemoveParameter(parameters, "initialDelay", Integer.class, 1);
+        int limit = this.getAndRemoveParameter(parameters, "limit", Integer.class, 100);
+        int maxAttempts = this.getAndRemoveParameter(parameters, "maxAttempts", Integer.class, 3);
 
         if (ds == null) {
             LOG.error("DataSource must be configured");
@@ -77,7 +79,8 @@ public class DatabaseQueueComponent extends UriEndpointComponent {
         }
         this.createIfNotExists(ds, tableName);
 
-        DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName, delay, initialDelay);
+        DatabaseQueueEndpoint endpoint = new DatabaseQueueEndpoint(uri, this, ds, tableName, delay, initialDelay, limit,
+                maxAttempts);
 
         return endpoint;
     }

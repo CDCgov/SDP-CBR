@@ -36,14 +36,25 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
     private int delay;
     @UriParam(description = "InitialDelay (in seconds) before first poll.")
     private int initialDelay;
+    @UriParam(description = "Limit of results returned by each poll.")
+    private int limit;
+
+    public int getLimit() {
+        return limit;
+    }
+
+    @UriParam(description = "Maximum times to attempt updating.")
+    private int maxAttempts;
 
     public DatabaseQueueEndpoint(String uri, Component component, DataSource ds, String tableName, int delay,
-            int initialDelay) {
+            int initialDelay, int limit, int maxAttempts) {
         super(uri, component);
         this.dataSource = ds;
         this.tableName = tableName;
         this.delay = delay;
         this.initialDelay = initialDelay;
+        this.limit = limit;
+        this.maxAttempts = maxAttempts;
     }
 
     @Override
@@ -58,11 +69,12 @@ public class DatabaseQueueEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DatabaseQueueConsumer(this, dataSource, processor, tableName, delay, initialDelay);
+        return new DatabaseQueueConsumer(this, dataSource, processor, tableName, delay, initialDelay, limit,
+                maxAttempts);
     }
 
     private String outputClass = "String";// TODO this wont always be a string,
-                                          // yeah?
+                                            // yeah?
 
     public List<?> queryForList(String[] headers, ResultSet rs, boolean allowMapToClass) throws SQLException {
 
