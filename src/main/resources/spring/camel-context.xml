@@ -86,7 +86,7 @@
         </setHeader>
         <unmarshal id="_unmarshal1" ref="unvalidatedHl7" />
         <filter id="foodNetFilter">
-          <method beanType="gov.cdc.sdp.cbr.HL7Terser" method="filter" />
+          <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter" />
           <marshal id="_marshal1" ref="unvalidatedHl7" />
           <log id="fnf_passed_log" message="Exchange passed FoodNet filter" />
           <to id="foodNetQueue" uri="sdpqueue:{{foodNet.queue}}" />

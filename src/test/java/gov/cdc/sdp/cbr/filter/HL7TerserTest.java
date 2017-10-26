@@ -1,4 +1,4 @@
-package gov.cdc.sdp.cbr;
+package gov.cdc.sdp.cbr.filter;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +14,7 @@ import org.apache.camel.impl.DefaultMessage;
 import org.junit.Test;
 
 import gov.cdc.sdp.cbr.common.SDPTestBase;
+import gov.cdc.sdp.cbr.filter.HL7Terser;
 
 public class HL7TerserTest extends SDPTestBase {
 
