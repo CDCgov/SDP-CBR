@@ -5,6 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
+  <packaging>pom</packaging>
   <version>1.0.0-SNAPSHOT</version>
   <name>Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
@@ -22,7 +23,7 @@
     <jmh.version>1.13</jmh.version>
     <camel.version>2.18.1.redhat-000012</camel.version>
   </properties>
-  <dependencyManagement>
+    <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.fabric8</groupId>
@@ -33,8 +34,9 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  
   <dependencies>
-    <dependency>
+  <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
@@ -270,118 +272,9 @@
     </dependency>
 
   </dependencies>
-  <build>
-    <defaultGoal>spring-boot:run</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.3.0.603</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>fabric8-maven-plugin</artifactId>
-        <version>${fabric8.maven.plugin.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>resource</goal>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${maven-build-helper-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/test/perf</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-
-            <configuration>
-              <annotationProcessorPaths>
-                <path>
-                  <groupId>org.openjdk.jmh</groupId>
-                  <artifactId>jmh-generator-annprocess</artifactId>
-                  <version>${jmh.version}</version>
-                </path>
-              </annotationProcessorPaths>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${maven-assembly-plugin.version}</version>
-        <configuration>
-          <descriptor>src/main/assembly/perf-tests.xml</descriptor>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <attach>true</attach>
-              <archive>
-                <manifest>
-                  <mainClass>org.openjdk.jmh.Main</mainClass>
-                </manifest>
-              </archive>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+	<modules>
+		<module>common</module>
+		<module>database_queue</module>
+		<module>core</module>
+	</modules>  
 </project>
