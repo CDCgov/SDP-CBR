@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="10" failures="0" name="gov.cdc.sdp.cbr.filter.HL7TerserTest" time="0.406" errors="0" skipped="0">
+<testsuite tests="10" failures="0" name="gov.cdc.sdp.cbr.filter.HL7TerserTest" time="0.589" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_151\jre\bin"/>
@@ -65,14 +65,14 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterComplex" time="0.141"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermContains" time="0.015"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterTwoTermsWithNot" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterTwoTermsWithRepetition" time="0.156"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermEqualsWithNot" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermContainsWithNot" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermEquals" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterAndTwoTermsBothEquals" time="0.015"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterOrTwoTermsBothEquals" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterThreeTerms" time="0.015"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterComplex" time="0.217"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermContains" time="0.016"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterTwoTermsWithNot" time="0.028"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterTwoTermsWithRepetition" time="0.196"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermEqualsWithNot" time="0.012"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermContainsWithNot" time="0.024"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterSingleTermEquals" time="0.02"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterAndTwoTermsBothEquals" time="0.028"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterOrTwoTermsBothEquals" time="0.024"/>
+  <testcase classname="gov.cdc.sdp.cbr.filter.HL7TerserTest" name="testFilterThreeTerms" time="0.024"/>
 </testsuite>

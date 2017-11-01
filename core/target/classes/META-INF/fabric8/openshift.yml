@@ -6,7 +6,7 @@ items:
   kind: "Service"
   metadata:
     annotations:
-      fabric8.io/git-commit: "2a48b9edba2c527d479a5551c67e065794ebbb5e"
+      fabric8.io/git-commit: "151f43b3ded237eb81065fb236a16bce3263cb2d"
       fabric8.io/iconUrl: "img/icons/camel.svg"
       fabric8.io/git-branch: "ProjectStructure"
     labels:
@@ -30,7 +30,7 @@ items:
   kind: "DeploymentConfig"
   metadata:
     annotations:
-      fabric8.io/git-commit: "2a48b9edba2c527d479a5551c67e065794ebbb5e"
+      fabric8.io/git-commit: "151f43b3ded237eb81065fb236a16bce3263cb2d"
       fabric8.io/iconUrl: "img/icons/camel.svg"
       fabric8.io/git-branch: "ProjectStructure"
       fabric8.io/metrics-path: "dashboard/file/camel-routes.json/?var-project=sdp-cbr-core&var-version=1.0.0-SNAPSHOT"
@@ -53,7 +53,7 @@ items:
     template:
       metadata:
         annotations:
-          fabric8.io/git-commit: "2a48b9edba2c527d479a5551c67e065794ebbb5e"
+          fabric8.io/git-commit: "151f43b3ded237eb81065fb236a16bce3263cb2d"
           fabric8.io/iconUrl: "img/icons/camel.svg"
           fabric8.io/git-branch: "ProjectStructure"
           fabric8.io/metrics-path: "dashboard/file/camel-routes.json/?var-project=sdp-cbr-core&var-version=1.0.0-SNAPSHOT"
@@ -69,7 +69,7 @@ items:
             valueFrom:
               fieldRef:
                 fieldPath: "metadata.namespace"
-          image: "sdp/sdp-cbr-core:snapshot-171031-142926-0046"
+          image: "sdp/sdp-cbr-core:snapshot-171101-122658-0385"
           imagePullPolicy: "IfNotPresent"
           livenessProbe:
             httpGet:
