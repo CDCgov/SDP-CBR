@@ -276,5 +276,6 @@
 		<module>common</module>
 		<module>database_queue</module>
 		<module>core</module>
+		<module>filter</module>
 	</modules>  
 </project>

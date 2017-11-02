@@ -1,0 +1,392 @@
+[2017-10-31 : 14:46:57.021] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener] 
+[2017-10-31 : 14:46:57.270] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@35d019a3, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@689604d9, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@18078bef, org.springframework.test.context.support.DirtiesContextTestExecutionListener@799f10e1, org.springframework.test.context.transaction.TransactionalTestExecutionListener@4c371370, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@145f66e3, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@3023df74, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@313ac989, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@4562e04d, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@2a65fe7c, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@4135c3b, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@6302bbb1] 
+[2017-10-31 : 14:46:58.001] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueParallelTest-context.xml] 
+[2017-10-31 : 14:47:04.206] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:04.270] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@3b69e7d1: startup date [Tue Oct 31 14:47:04 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:05.018] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:05.086] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:07.392] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:08.116] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:08.141] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:08.143] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:08.170] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:08.691] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:09.930] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:10.089] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource 
+[2017-10-31 : 14:47:10.100] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource2 
+[2017-10-31 : 14:47:10.107] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 2 routes, of which 2 are started. 
+[2017-10-31 : 14:47:10.108] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 1.965 seconds 
+[2017-10-31 : 14:47:14.137] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint is satisfied 
+[2017-10-31 : 14:47:25.139] [main] INFO  o.a.c.component.mock.MockEndpoint - Re-asserting: mock://mock_endpoint is satisfied after 1000 millis 
+[2017-10-31 : 14:47:25.164] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@3b69e7d1: startup date [Tue Oct 31 14:47:04 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:25.176] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:25.180] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 2 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:25.203] [Camel (camel) thread #2 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource2 
+[2017-10-31 : 14:47:25.218] [Camel (camel) thread #2 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource 
+[2017-10-31 : 14:47:25.218] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 2 routes completed in 0 seconds 
+[2017-10-31 : 14:47:25.342] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 17.199 seconds 
+[2017-10-31 : 14:47:25.346] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.165 seconds 
+[2017-10-31 : 14:47:25.363] [main] INFO  g.c.s.c.q.DatabaseQueueParallelTest - ******************************************************************************** 
+[2017-10-31 : 14:47:25.386] [main] INFO  g.c.s.c.q.DatabaseQueueParallelTest - Testing done: testQueueConsumer(gov.cdc.sdp.cbr.queue.DatabaseQueueParallelTest) 
+[2017-10-31 : 14:47:25.392] [main] INFO  g.c.s.c.q.DatabaseQueueParallelTest - Took: 15.115 seconds (15115 millis) 
+[2017-10-31 : 14:47:25.392] [main] INFO  g.c.s.c.q.DatabaseQueueParallelTest - ******************************************************************************** 
+[2017-10-31 : 14:47:25.595] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - ******************************************************************************** 
+[2017-10-31 : 14:47:25.602] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - Testing: testCreateProduce(gov.cdc.sdp.cbr.queue.DatabaseQueueCreationProducerTest) 
+[2017-10-31 : 14:47:25.603] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - ******************************************************************************** 
+[2017-10-31 : 14:47:25.858] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:25.861] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-2) is starting 
+[2017-10-31 : 14:47:25.861] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:25.968] [main] INFO  o.a.camel.impl.DefaultCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:26.011] [main] INFO  o.a.camel.impl.DefaultCamelContext - Route: test_produce started and consuming from: direct://start 
+[2017-10-31 : 14:47:26.012] [main] INFO  o.a.camel.impl.DefaultCamelContext - Total 1 routes, of which 1 are started. 
+[2017-10-31 : 14:47:26.015] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-2) started in 0.151 seconds 
+[2017-10-31 : 14:47:26.072] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - ******************************************************************************** 
+[2017-10-31 : 14:47:26.072] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - Testing done: testCreateProduce(gov.cdc.sdp.cbr.queue.DatabaseQueueCreationProducerTest) 
+[2017-10-31 : 14:47:26.073] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - Took: 0.046 seconds (46 millis) 
+[2017-10-31 : 14:47:26.075] [main] INFO  g.c.s.c.q.DatabaseQueueCreationProducerTest - ******************************************************************************** 
+[2017-10-31 : 14:47:26.079] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-2) is shutting down 
+[2017-10-31 : 14:47:26.081] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 1 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:26.087] [Camel (camel-2) thread #3 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: test_produce shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:26.087] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 1 routes completed in 0 seconds 
+[2017-10-31 : 14:47:26.097] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-2) uptime 0.236 seconds 
+[2017-10-31 : 14:47:26.102] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-2) is shutdown in 0.018 seconds 
+[2017-10-31 : 14:47:26.245] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener] 
+[2017-10-31 : 14:47:26.248] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@23f72d88, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@4bafe935, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@87b5b49, org.springframework.test.context.support.DirtiesContextTestExecutionListener@4a7a965d, org.springframework.test.context.transaction.TransactionalTestExecutionListener@507b79f7, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@64a9d48c, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@365a6a43, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@288cdaab, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@23b3aa8c, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@99407c2, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@6c796cc1, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@226eba67] 
+[2017-10-31 : 14:47:26.283] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:27.779] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:27.782] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@1cb7936c: startup date [Tue Oct 31 14:47:27 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:27.949] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:27.966] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:28.243] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:28.692] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:28.701] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:28.707] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:28.708] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:28.746] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:29.246] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:29.279] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:29.291] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:29.303] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:29.313] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:29.347] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:29.376] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:29.388] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:29.389] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:29.404] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.682 seconds 
+[2017-10-31 : 14:47:29.890] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint2 is satisfied 
+[2017-10-31 : 14:47:29.903] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint is satisfied 
+[2017-10-31 : 14:47:29.904] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint3 is satisfied 
+[2017-10-31 : 14:47:29.904] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint4 is satisfied 
+[2017-10-31 : 14:47:29.905] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint5 is satisfied 
+[2017-10-31 : 14:47:29.956] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@1cb7936c: startup date [Tue Oct 31 14:47:27 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:29.971] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:29.973] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:29.995] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:30.001] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:30.002] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:30.003] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:30.004] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:30.005] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:47:30.008] [Camel (camel) thread #9 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:30.043] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:47:30.046] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 1.339 seconds 
+[2017-10-31 : 14:47:30.048] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.075 seconds 
+[2017-10-31 : 14:47:30.059] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:30.061] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testQueueProducer(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:47:30.062] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 0.569 seconds (569 millis) 
+[2017-10-31 : 14:47:30.062] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:30.064] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:31.381] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:31.384] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@2b289ac9: startup date [Tue Oct 31 14:47:31 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:31.570] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:31.591] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:31.824] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:32.405] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:32.414] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:32.420] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:32.421] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:32.475] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:32.979] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:32.984] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:32.995] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:33.051] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:33.053] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:33.061] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:33.092] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:33.095] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:33.102] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:33.111] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.683 seconds 
+[2017-10-31 : 14:47:33.250] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint is satisfied 
+[2017-10-31 : 14:47:34.078] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@2b289ac9: startup date [Tue Oct 31 14:47:31 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:34.080] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:34.082] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:34.111] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:34.114] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:34.120] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:34.120] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:34.121] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:34.156] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:47:34.158] [Camel (camel) thread #15 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:34.171] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:47:34.173] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 1.754 seconds 
+[2017-10-31 : 14:47:34.175] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.093 seconds 
+[2017-10-31 : 14:47:34.184] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:34.186] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testQueueConsumer(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:47:34.196] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 0.986 seconds (986 millis) 
+[2017-10-31 : 14:47:34.197] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:34.201] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:35.508] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:35.509] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@3f0d6038: startup date [Tue Oct 31 14:47:35 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:35.680] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:35.702] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:35.928] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:36.363] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:36.368] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:36.374] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:36.374] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:36.392] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:36.771] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:36.786] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:36.787] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:36.813] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:36.823] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:36.830] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:36.884] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:36.890] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:36.894] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:36.895] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.525 seconds 
+[2017-10-31 : 14:47:36.977] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint3 is satisfied 
+[2017-10-31 : 14:47:37.978] [main] INFO  o.a.c.component.mock.MockEndpoint - Caught expected failure: java.lang.AssertionError: mock://mock_endpoint3 Received message count. Expected: <1> but was: <0> 
+[2017-10-31 : 14:47:37.983] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@3f0d6038: startup date [Tue Oct 31 14:47:35 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:37.995] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:38.026] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:38.028] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:38.030] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:38.033] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:38.039] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:38.040] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:38.042] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:47:38.042] [Camel (camel) thread #21 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:38.043] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:47:38.050] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 1.681 seconds 
+[2017-10-31 : 14:47:38.058] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.055 seconds 
+[2017-10-31 : 14:47:38.061] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:38.061] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testDelayedQueueConsumer_Fail(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:47:38.061] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 1.139 seconds (1139 millis) 
+[2017-10-31 : 14:47:38.062] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:38.074] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:39.177] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:39.187] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@44784e2f: startup date [Tue Oct 31 14:47:39 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:39.292] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:39.326] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:39.528] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:39.856] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:39.860] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:39.872] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:39.875] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:39.914] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:40.247] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:40.251] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:40.252] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:40.256] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:40.300] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:40.316] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:40.325] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:40.356] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:40.358] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:40.358] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.487 seconds 
+[2017-10-31 : 14:47:40.422] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint3 is satisfied 
+[2017-10-31 : 14:47:45.361] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@44784e2f: startup date [Tue Oct 31 14:47:39 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:45.368] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:45.370] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:45.394] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:45.413] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:45.418] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:45.421] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:45.427] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:45.427] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:47:45.440] [Camel (camel) thread #27 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:45.441] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:47:45.462] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 5.591 seconds 
+[2017-10-31 : 14:47:45.463] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.094 seconds 
+[2017-10-31 : 14:47:45.480] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:45.481] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testDelayedQueueConsumer_Pass(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:47:45.481] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 5.110 seconds (5110 millis) 
+[2017-10-31 : 14:47:45.481] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:45.482] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:46.583] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:46.584] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@2ee83775: startup date [Tue Oct 31 14:47:46 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:46.736] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:46.750] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:46.929] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:47.241] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:47.244] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:47.254] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:47.255] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:47.281] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:47.570] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:47.572] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:47.586] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:47.610] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:47.612] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:47.616] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:47.633] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:47.653] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:47.654] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:47.655] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.400 seconds 
+[2017-10-31 : 14:47:47.789] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint2 is satisfied 
+[2017-10-31 : 14:47:52.789] [main] INFO  o.a.c.component.mock.MockEndpoint - Caught expected failure: java.lang.AssertionError: mock://mock_endpoint2 Received message count. Expected: <1> but was: <0> 
+[2017-10-31 : 14:47:52.795] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@2ee83775: startup date [Tue Oct 31 14:47:46 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:52.795] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:47:52.796] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:47:52.801] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:52.805] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:52.811] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:52.813] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:52.824] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:52.827] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:47:52.828] [Camel (camel) thread #33 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:47:52.828] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:47:52.849] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 5.595 seconds 
+[2017-10-31 : 14:47:52.850] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.054 seconds 
+[2017-10-31 : 14:47:52.865] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:52.865] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testInitialDelayQueueConsumer_Fail(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:47:52.865] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 5.131 seconds (5131 millis) 
+[2017-10-31 : 14:47:52.866] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:47:52.883] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:47:53.779] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:47:53.782] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@1ec22831: startup date [Tue Oct 31 14:47:53 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:47:53.906] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:47:53.920] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:47:54.053] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:47:54.352] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:47:54.359] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:47:54.360] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:47:54.360] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:47:54.392] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:47:54.680] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:47:54.692] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:47:54.694] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:47:54.710] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:47:54.711] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:47:54.724] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:47:54.732] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:47:54.740] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:47:54.741] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:47:54.743] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.381 seconds 
+[2017-10-31 : 14:47:54.826] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint2 is satisfied 
+[2017-10-31 : 14:48:01.750] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@1ec22831: startup date [Tue Oct 31 14:47:53 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:48:01.755] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:48:01.755] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:48:01.774] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:48:01.775] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:48:01.776] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:48:01.791] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:48:01.791] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:48:01.795] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:48:01.798] [Camel (camel) thread #39 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:48:01.808] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:48:01.813] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 7.453 seconds 
+[2017-10-31 : 14:48:01.822] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.058 seconds 
+[2017-10-31 : 14:48:01.831] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:01.833] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testInitialDelayQueueConsumer_Pass(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:48:01.834] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 7.080 seconds (7080 millis) 
+[2017-10-31 : 14:48:01.844] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:01.845] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:48:02.746] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:48:02.748] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@536b71b4: startup date [Tue Oct 31 14:48:02 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:48:02.894] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:48:02.896] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:48:03.100] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:48:03.451] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:48:03.453] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:48:03.455] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:48:03.459] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:48:03.484] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:48:03.766] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:48:03.777] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:48:03.788] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:48:03.801] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:48:03.814] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:48:03.815] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:48:03.825] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:48:03.834] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:48:03.835] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:48:03.835] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.380 seconds 
+[2017-10-31 : 14:48:03.952] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint5 is satisfied 
+[2017-10-31 : 14:48:04.004] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@536b71b4: startup date [Tue Oct 31 14:48:02 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:48:04.004] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:48:04.005] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:48:04.015] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:48:04.041] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:48:04.046] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:48:04.047] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:48:04.048] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:48:04.049] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:48:04.049] [Camel (camel) thread #45 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:48:04.049] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:48:04.052] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 0.597 seconds 
+[2017-10-31 : 14:48:04.054] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.048 seconds 
+[2017-10-31 : 14:48:04.056] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:04.057] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testMaxAttemptsQueueConsumer_fail(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:48:04.058] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 0.199 seconds (199 millis) 
+[2017-10-31 : 14:48:04.058] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:04.067] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DatabaseQueueComponentTest-context.xml] 
+[2017-10-31 : 14:48:05.071] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-10-31 : 14:48:05.078] [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@7f3fc42f: startup date [Tue Oct 31 14:48:05 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:48:05.195] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer - Loading properties file from class path resource [application.properties] 
+[2017-10-31 : 14:48:05.203] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-10-31 : 14:48:05.400] [main] INFO  o.a.c.spring.CamelContextFactoryBean - Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-10-31 : 14:48:05.703] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-10-31 : 14:48:05.703] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader - Starting CamelContext with name [camel]. 
+[2017-10-31 : 14:48:05.704] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-10-31 : 14:48:05.704] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:48:05.713] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:48:06.072] [main] INFO  o.a.camel.spring.SpringCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:48:06.074] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: _route1 started and consuming from: direct://start 
+[2017-10-31 : 14:48:06.074] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: producer_test_route started and consuming from: direct://producer_test 
+[2017-10-31 : 14:48:06.096] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: consumer_test_route started and consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:48:06.105] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: initially_delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:48:06.132] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: delayed_consumer_test_route started and consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:48:06.139] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: limited_consumer_test_route started and consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:48:06.150] [main] INFO  o.a.camel.spring.SpringCamelContext - Route: maxattempts_consumer_test_route started and consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:48:06.152] [main] INFO  o.a.camel.spring.SpringCamelContext - Total 7 routes, of which 7 are started. 
+[2017-10-31 : 14:48:06.153] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) started in 0.448 seconds 
+[2017-10-31 : 14:48:06.208] [main] INFO  o.a.c.component.mock.MockEndpoint - Asserting: mock://mock_endpoint4 is satisfied 
+[2017-10-31 : 14:48:07.185] [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@7f3fc42f: startup date [Tue Oct 31 14:48:05 EDT 2017]; root of context hierarchy 
+[2017-10-31 : 14:48:07.187] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-10-31 : 14:48:07.188] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 7 routes (timeout 10 seconds) 
+[2017-10-31 : 14:48:07.193] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: maxattempts_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_five?dataSource=sdpqDataSource&maxAttempts=-1 
+[2017-10-31 : 14:48:07.216] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: limited_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_four?dataSource=sdpqDataSource&limit=5 
+[2017-10-31 : 14:48:07.247] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_three?dataSource=sdpqDataSource&delay=5&initialDelay=0 
+[2017-10-31 : 14:48:07.248] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: initially_delayed_consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue_two?dataSource=sdpqDataSource&initialDelay=7 
+[2017-10-31 : 14:48:07.248] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: consumer_test_route shutdown complete, was consuming from: sdpqueue://message_queue?dataSource=sdpqDataSource&limit=100&maxAttempts=5 
+[2017-10-31 : 14:48:07.248] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: producer_test_route shutdown complete, was consuming from: direct://producer_test 
+[2017-10-31 : 14:48:07.248] [Camel (camel) thread #51 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: _route1 shutdown complete, was consuming from: direct://start 
+[2017-10-31 : 14:48:07.249] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 7 routes completed in 0 seconds 
+[2017-10-31 : 14:48:07.268] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 1.563 seconds 
+[2017-10-31 : 14:48:07.271] [main] INFO  o.a.camel.spring.SpringCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.080 seconds 
+[2017-10-31 : 14:48:07.297] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.297] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Testing done: testLimitedQueueConsumer_Pass(gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest) 
+[2017-10-31 : 14:48:07.297] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - Took: 1.115 seconds (1115 millis) 
+[2017-10-31 : 14:48:07.298] [main] INFO  g.c.s.c.q.DatabaseQueueComponentTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.323] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.323] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - Testing: testCreateConsume(gov.cdc.sdp.cbr.queue.DatabaseQueueCreationConsumerTest) 
+[2017-10-31 : 14:48:07.323] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.426] [main] INFO  o.a.c.i.c.DefaultTypeConverter - Loaded 211 type converters 
+[2017-10-31 : 14:48:07.437] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-11) is starting 
+[2017-10-31 : 14:48:07.441] [main] INFO  o.a.c.m.DefaultManagementStrategy - JMX is disabled 
+[2017-10-31 : 14:48:07.512] [main] INFO  o.a.camel.impl.DefaultCamelContext - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html 
+[2017-10-31 : 14:48:07.530] [main] INFO  o.a.camel.impl.DefaultCamelContext - Route: test_consume started and consuming from: sdpqueue://temp_fake_table?dataSource=%23dataSource 
+[2017-10-31 : 14:48:07.535] [main] INFO  o.a.camel.impl.DefaultCamelContext - Total 1 routes, of which 1 are started. 
+[2017-10-31 : 14:48:07.535] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-11) started in 0.098 seconds 
+[2017-10-31 : 14:48:07.568] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.570] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - Testing done: testCreateConsume(gov.cdc.sdp.cbr.queue.DatabaseQueueCreationConsumerTest) 
+[2017-10-31 : 14:48:07.580] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - Took: 0.028 seconds (28 millis) 
+[2017-10-31 : 14:48:07.589] [main] INFO  g.c.s.c.q.DatabaseQueueCreationConsumerTest - ******************************************************************************** 
+[2017-10-31 : 14:48:07.590] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-11) is shutting down 
+[2017-10-31 : 14:48:07.590] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Starting to graceful shutdown 1 routes (timeout 10 seconds) 
+[2017-10-31 : 14:48:07.610] [Camel (camel-11) thread #53 - ShutdownTask] INFO  o.a.c.impl.DefaultShutdownStrategy - Route: test_consume shutdown complete, was consuming from: sdpqueue://temp_fake_table?dataSource=%23dataSource 
+[2017-10-31 : 14:48:07.612] [main] INFO  o.a.c.impl.DefaultShutdownStrategy - Graceful shutdown of 1 routes completed in 0 seconds 
+[2017-10-31 : 14:48:07.625] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-11) uptime 0.187 seconds 
+[2017-10-31 : 14:48:07.625] [main] INFO  o.a.camel.impl.DefaultCamelContext - Apache Camel 2.18.1.redhat-000012 (CamelContext: camel-11) is shutdown in 0.034 seconds 

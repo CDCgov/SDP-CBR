@@ -1,78 +1,72 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="10" failures="0" name="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.047" errors="0" skipped="0">
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.106" tests="10" errors="0" skipped="0" failures="0">
   <properties>
-    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_151\jre\bin"/>
-    <property name="java.vm.version" value="25.151-b12"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
+    <property name="java.vm.version" value="25.131-b11"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
-    <property name="maven.multiModuleProjectDirectory" value="c:\src\SDP-CBR"/>
+    <property name="maven.multiModuleProjectDirectory" value="/home/troy/project/SDP-CBR"/>
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
-    <property name="path.separator" value=";"/>
+    <property name="path.separator" value=":"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
-    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="user.script" value=""/>
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="sun.os.patch.level" value=""/>
+    <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="c:\src\SDP-CBR"/>
-    <property name="java.runtime.version" value="1.8.0_151-b12"/>
-    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.8.0_151\jre\lib\endorsed"/>
+    <property name="user.dir" value="/home/troy/project/SDP-CBR"/>
+    <property name="java.runtime.version" value="1.8.0_131-8u131-b11-2ubuntu1.16.04.3-b11"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/endorsed"/>
     <property name="os.arch" value="amd64"/>
-    <property name="java.io.tmpdir" value="C:\Users\ecole\AppData\Local\Temp\"/>
-    <property name="line.separator" value="
-"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="user.variant" value=""/>
-    <property name="os.name" value="Windows 10"/>
-    <property name="classworlds.conf" value="C:\Program Files\apache-maven-3.5.0\bin\..\bin\m2.conf"/>
-    <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Program Files\Java\jdk1.8.0_151\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\ProgramData\Oracle\Java\javapath;C:\Oracle\product64\12.1.0\client_1\bin;C:\Oracle\product\12.1.0\client_1\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ActivIdentity\ActivClient\;C:\Program Files\ActivIdentity\ActivClient\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\CheckPoint\Endpoint Security\Endpoint Common\bin;C:\tools\libphutil;C:\tools\arcanist\bin;C:\tools\php-7.1.3-nts-Win32-VC14-x86;C:\Program Files\PuTTY\;C:\Program Files\Git\cmd;C:\Program Files\Git\usr\bin;C:\Program Files\apache-maven-3.5.0\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files\MySQL\MySQL Server 5.7\bin;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\;C:\Users\ecole\AppData\Local\Microsoft\WindowsApps;;."/>
-    <property name="maven.conf" value="C:\Program Files\apache-maven-3.5.0\bin\../conf"/>
+    <property name="os.name" value="Linux"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="os.version" value="10.0"/>
-    <property name="library.jansi.path" value="C:\Program Files\apache-maven-3.5.0\bin\..\lib\jansi-native\windows64"/>
-    <property name="user.home" value="C:\Users\ecole"/>
+    <property name="os.version" value="4.10.0-38-generic"/>
+    <property name="user.home" value="/home/troy"/>
     <property name="user.timezone" value="America/New_York"/>
-    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="1.8"/>
-    <property name="file.encoding" value="Cp1252"/>
-    <property name="user.name" value="ECOLE"/>
-    <property name="java.class.path" value="C:\Program Files\apache-maven-3.5.0\bin\..\boot\plexus-classworlds-2.5.2.jar"/>
+    <property name="user.name" value="troy"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="java.home" value="C:\Program Files\Java\jdk1.8.0_151\jre"/>
+    <property name="java.home" value="/usr/lib/jvm/java-8-openjdk-amd64/jre"/>
     <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
-    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
     <property name="java.vm.info" value="mixed mode"/>
-    <property name="java.version" value="1.8.0_151"/>
-    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.8.0_151\jre\lib\ext;C:\windows\Sun\Java\lib\ext"/>
-    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.8.0_151\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_151\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_151\jre\classes"/>
-    <property name="sun.stderr.encoding" value="cp437"/>
+    <property name="java.version" value="1.8.0_131"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jfr.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="C:\Program Files\apache-maven-3.5.0\bin\.."/>
-    <property name="file.separator" value="\"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="sun.stdout.encoding" value="cp437"/>
-    <property name="sun.desktop" value="windows"/>
-    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.desktop" value="gnome"/>
+    <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="missingFHSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="missingFTSTest" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="malformedFHSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="mshProblems" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="missingBHSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="malformedFTSTest" time="0.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="missingBTSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="malformedBHSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="malformedBTSTest" time="0"/>
-  <testcase classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" name="validBatchTest" time="0.015"/>
+  <testcase name="missingFHSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.011"/>
+  <testcase name="missingFTSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.031"/>
+  <testcase name="malformedFHSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.004"/>
+  <testcase name="mshProblems" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.009"/>
+  <testcase name="missingBHSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.006"/>
+  <testcase name="malformedFTSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.009"/>
+  <testcase name="missingBTSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.021"/>
+  <testcase name="malformedBHSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.006"/>
+  <testcase name="malformedBTSTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.006"/>
+  <testcase name="validBatchTest" classname="gov.cdc.sdp.cbr.HL7V2BatchSplitterTest" time="0.003"/>
 </testsuite>

@@ -1,4 +1,4 @@
-C:\src\SDP-CBR\database_queue\src\test\java\gov\cdc\sdp\cbr\queue\DatabaseQueueCreationProducerTest.java
-C:\src\SDP-CBR\database_queue\src\test\java\gov\cdc\sdp\cbr\queue\DatabaseQueueCreationConsumerTest.java
-C:\src\SDP-CBR\database_queue\src\test\java\gov\cdc\sdp\cbr\queue\DatabaseQueueComponentTest.java
-C:\src\SDP-CBR\database_queue\src\test\java\gov\cdc\sdp\cbr\queue\DatabaseQueueParallelTest.java
+/home/troy/project/SDP-CBR/database_queue/src/test/java/gov/cdc/sdp/cbr/queue/DatabaseQueueCreationProducerTest.java
+/home/troy/project/SDP-CBR/database_queue/src/test/java/gov/cdc/sdp/cbr/queue/DatabaseQueueComponentTest.java
+/home/troy/project/SDP-CBR/database_queue/src/test/java/gov/cdc/sdp/cbr/queue/DatabaseQueueCreationConsumerTest.java
+/home/troy/project/SDP-CBR/database_queue/src/test/java/gov/cdc/sdp/cbr/queue/DatabaseQueueParallelTest.java

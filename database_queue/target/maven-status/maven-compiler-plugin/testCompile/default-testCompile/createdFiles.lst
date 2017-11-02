@@ -1,6 +1,6 @@
-gov\cdc\sdp\cbr\queue\DatabaseQueueCreationConsumerTest.class
-gov\cdc\sdp\cbr\queue\DatabaseQueueCreationProducerTest$1.class
-gov\cdc\sdp\cbr\queue\DatabaseQueueParallelTest.class
-gov\cdc\sdp\cbr\queue\DatabaseQueueCreationProducerTest.class
-gov\cdc\sdp\cbr\queue\DatabaseQueueComponentTest.class
-gov\cdc\sdp\cbr\queue\DatabaseQueueCreationConsumerTest$1.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueCreationProducerTest.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueCreationProducerTest$1.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueComponentTest.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueCreationConsumerTest$1.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueParallelTest.class
+gov/cdc/sdp/cbr/queue/DatabaseQueueCreationConsumerTest.class

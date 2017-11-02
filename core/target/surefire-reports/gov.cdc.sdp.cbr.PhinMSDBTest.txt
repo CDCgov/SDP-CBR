@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: gov.cdc.sdp.cbr.PhinMSDBTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.25 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.699 sec - in gov.cdc.sdp.cbr.PhinMSDBTest
