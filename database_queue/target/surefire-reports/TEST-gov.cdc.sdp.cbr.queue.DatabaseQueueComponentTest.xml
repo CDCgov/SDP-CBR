@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="8" failures="0" name="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" time="22.908" errors="0" skipped="0">
+<testsuite tests="8" failures="0" name="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" time="26.304" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_151\jre\bin"/>
@@ -65,12 +65,12 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testQueueProducer" time="0.203"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testQueueConsumer" time="2.188"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testDelayedQueueConsumer_Fail" time="2.031"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testDelayedQueueConsumer_Pass" time="5.032"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testInitialDelayQueueConsumer_Fail" time="5.047"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testInitialDelayQueueConsumer_Pass" time="7.016"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testMaxAttemptsQueueConsumer_fail" time="0.031"/>
-  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testLimitedQueueConsumer_Pass" time="1.36"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testQueueProducer" time="0.277"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testQueueConsumer" time="2.493"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testDelayedQueueConsumer_Fail" time="2.04"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testDelayedQueueConsumer_Pass" time="6.025"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testInitialDelayQueueConsumer_Fail" time="5.052"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testInitialDelayQueueConsumer_Pass" time="8.021"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testMaxAttemptsQueueConsumer_fail" time="0.052"/>
+  <testcase classname="gov.cdc.sdp.cbr.queue.DatabaseQueueComponentTest" name="testLimitedQueueConsumer_Pass" time="2.344"/>
 </testsuite>

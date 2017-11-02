@@ -6,7 +6,7 @@
     "kind" : "Service",
     "metadata" : {
       "annotations" : {
-        "fabric8.io/git-commit" : "2a48b9edba2c527d479a5551c67e065794ebbb5e",
+        "fabric8.io/git-commit" : "151f43b3ded237eb81065fb236a16bce3263cb2d",
         "fabric8.io/iconUrl" : "img/icons/camel.svg",
         "fabric8.io/git-branch" : "ProjectStructure"
       },
@@ -37,7 +37,7 @@
     "kind" : "Deployment",
     "metadata" : {
       "annotations" : {
-        "fabric8.io/git-commit" : "2a48b9edba2c527d479a5551c67e065794ebbb5e",
+        "fabric8.io/git-commit" : "151f43b3ded237eb81065fb236a16bce3263cb2d",
         "fabric8.io/iconUrl" : "img/icons/camel.svg",
         "fabric8.io/git-branch" : "ProjectStructure",
         "fabric8.io/metrics-path" : "dashboard/file/camel-routes.json/?var-project=sdp-cbr-queue&var-version=1.0.0-SNAPSHOT"
@@ -62,7 +62,7 @@
       "template" : {
         "metadata" : {
           "annotations" : {
-            "fabric8.io/git-commit" : "2a48b9edba2c527d479a5551c67e065794ebbb5e",
+            "fabric8.io/git-commit" : "151f43b3ded237eb81065fb236a16bce3263cb2d",
             "fabric8.io/iconUrl" : "img/icons/camel.svg",
             "fabric8.io/git-branch" : "ProjectStructure",
             "fabric8.io/metrics-path" : "dashboard/file/camel-routes.json/?var-project=sdp-cbr-queue&var-version=1.0.0-SNAPSHOT"
@@ -84,7 +84,7 @@
                 }
               }
             } ],
-            "image" : "sdp/sdp-cbr-queue:snapshot-171031-142824-0334",
+            "image" : "sdp/sdp-cbr-queue:snapshot-171101-122549-0055",
             "imagePullPolicy" : "IfNotPresent",
             "livenessProbe" : {
               "httpGet" : {
