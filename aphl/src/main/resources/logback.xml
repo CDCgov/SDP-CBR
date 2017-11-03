@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+  <property name="log_folder" value="./log_files" />
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log_folder}/sdp_console.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log_folder}/sdp_console-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>14</maxHistory>
+      <totalSizeCap>5GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{[yyyy-MM-dd : HH:mm:ss.SSS]} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ''} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{[yyyy-MM-dd : HH:mm:ss.SSS]} [%thread] %-5level %logger{36} - %replace(%msg){'\n', ' '} %replace(%ex){'[\r\n]+', ' '}%nopex%n</pattern>
+    </encoder>
+  </appender>
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>
