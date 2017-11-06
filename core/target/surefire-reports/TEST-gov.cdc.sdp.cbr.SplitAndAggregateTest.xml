@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="gov.cdc.sdp.cbr.SplitAndAggregateTest" time="0.054" tests="1" errors="1" skipped="0" failures="0">
+<testsuite name="gov.cdc.sdp.cbr.SplitAndAggregateTest" time="0.045" tests="1" errors="1" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,7 +59,7 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testAggregation" classname="gov.cdc.sdp.cbr.SplitAndAggregateTest" time="0.054">
+  <testcase name="testAggregation" classname="gov.cdc.sdp.cbr.SplitAndAggregateTest" time="0.045">
     <error message="Failed to load ApplicationContext" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
 	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)
@@ -245,50 +245,50 @@ Caused by: java.lang.ClassNotFoundException: gov.cdc.sdp.cbr.filter.HL7Terser
 	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
 ]]></error>
-    <system-out><![CDATA[13:46:28,624 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
-13:46:28,624 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
-13:46:28,624 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [file:/home/troy/project/SDP-CBR/core/target/test-classes/logback.xml]
-13:46:28,625 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs multiple times on the classpath.
-13:46:28,625 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [file:/home/troy/project/SDP-CBR/core/target/test-classes/logback.xml]
-13:46:28,625 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [file:/home/troy/project/SDP-CBR/core/target/classes/logback.xml]
-13:46:28,739 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
-13:46:28,766 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
-13:46:28,771 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [FILE]
-13:46:28,816 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - Achive files will be limied to [100MB] each.
-13:46:28,865 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - No compression will be used
-13:46:28,866 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - Will use the pattern ./log_files/sdp_console-%d{yyyy-MM-dd}.%i.log for the active file
-13:46:28,874 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - The date pattern is 'yyyy-MM-dd' from file name pattern './log_files/sdp_console-%d{yyyy-MM-dd}.%i.log'.
-13:46:28,874 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - Roll-over at midnight.
-13:46:28,879 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - Setting initial period to Thu Nov 02 09:30:03 EDT 2017
-13:46:28,882 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
-13:46:28,905 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Active log file name: ./log_files/sdp_console.log
-13:46:28,905 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - File property is set to [./log_files/sdp_console.log]
-13:46:28,909 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
-13:46:28,913 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
-13:46:28,913 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
-13:46:28,915 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
-13:46:28,915 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
-13:46:28,915 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [FILE] to Logger[ROOT]
-13:46:28,915 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
-13:46:28,916 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@20d3d15a - Registering current configuration as safe fallback point
+    <system-out><![CDATA[09:11:41,887 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+09:11:41,900 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
+09:11:41,900 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [file:/home/troy/project/SDP-CBR/core/target/test-classes/logback.xml]
+09:11:41,901 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs multiple times on the classpath.
+09:11:41,901 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [file:/home/troy/project/SDP-CBR/core/target/test-classes/logback.xml]
+09:11:41,901 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [file:/home/troy/project/SDP-CBR/core/target/classes/logback.xml]
+09:11:42,058 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+09:11:42,174 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
+09:11:42,210 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [FILE]
+09:11:42,278 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - Achive files will be limied to [100MB] each.
+09:11:42,349 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - No compression will be used
+09:11:42,351 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@1567885839 - Will use the pattern ./log_files/sdp_console-%d{yyyy-MM-dd}.%i.log for the active file
+09:11:42,362 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - The date pattern is 'yyyy-MM-dd' from file name pattern './log_files/sdp_console-%d{yyyy-MM-dd}.%i.log'.
+09:11:42,362 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - Roll-over at midnight.
+09:11:42,367 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@214b199c - Setting initial period to Thu Nov 02 14:21:09 EDT 2017
+09:11:42,377 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+09:11:42,416 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Active log file name: ./log_files/sdp_console.log
+09:11:42,416 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - File property is set to [./log_files/sdp_console.log]
+09:11:42,417 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+09:11:42,419 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+09:11:42,424 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+09:11:42,425 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+09:11:42,425 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+09:11:42,426 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [FILE] to Logger[ROOT]
+09:11:42,426 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+09:11:42,426 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@20d3d15a - Registering current configuration as safe fallback point
 
-[2017-11-02 : 13:46:29.224] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper -Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener] 
-[2017-11-02 : 13:46:29.317] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper -Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@6150c3ec, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@44c03695, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@7e6f74c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@dd05255, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6a78afa0, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@2f4948e4, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@1f2586d6, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@10683d9d, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@3fc2959f, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@5aa9e4eb, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@6989da5e, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@385c9627] 
-[2017-11-02 : 13:46:29.626] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader -Loading XML bean definitions from class path resource [SplitAndAggregateTest-context.xml] 
-[2017-11-02 : 13:46:31.760] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
-[2017-11-02 : 13:46:31.772] [main] INFO  o.s.c.s.GenericApplicationContext -Refreshing org.springframework.context.support.GenericApplicationContext@69453e37: startup date [Thu Nov 02 13:46:31 EDT 2017]; root of context hierarchy 
-[2017-11-02 : 13:46:32.058] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer -Loading properties file from class path resource [application.properties] 
-[2017-11-02 : 13:46:32.064] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor -JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
-[2017-11-02 : 13:46:32.902] [main] INFO  o.a.c.spring.CamelContextFactoryBean -Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
-[2017-11-02 : 13:46:33.236] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
-[2017-11-02 : 13:46:33.239] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Starting CamelContext with name [camel]. 
-[2017-11-02 : 13:46:33.246] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
-[2017-11-02 : 13:46:33.248] [main] INFO  o.a.c.m.DefaultManagementStrategy -JMX is disabled 
-[2017-11-02 : 13:46:33.457] [main] INFO  o.a.c.i.c.DefaultTypeConverter -Loaded 211 type converters 
-[2017-11-02 : 13:46:35.367] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
-[2017-11-02 : 13:46:35.436] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 2.190 seconds 
-[2017-11-02 : 13:46:35.449] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.068 seconds 
-[2017-11-02 : 13:46:35.455] [main] ERROR o.s.test.context.TestContextManager -Caught exception while allowing TestExecutionListener [org.springframework.test.context.support.DependencyInjectionTestExecutionListener@7e6f74c] to prepare test instance [gov.cdc.sdp.cbr.SplitAndAggregateTest@68f0f72c] 
+[2017-11-03 : 09:11:42.982] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper -Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener] 
+[2017-11-03 : 09:11:43.117] [main] INFO  o.a.c.t.s.CamelTestContextBootstrapper -Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@3fc2959f, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@5aa9e4eb, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@6989da5e, org.springframework.test.context.support.DirtiesContextTestExecutionListener@385c9627, org.springframework.test.context.transaction.TransactionalTestExecutionListener@139982de, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@682b2fa, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@217ed35e, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@7dcf94f8, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@229f66ed, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@31190526, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@662ac478, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@6743e411] 
+[2017-11-03 : 09:11:43.524] [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader -Loading XML bean definitions from class path resource [SplitAndAggregateTest-context.xml] 
+[2017-11-03 : 09:11:47.561] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting. 
+[2017-11-03 : 09:11:47.725] [main] INFO  o.s.c.s.GenericApplicationContext -Refreshing org.springframework.context.support.GenericApplicationContext@22fcf7ab: startup date [Fri Nov 03 09:11:47 EDT 2017]; root of context hierarchy 
+[2017-11-03 : 09:11:48.644] [main] INFO  o.a.c.s.s.BridgePropertyPlaceholderConfigurer -Loading properties file from class path resource [application.properties] 
+[2017-11-03 : 09:11:48.719] [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor -JSR-330 'javax.inject.Inject' annotation found and supported for autowiring 
+[2017-11-03 : 09:11:51.476] [main] INFO  o.a.c.spring.CamelContextFactoryBean -Bridging Camel and Spring property placeholder configurer with id: bridgePropertyPlaceholder 
+[2017-11-03 : 09:11:52.082] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Setting shutdown timeout to [10 SECONDS] on CamelContext with name [camel]. 
+[2017-11-03 : 09:11:52.092] [main] INFO  o.a.c.t.s.CamelSpringTestContextLoader -Starting CamelContext with name [camel]. 
+[2017-11-03 : 09:11:52.094] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is starting 
+[2017-11-03 : 09:11:52.100] [main] INFO  o.a.c.m.DefaultManagementStrategy -JMX is disabled 
+[2017-11-03 : 09:11:52.368] [main] INFO  o.a.c.i.c.DefaultTypeConverter -Loaded 211 type converters 
+[2017-11-03 : 09:11:55.552] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutting down 
+[2017-11-03 : 09:11:55.646] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) uptime 3.552 seconds 
+[2017-11-03 : 09:11:55.646] [main] INFO  o.a.camel.spring.SpringCamelContext -Apache Camel 2.18.1.redhat-000012 (CamelContext: camel) is shutdown in 0.093 seconds 
+[2017-11-03 : 09:11:55.651] [main] ERROR o.s.test.context.TestContextManager -Caught exception while allowing TestExecutionListener [org.springframework.test.context.support.DependencyInjectionTestExecutionListener@6989da5e] to prepare test instance [gov.cdc.sdp.cbr.SplitAndAggregateTest@b887730] 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
 	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)

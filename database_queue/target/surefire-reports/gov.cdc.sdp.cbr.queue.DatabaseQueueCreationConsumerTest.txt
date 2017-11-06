@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: gov.cdc.sdp.cbr.queue.DatabaseQueueCreationConsumerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.292 sec - in gov.cdc.sdp.cbr.queue.DatabaseQueueCreationConsumerTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.279 sec - in gov.cdc.sdp.cbr.queue.DatabaseQueueCreationConsumerTest

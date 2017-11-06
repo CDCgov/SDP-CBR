@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: gov.cdc.sdp.cbr.SplitAndAggregateTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 7.109 sec <<< FAILURE! - in gov.cdc.sdp.cbr.SplitAndAggregateTest
-testAggregation(gov.cdc.sdp.cbr.SplitAndAggregateTest)  Time elapsed: 0.054 sec  <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 14.144 sec <<< FAILURE! - in gov.cdc.sdp.cbr.SplitAndAggregateTest
+testAggregation(gov.cdc.sdp.cbr.SplitAndAggregateTest)  Time elapsed: 0.045 sec  <<< ERROR!
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
 	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)
