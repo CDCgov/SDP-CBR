@@ -3,11 +3,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>gov.cdc.sdp</groupId>
-  <artifactId>sdp-cbr-core</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-  <name>PHIN-MS camel route for Surveillance Data Platform Content Based Routing SDP-CBR</name>
-  <description>SDP-CBR Spring Boot Camel route defined in XML</description>
+  <artifactId>sdp-cbr-aphl</artifactId>
+  <name>APHL S3 component for SDP-CBR</name>
+  <description>APHL S3 component for SDP-CBR</description>
   <parent>
    <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
@@ -18,16 +16,6 @@
 	<dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-common</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-queue</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-aphl</artifactId>
       <version>1.0.0-SNAPSHOT</version>
 	</dependency>
   </dependencies>
