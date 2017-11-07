@@ -4,6 +4,5 @@
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/src/test/perf"/>
         <wb-resource deploy-path="/" source-path="/common/src/main"/>
-        <wb-resource deploy-path="/" source-path="/aphl/src"/>
     </wb-module>
 </project-modules>
