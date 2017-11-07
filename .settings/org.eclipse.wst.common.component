@@ -5,5 +5,8 @@
         <wb-resource deploy-path="/" source-path="/src/test/perf"/>
         <wb-resource deploy-path="/" source-path="/common/src/main"/>
         <wb-resource deploy-path="/" source-path="/aphl/src"/>
+        <wb-resource deploy-path="/" source-path="/database_queue/src"/>
+        <wb-resource deploy-path="/" source-path="/foodNet/src"/>
+        <wb-resource deploy-path="/" source-path="/core/src"/>
     </wb-module>
 </project-modules>

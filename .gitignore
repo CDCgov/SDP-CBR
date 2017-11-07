@@ -3,7 +3,9 @@ target/
 common/target/
 core/target/
 database_queue/target/
+foodNet/target/
 log_files/
 common/log_files/
 core/log_files/
 database_queue/log_files/
+foodNet/log_files/
