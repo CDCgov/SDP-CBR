@@ -13,10 +13,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Test;
 
-import gov.cdc.sdp.cbr.common.SDPTestBase;
 import gov.cdc.sdp.cbr.filter.HL7Terser;
 
-public class HL7TerserTest extends SDPTestBase {
+public class HL7TerserTest {
 
     @Test
     public void testFilterSingleTermEquals() throws IOException {
@@ -309,5 +308,9 @@ public class HL7TerserTest extends SDPTestBase {
         exchange.setIn(msg);
         assertFalse(new HL7Terser().filter(exchange));
 
+    }
+    
+    protected String readFile(String file) throws IOException {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
     }
 }

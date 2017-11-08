@@ -1,9 +1,10 @@
 sdp_console.log
 target/
-common/target/
-core/target/
-database_queue/target/
+**/target/
 log_files/
-common/log_files/
-core/log_files/
-database_queue/log_files/
+**/log_files/
+.project
+.classpath
+**/.classpath
+**/.project
+**/.settings/

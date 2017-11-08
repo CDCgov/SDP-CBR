@@ -23,13 +23,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
-import gov.cdc.sdp.cbr.common.SDPTestBase;
-
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration(locations = { "/HL7FiltersTest-context.xml" })
 @PropertySource("/application.properties")
-public class HL7FiltersTest extends SDPTestBase {
+public class HL7FiltersTest {
 
     @Autowired
     protected CamelContext camelContext;
@@ -216,5 +214,9 @@ public class HL7FiltersTest extends SDPTestBase {
 
         mockEndpointAll.assertIsSatisfied();
         mockEndpointFiltered.assertIsSatisfied();
+    }
+    
+    protected String readFile(String file) throws IOException {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
     }
 }
