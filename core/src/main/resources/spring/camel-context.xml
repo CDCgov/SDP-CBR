@@ -20,7 +20,6 @@
         <property name="password" value="${sdpqDataSource.jdbc.password}"/>
     </bean>
     <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
-    <bean class="gov.cdc.sdp.cbr.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
     <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
     <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
     <bean class="gov.cdc.sdp.cbr.HTTP4Transformer" id="httpTransformer"/>
@@ -91,14 +90,6 @@
                     <to id="foodNetQueue" uri="sdpqueue:{{foodNet.queue}}"/>
                 </filter>
             </idempotentConsumer>
-        </route>
-        <route id="FoodNetRoute">
-            <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
-            <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">
-                <simple>${in.header.CBR_ID}</simple>
-            </setHeader>
-            <camel:process id="foodNetAimsHeaderProcess" ref="aimsHeaderProcessor"/>
-            <to id="_to_s3" uri="aphl-s3://{{aims.url}}"/>
         </route>
     </camelContext>
 </beans>
