@@ -69,9 +69,8 @@ public class PathExpressionTest extends BaseTest{
     @Test
     public void testEvalGroupPathContains()  throws IOException{
         String sf = "src/test/resources/hl7v2_repetitions.txt";
-        
         Filter e = buildFilter("/OBSERVATION/OBX contains 'Preg'");
-        assertTrue((Boolean)e.evaluate(ctx));
+        assertTrue((Boolean)e.evaluate(parseMessage(readFile(sf))));
     }
 
     @Test
