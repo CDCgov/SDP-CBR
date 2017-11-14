@@ -34,7 +34,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
   <dependency>
       <groupId>javax.inject</groupId>
@@ -278,5 +278,6 @@
 		<module>aphl</module>
 		<module>core</module>
 		<module>foodNet</module>
-	</modules>  
+    <module>hl7v2filter</module>
+	</modules>
 </project>
