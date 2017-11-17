@@ -1,15 +1,12 @@
 package gov.cdc.sdp.hl7v2filter;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
 import gov.cdc.sdp.hl7v2.filter.Context;
 import gov.cdc.sdp.hl7v2.filter.Expression;
 import gov.cdc.sdp.hl7v2.filter.Filter;
-import gov.cdc.sdp.hl7v2.filter.FilterBuilder;
 import org.junit.Test;
 
 import java.io.IOException;
