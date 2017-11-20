@@ -6,3 +6,4 @@ hl7v2filter.iml
 .idea
 .project
 .classpath
+src/generated/*
