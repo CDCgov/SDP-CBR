@@ -277,6 +277,7 @@
 		<module>database_queue</module>
 		<module>aphl</module>
 		<module>core</module>
+		<module>sdp-cbr-filter</module>
 		<module>foodNet</module>
 	</modules>  
 </project>
