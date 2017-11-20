@@ -4,7 +4,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
-  <artifactId>sdp-cbr-core</artifactId>
+  <artifactId>sdp-cbr-phinms</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>PHIN-MS camel route for Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
