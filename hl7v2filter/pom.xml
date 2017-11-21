@@ -11,6 +11,8 @@
     <hapi.version.stable>2.2</hapi.version.stable>
     <slf4j.version>1.6.2</slf4j.version>
     <log4j.version>1.6.2</log4j.version>
+    <antlr4.visitor>true</antlr4.visitor>
+    <antlr4.listener>true</antlr4.listener>
   </properties>
 
   <dependencies>
@@ -111,26 +113,28 @@
         </configuration>
       </plugin>
 
-
-<plugin>
-	<groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.5.3</version>
+        <configuration>
+          <sourceDirectory>src/grammer</sourceDirectory>
+          <arguments>
+            <argument>-package</argument>
+            <argument>gov.cdc.sdp.hl7v2.filter</argument>
+          </arguments>
+        </configuration>
         <executions>
-		<execution>
-			<id>add-source</id>
-			<phase>generate-sources</phase>
-			<goals>
-				<goal>add-source</goal>
-			</goals>
-			<configuration>
-				<sources>
-					<source>./src/generated/java</source>
-				</sources>
-			</configuration>
-		</execution>
+          <execution>
+            <id>antlr</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
         </executions>
-</plugin>
-  </plugins>
+      </plugin>
+
+    </plugins>
   </build>
 
 </project>
