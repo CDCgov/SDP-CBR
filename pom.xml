@@ -34,7 +34,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
   <dependency>
       <groupId>javax.inject</groupId>
@@ -279,5 +279,6 @@
 		<module>core</module>
 		<module>sdp-cbr-filter</module>
 		<module>foodNet</module>
-	</modules>  
+    <module>hl7v2filter</module>
+	</modules>
 </project>
