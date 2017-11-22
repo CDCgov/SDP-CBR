@@ -119,6 +119,7 @@
         <version>4.5.3</version>
         <configuration>
           <sourceDirectory>src/grammer</sourceDirectory>
+         <outputDirectory>${project.build.directory}/generated-sources/antlr4/gov/cdc/sdp/hl7v2/filter</outputDirectory>
           <arguments>
             <argument>-package</argument>
             <argument>gov.cdc.sdp.hl7v2.filter</argument>
