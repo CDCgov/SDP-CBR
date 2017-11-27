@@ -276,8 +276,8 @@
 		<module>common</module>
 		<module>database_queue</module>
 		<module>aphl</module>
-		<module>core</module>
 		<module>sdp-cbr-filter</module>
+		<module>phinms</module>
 		<module>foodNet</module>
     <module>hl7v2filter</module>
 	</modules>
