@@ -37,14 +37,6 @@ import org.springframework.test.context.ContextConfiguration;
 @PropertySource("classpath:application.properties")
 public class GenericTransformerTest {
 
-    private static final String DELETE_FROM = "DELETE FROM ";
-
-	private static final String SELECT_FROM = "SELECT * FROM ";
-
-	private static final String HEADERS = "(id, cbr_id, source, source_id, payload, cbr_recevied_time)";
-
-	private static final String INSERT_INTO = "INSERT into ";
-
 	@Autowired
     protected CamelContext camelContext;
 
@@ -69,51 +61,41 @@ public class GenericTransformerTest {
     @Test
     @DirtiesContext
     public void testGenericProcessor() throws Exception {
-        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("sdpqDataSource");
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-
-        /*String delete_test_entries = "delete from message_queue where SOURCE_ID='testQueueProducer_rec'";
-        String query_queue = "select * from message_queue where SOURCE_ID='testQueueProducer_rec'";
-        String query_queue_for_batch_zero = "select * from message_queue where SOURCE_ID='testQueueProducer_rec' AND BATCH_INDEX=0";*/
+    	mock_endpoint.reset();
+        
         String source_file = "src/test/resources/BatchTest_GenV2_2msgs.txt";
 
-        try {
-            Exchange exchange = new DefaultExchange(camelContext);
-            Message msg = new DefaultMessage();
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message msg = new DefaultMessage();
 
-            Map<String, String> map = new HashMap<>();
-            map.put("recordId", "testQueueProducer_rec");
-            map.put("messageId", "testQueueProducer_msg");
-            map.put("payloadName", "Name");
-            map.put("payloadBinaryContent", readFile(source_file));
-            map.put("payloadTextContent", readFile(source_file));
-            map.put("localFileName", "file??");
-            map.put("service", "service");
-            map.put("action", "action");
-            map.put("arguments", "arge");
-            map.put("fromPartyId", "testQueueProducer");
-            map.put("messageRecipient", "recipient");
-            map.put("receivedTime", new Date().toString());
-            msg.setBody(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testGenericProcessor_rec");
+        map.put("sourceId", "testGenericProcessor_src");
+        map.put("messageId", "testGenericProcessor_msg");
+        map.put("payloadName", "Name");
+        map.put("payloadBinaryContent", readFile(source_file));
+        map.put("payloadTextContent", readFile(source_file));
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testGenericProcessor");
+        map.put("messageRecipient", "recipient");
+        map.put("receivedTime", new Date().toString());
+        msg.setBody(map);
+        
+        msg.setHeader("FILTER", true);
 
-            exchange.setIn(msg);
+        exchange.setIn(msg);
 
-            mock_endpoint.expectedMessageCount(3);
-            template.send(exchange);
+        mock_endpoint.expectedMessageCount(1);
+        mock_endpoint.expectedHeaderReceived("CBR_ID", "_ROUTE1_testGenericProcessor_src");
+        mock_endpoint.expectedHeaderReceived("sourceId", "testGenericProcessor_src");
+        
+        
+        template.send(exchange);
 
-            MockEndpoint.assertIsSatisfied(camelContext);
-
-            //List<Map<String, Object>> lst = jdbcTemplate.queryForList(query_queue);
-            //assertEquals(3, lst.size());
-
-            //lst = jdbcTemplate.queryForList(query_queue_for_batch_zero);
-            //assertEquals(1, lst.size());
-        } finally {
-            //jdbcTemplate.update(delete_test_entries);
-
-            //List<Map<String, Object>> lst = jdbcTemplate.queryForList(query_queue);
-            //assertEquals(0, lst.size());
-        }
+        MockEndpoint.assertIsSatisfied(camelContext);
     }
 
     private String readFile(String file) throws IOException {
