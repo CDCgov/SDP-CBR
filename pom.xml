@@ -5,25 +5,34 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
-  <packaging>pom</packaging>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
+  <modules>
+    <module>common</module>
+    <module>database_queue</module>
+    <module>aphl</module>
+    <module>sdp-cbr-filter</module>
+    <module>phinms</module>
+    <module>foodNet</module>
+    <module>filterQueue</module>
+    <module>hl7v2filter</module>
+  </modules>
   <properties>
-    <hapi.version.stable>2.2</hapi.version.stable>
-    <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-    <fabric8.version>2.2.170.redhat-000010</fabric8.version>
-    <fabric8.maven.plugin.version>3.1.80.redhat-000010</fabric8.maven.plugin.version>
-    <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-    <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
-    <maven-build-helper-plugin.version>1.12</maven-build-helper-plugin.version>
+    <fabric8.version>2.2.170.redhat-000010</fabric8.version>
+    <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
     <jmh.version>1.13</jmh.version>
+    <maven-build-helper-plugin.version>1.12</maven-build-helper-plugin.version>
+    <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+    <fabric8.maven.plugin.version>3.1.80.redhat-000010</fabric8.maven.plugin.version>
     <camel.version>2.18.1.redhat-000012</camel.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+    <hapi.version.stable>2.2</hapi.version.stable>
   </properties>
-    <dependencyManagement>
+  <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.fabric8</groupId>
@@ -34,9 +43,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
-  <dependency>
+    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
@@ -175,7 +183,6 @@
       <artifactId>camel-sql-starter</artifactId>
       <version>2.18.1.redhat-000012</version>
     </dependency>
-    <!-- jdbc -->
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
@@ -198,20 +205,17 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
       <version>${camel.version}</version>
-      <!-- use the same version as your Camel core version -->
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.8.0</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>22.0</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
@@ -250,35 +254,38 @@
       <artifactId>httpclient-osgi</artifactId>
       <version>4.5.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>${jmh.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>io.findify</groupId>
       <artifactId>s3mock_2.12</artifactId>
       <version>0.2.3</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>de.saly</groupId>
       <artifactId>javamail-mock2-fullmock</artifactId>
       <version>0.5-beta3</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <version>5.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms-starter</artifactId>
+      <version>2.18.1.redhat-000012</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-jms -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+      <version>2.18.1.redhat-000012</version>
+    </dependency>
   </dependencies>
-	<modules>
-		<module>common</module>
-		<module>database_queue</module>
-		<module>aphl</module>
-		<module>sdp-cbr-filter</module>
-		<module>phinms</module>
-		<module>foodNet</module>
-    <module>hl7v2filter</module>
-	</modules>
 </project>
