@@ -5,6 +5,9 @@ log_files/
 **/log_files/
 .project
 .classpath
+.settings
 **/.classpath
 **/.project
 **/.settings/
+application.properties
+.DS_Store

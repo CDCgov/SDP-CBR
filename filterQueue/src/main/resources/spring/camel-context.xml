@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:camel="http://camel.apache.org/schema/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  xmlns:camel="http://camel.apache.org/schema/spring"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
   <bean class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close" id="sdpqDataSource" primary="true">
-    <property name="driverClassName" value="${sdpqDataSource.jdbc.driverClassName}" />
-    <property name="url" value="${sdpqDataSource.jdbc.url}" />
-    <property name="username" value="${sdpqDataSource.jdbc.username}" />
-    <property name="password" value="${sdpqDataSource.jdbc.password}" />
+    <property name="driverClassName" value="${sdpqDataSource.jdbc.driverClassName}"/>
+    <property name="url" value="${sdpqDataSource.jdbc.url}"/>
+    <property name="username" value="${sdpqDataSource.jdbc.username}"/>
+    <property name="password" value="${sdpqDataSource.jdbc.password}"/>
   </bean>
   <bean class="gov.cdc.sdp.cbr.SDPMessageIdRepository" id="foodNetIDRepo">
-    <constructor-arg ref="sdpqDataSource" />
-    <constructor-arg value="foodNetIds" />
-    <constructor-arg value="foodnetMessageIds" />
+    <constructor-arg ref="sdpqDataSource"/>
+    <constructor-arg value="foodNetIds"/>
+    <constructor-arg value="foodnetMessageIds"/>
   </bean>
-  <bean class="org.apache.activemq.camel.component.ActiveMQComponent"
-    id="activemq">
+  <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq">
     <property name="connectionFactory">
       <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="${activemq.url}" />
+        <property name="brokerURL" value="${activemq.url}"/>
       </bean>
     </property>
   </bean>
-  <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg" />
+  <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
   <camelContext id="camelContext-e2d73c04-5009-4dbd-8f4f-885690ed2064"
     trace="false" xmlns="http://camel.apache.org/schema/spring">
     <dataFormats>
@@ -30,22 +29,21 @@
     </dataFormats>
     <route id="ProcessingRoute">
       <!-- Need to process into something that can be used -->
-      <from id="_from1" uri="{{main.queue}}" />
+      <from id="_from1" uri="{{main.queue}}"/>
       <choice id="_choice1">
         <when id="_when1">
           <simple>body.trim().startsWith("FHS")</simple>
-          <split id="batchSplitter" parallelProcessing="false"
-            strategyRef="agg">
+          <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
             <method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
-              method="split" trim="false" />
-            <to id="_to1" uri="direct:multicast" />
+              method="split" trim="false"/>
+            <to id="_to1" uri="direct:multicast"/>
           </split>
           <setHeader headerName="errorMsg" id="_setHeader1">
             <simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
           </setHeader>
         </when>
         <otherwise id="_otherwise1">
-          <to id="_to2" uri="direct:multicast" />
+          <to id="_to2" uri="direct:multicast"/>
           <setHeader headerName="errorMsg" id="_setHeader2">
             <simple>An error occurred.</simple>
           </setHeader>
@@ -53,27 +51,25 @@
       </choice>
     </route>
     <route id="Multicast">
-      <from id="_from1" uri="direct:multicast" />
+      <from id="_from1" uri="direct:multicast"/>
       <multicast id="_multicast2">
-        <to id="_to31" uri="direct:foodNetFilter" />
+        <to id="_to31" uri="direct:foodNetFilter"/>
       </multicast>
     </route>
     <route id="foodNetFilter">
-      <from id="_from2" uri="direct:foodNetFilter" />
-      <idempotentConsumer id="_idempotentConsumer"
-        messageIdRepositoryRef="foodNetIDRepo">
+      <from id="_from2" uri="direct:foodNetFilter"/>
+      <idempotentConsumer id="_idempotentConsumer" messageIdRepositoryRef="foodNetIDRepo">
         <header>CBR_ID</header>
-        <log id="_log1" message="FOOD NET FILTER" />
+        <log id="_log1" message="FOOD NET FILTER"/>
         <setHeader headerName="HL7Filter" id="_setHeader7">
           <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
         </setHeader>
-        <unmarshal id="_unmarshal1" ref="unvalidatedHl7" />
+        <unmarshal id="_unmarshal1" ref="unvalidatedHl7"/>
         <filter id="foodNetFilter">
-          <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser"
-            method="filter" />
-          <marshal id="_marshal1" ref="unvalidatedHl7" />
-          <log id="fnf_passed_log" message="Exchange passed FoodNet filter" />
-          <to id="foodNetQueue" uri="{{foodNet.queue}}" />
+          <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter"/>
+          <marshal id="_marshal1" ref="unvalidatedHl7"/>
+          <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
+          <to id="foodNetQueue" uri="{{foodNet.queue}}"/>
         </filter>
       </idempotentConsumer>
     </route>
