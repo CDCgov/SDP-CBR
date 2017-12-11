@@ -16,7 +16,6 @@ public class GenericTransformer implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Map myMap = exchange.getIn().getBody(Map.class);
-        //String bodyData = exchange.getIn().getBody(String.class);
         Gson gson = new Gson();
 
         String exchg_src = exchange.getFromRouteId().toUpperCase();
@@ -32,12 +31,7 @@ public class GenericTransformer implements Processor {
         sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
         sdpMessage.setId(cbr_id);
         sdpMessage.setPayload(msg.getBody().toString());
-        //sdpMessage.setRecipient((String) myMap.get("recipientId"));
-        	//sdpMessage.setSender((String) myMap.get("fromPartyId"));
-        //sdpMessage.setSource(exchg_src);
         sdpMessage.setSourceId(sourceId);
-        	//sdpMessage.setSourceReceivedTime((String) myMap.get("receivedTime"));
-        	//sdpMessage.setSourceAttributes(myMap);
 
         msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
         msg.setHeader(CBR.CBR_ID, cbr_id);

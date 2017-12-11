@@ -1,7 +1,5 @@
 package gov.cdc.sdp.cbr;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,18 +40,6 @@ public class GenericTransformerTest {
 
     @EndpointInject(uri = "mock:mock_endpoint")
     protected MockEndpoint mock_endpoint;
-
-    @EndpointInject(uri = "mock:mock_endpoint2")
-    protected MockEndpoint mock_endpoint2;
-
-    @EndpointInject(uri = "mock:mock_endpoint3")
-    protected MockEndpoint mock_endpoint3;
-
-    @EndpointInject(uri = "mock:mock_endpoint4")
-    protected MockEndpoint mock_endpoint4;
-    
-    @EndpointInject(uri = "mock:mock_endpoint5")
-    protected MockEndpoint mock_endpoint5;
     
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
