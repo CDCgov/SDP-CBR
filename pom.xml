@@ -6,7 +6,7 @@
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   <name>Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
   <properties>

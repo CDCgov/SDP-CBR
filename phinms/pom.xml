@@ -5,35 +5,35 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr-phinms</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   <name>PHIN-MS camel route for Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
   <parent>
    <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   </parent>
   
   <dependencies>
 	<dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-common</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.1.0</version>
 	</dependency>
 	<dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-queue</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.1.0</version>
 	</dependency>
 	<dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-aphl</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.1.0</version>
 	</dependency>
 	<dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-filter</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.1.0</version>
 	</dependency>
   </dependencies>
 
