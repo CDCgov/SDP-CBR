@@ -50,6 +50,7 @@ The application can be built with the following command
 
     mvn clean package
 
+
 ### Databases
 
 The application depends on a number of databases and connections in order to run.  All databases are defined in the application properties, which should be configured for the environment.
@@ -67,7 +68,7 @@ In order for the tests to succeed, the test datasources must be properly configu
 Required databases for tests are nndssDataSource, sdpqDataSource, and phinMsDataSource.  The phinMsDataSource should have the table message_inq, which can be created in SQLServer using the script at main/db/MSSQL_message_inq.sql.  The other tables will be created as needed by the application.
 
 ### Running the application in OpenShift
-
+The application is setup as a series of maven sub modules. The sub modules comprise both reusable components such as the database queue component as well as modules that comprise portions of the application that are meant to be run.  The 2 modules that are meant to be run are the phinms and foodnet modules.  You can run either of these on openshift with the following description provided the commands are executed from within the modules sub directory.
 It is assumed that:
 - OpenShift platform is already running, if not you can find details how to [Install OpenShift at your site](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
 - Your system is configured for Fabric8 Maven Workflow, if not you can find a [Get Started Guide](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/)
@@ -100,12 +101,15 @@ Then create the quickstart template:
 
 Now when you use "Add to Project" button in the OpenShift console, you should see a template for this quickstart.
 
+The s2i templates will build the entire project and assumes that the resulting build will place the application in a single jar file in the top level target directory of the project.  As this is not the case for this projects setup you will need to add an environment variable that will inform the s2i template where to look for the resulting jar file to run. The variable is ARTIFACT_DIRECTORY and it must be set to either phinms/target or foodNet/target depending on which route is being deployed. 
+
 
 ### Running the application locally
 
-The maven command to build the application described above produces an all-in-one jar file that can be run locally.  The jar file is created in the target directory and can be run with the following comand.
+The maven command to build the application described above produces an all-in-one jar file that can be run locally for both the foodnet and phinms sub modules.  The jar files are created in the target directory of the individual sub projects and can be run with the following commands.
 
-     java -jar target/sdp-cbr-1.0.0-SNAPSHOT.jar
+     java -jar foodNet/target/sdp-cbr-foodnet-1.1.0.jar 
+     java -jar phinms/target/sdp-cbr-phinms-1.1.0.jar 
 
 When running locally the application can be configured through extenal properties files according as provided by the spring boot framework.  Information on this external configuration can be found at the following location. https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-profile-specific-properties
 
