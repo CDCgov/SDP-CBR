@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd         
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd  
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd ">
+
+	<context:component-scan base-package="gov.cdc.sdp.cbr"/>
+	
+	
+	 <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties" location="application.properties"/>
+        <route id="aphls3_test_route">
+            <from id="from_test" uri="direct:test-target"/>
+            <to id="to_test" uri="mock:mock_endpoint"/>
+        </route>
+    </camelContext>
+</beans>
