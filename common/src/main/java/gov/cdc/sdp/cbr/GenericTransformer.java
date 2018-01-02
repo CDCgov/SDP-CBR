@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 
@@ -15,14 +16,18 @@ public class GenericTransformer implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Map myMap = exchange.getIn().getBody(Map.class);
         Gson gson = new Gson();
+        
+        Message inMsg = exchange.getIn();
 
-        String exchg_src = exchange.getFromRouteId().toUpperCase();
-        String sourceId = myMap.get("sourceId").toString();
-        String cbr_id = exchg_src + "_" + sourceId;
+        MultipartFile body = (MultipartFile) inMsg.getBody();
+        
+        String bodyString = new String(body.getBytes());
 
-        Message msg = exchange.getIn();
+        // TODO: Reconcile exchange id CBR_ID (See PhinMSTransformer) with CBR_ID from REST api.      
+        // String exchg_src = exchange.getFromRouteId().toUpperCase();
+        String sourceId = (String) inMsg.getHeader("sourceId");
+        String cbr_id = (String) inMsg.getHeader("CBR_ID");
 
         SDPMessage sdpMessage = new SDPMessage();
         sdpMessage.setBatch(false);
@@ -30,14 +35,16 @@ public class GenericTransformer implements Processor {
         sdpMessage.setBatchIndex(0);
         sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
         sdpMessage.setId(cbr_id);
-        sdpMessage.setPayload(msg.getBody().toString());
+        sdpMessage.setPayload(bodyString);
         sdpMessage.setSourceId(sourceId);
+        sdpMessage.setSourceAttributes((Map)inMsg.getHeader("METADATA"));
+        
+        inMsg.setBody(bodyString);
 
-        msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
-        msg.setHeader(CBR.CBR_ID, cbr_id);
-        msg.setHeader(CBR.ID, cbr_id);
-        msg.setHeader("sourceId", sourceId);
-
+        inMsg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
+        inMsg.setHeader(CBR.CBR_ID, cbr_id);
+        inMsg.setHeader(CBR.ID, cbr_id);
+        inMsg.setHeader("sourceId", sourceId);
     }
 
 }

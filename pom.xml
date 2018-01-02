@@ -279,6 +279,7 @@
 		<module>sdp-cbr-filter</module>
 		<module>phinms</module>
 		<module>foodNet</module>
-    <module>hl7v2filter</module>
+		<module>restapi</module>
+    	<module>hl7v2filter</module>
 	</modules>
 </project>
