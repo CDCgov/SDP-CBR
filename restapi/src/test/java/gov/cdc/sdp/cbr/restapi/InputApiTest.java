@@ -93,7 +93,7 @@ public class InputApiTest {
     
     @Test
     public void testMultipartSubmitWithCorruptMetadata() throws Exception {
-  
+        // Provides invalid JSON map structure for Metadata -- expect 422 failure.
         mockEndpoint.reset();
         MockMultipartFile file = new MockMultipartFile(
                 "file", 
@@ -107,7 +107,7 @@ public class InputApiTest {
                 .file(file)
                 .param("id", "test")
                 .param("source", "testSrc")
-                .param("metadata", "I am a chicken bakaw bakaw")) // JSON representation of a map -- will be translated  with GSON.
+                .param("metadata", "Sample corrupt metadata")) // Invalid JSON map -- will throw error  
                 .andExpect(status().is(HttpStatus.UNPROCESSABLE_ENTITY.value()));
 
         MockEndpoint.assertIsSatisfied(camelContext);
