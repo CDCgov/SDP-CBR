@@ -35,6 +35,8 @@ public class TraceService {
      * 
      * @param cbrId
      *            The CBR ID of the originating message that was sent to CBR.
+     * @param source
+     *            The source of the message that was sent to CBR.
      * @param status
      *            The severity of the trace log.
      * @param description
@@ -42,13 +44,14 @@ public class TraceService {
      * @return The created and saved log event.
      * @throws SQLException
      */
-    public TraceLog addTraceMessage(String cbrId, TraceStatus status, String description) throws SQLException {
+    public TraceLog addTraceMessage(String cbrId, String source, TraceStatus status, String description) throws SQLException {
         assert cbrId != null;
         assert status != null;
         assert description != null;
+        assert source != null;
         assert description.length()<=256;
         
-        TraceLog log = new TraceLog(cbrId, status, description, new Date());
+        TraceLog log = new TraceLog(cbrId, source, status, description, new Date());
         save(log);
         return log;
     }
@@ -134,6 +137,7 @@ public class TraceService {
                 messages.add(
                         new TraceLog(
                                 rs.getString("cbr_id"),
+                                rs.getString("source"),
                                 status,
                                 rs.getString("description"),
                                 rs.getTimestamp("created_at")
@@ -151,16 +155,17 @@ public class TraceService {
     }
 
     private boolean save(TraceLog log) throws SQLException {
-        String sql = "INSERT INTO " + tableName + " (cbr_id, status, description, created_at)" + " values (?, ?, ?, ?)";
+        String sql = "INSERT INTO " + tableName + " (cbr_id, source, status, description, created_at)" + " values (?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = traceLogDs.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, log.getCbrId());
-            ps.setInt(2, log.getStatus().getLevel());
-            ps.setString(3, log.getDescription());
-            ps.setTimestamp(4, new Timestamp(log.getCreatedAt().getTime()));
+            ps.setString(2, log.getSource());
+            ps.setInt(3, log.getStatus().getLevel());
+            ps.setString(4, log.getDescription());
+            ps.setTimestamp(5, new Timestamp(log.getCreatedAt().getTime()));
             ps.executeUpdate();
             return true;
         } finally {
@@ -178,6 +183,7 @@ public class TraceService {
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
                 + "  id           bigserial primary key,"
                 + "  cbr_id       varchar(255) NOT NULL, " 
+                + "  source       varchar(255) NOT NULL, " 
                 + "  status       int, "
                 + "  description  varchar(255) NOT NULL, " 
                 + "  created_at   timestamp NOT NULL)";
