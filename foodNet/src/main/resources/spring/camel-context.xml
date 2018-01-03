@@ -23,7 +23,6 @@
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="1"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
-     
         <route id="FoodNetRoute">
             <from id="_from3" uri="sdpqueue:{{foodNet.queue}}"/>
             <setHeader headerName="CamelAwsS3Key" id="setAwsS3Key">

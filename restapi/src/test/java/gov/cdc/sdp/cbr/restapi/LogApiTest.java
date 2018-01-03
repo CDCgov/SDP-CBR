@@ -17,6 +17,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,8 @@ import gov.cdc.sdp.cbr.trace.model.TraceStatus;
 @PropertySource("classpath:application.properties")
 public class LogApiTest {
     
+    private static DataSource ds;
+
     private MockMvc mockMvc;
     
     @Autowired
@@ -65,6 +68,9 @@ public class LogApiTest {
     @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        if (LogApiTest.ds == null) {
+            LogApiTest.ds = (DataSource) camelContext.getRegistry().lookupByName("traceLogDs");
+        }
     }
 
     @Test
@@ -82,9 +88,9 @@ public class LogApiTest {
     }
     
     @Test
-    public void testRetrieve() throws Exception {
+    public void testRetrieveSingleMsg() throws Exception {
         
-        traceService.addTraceMessage("cbrId1", TraceStatus.ERROR, "This is msg 1");
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.ERROR, "This is msg 1");
         
         mockMvc.perform(get("/cbr/log/cbrId1"))
         
@@ -100,40 +106,59 @@ public class LogApiTest {
                 
                 for (Object o : readFromJson) {
                     TraceLog logMsg = gson.fromJson((String)o, TraceLog.class);
-                    assertEquals(TraceStatus.ERROR,logMsg.getStatus());                    
+                    assertEquals(TraceStatus.ERROR,logMsg.getStatus());      
+                    assertEquals("This is msg 1",logMsg.getDescription());                         
                 }
             }});
         }
+    
+    @Test
+    public void testRetrieveMultipleMessagesAndIds() throws Exception {
+        
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.WARN, "This is msg 1-1");
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.INFO, "This is msg 1-2");
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.INFO, "This is msg 1-3");
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.INFO, "This is msg 1-4");
+        traceService.addTraceMessage("cbrId2", "src", TraceStatus.INFO, "This is msg 2-1");
+        traceService.addTraceMessage("cbrId2", "src", TraceStatus.INFO, "This is msg 2-2");
+        
+        mockMvc.perform(get("/cbr/log/cbrId1"))
+        
+        .andDo(new ResultHandler(){
+
+            @Override
+            public void handle(MvcResult result) throws Exception {
+                // TODO Auto-generated method stub
+                String jsonContent = result.getResponse().getContentAsString();
+                Gson gson = new Gson();
+                List readFromJson = gson.fromJson(jsonContent, List.class);
+                assertNotNull(readFromJson);
+                int count = 0;
+                for (Object o : readFromJson) {
+                    count++;
+                    TraceLog logMsg = gson.fromJson((String)o, TraceLog.class);
+                    assertEquals(count==1 ? TraceStatus.WARN : TraceStatus.INFO,logMsg.getStatus());      
+                    assertEquals("This is msg 1-"+count,logMsg.getDescription());
+                }
+                assertEquals(4, count); // Should be 4 messages.
+            }});
+        }
   
-//        mockEndpoint.reset();
-//        MockMultipartFile file = new MockMultipartFile(
-//                "file", 
-//                "hello.txt", 
-//                MediaType.TEXT_PLAIN_VALUE, 
-//                "Hello, World!".getBytes());  // Fake data.  Should not need valid data for this.
-//        
-//        mockEndpoint.expectedMessageCount(1);
-//        mockEndpoint.expectedHeaderReceived("CBR_ID", "CBR_testSrc_test");
-//        mockEndpoint.expectedHeaderReceived("sourceId", "test");
-//        mockEndpoint.expectedHeaderReceived("source", "testSrc");
-//        mockEndpoint.expectedHeaderReceived("METADATA", new HashMap<String,String>());
-//        mockEndpoint.expectedBodiesReceived(file);
-//
-//        mockMvc.perform(fileUpload("/cbr/input")
-//                .file(file)
-//                .param("id", "test")
-//                .param("source", "testSrc")
-//                .param("metadata", "{}")) // JSON representation of a map -- will be translated  with GSON.
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("CBR_testSrc_test")); // Returned CBR ID.
-//
-//        MockEndpoint.assertIsSatisfied(camelContext);
     
     @After
     public void tearDown() throws SQLException {
         DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("traceLogDs");
         Connection conn = ds.getConnection();
         PreparedStatement ps = conn.prepareStatement("DELETE FROM trace_log_api_test");
+        ps.execute();
+        ps.close();
+        conn.close();
+    }
+    
+    @AfterClass 
+    public static void afterClass() throws SQLException {
+        Connection conn = ds.getConnection();
+        PreparedStatement ps = conn.prepareStatement("DROP TABLE if exists trace_log_api_test");
         ps.execute();
         ps.close();
         conn.close();

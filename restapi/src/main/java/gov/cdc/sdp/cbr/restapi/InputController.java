@@ -32,20 +32,25 @@ public class InputController {
     
     @RequestMapping(value="/cbr/input", method = RequestMethod.POST)
     
-    public @ResponseBody String doSomething(
+    public @ResponseBody String processInputFile (
                 @RequestParam("id") String id,
                 @RequestParam("source") String source,
+                // TODO: Add createdAt, change createdAt in transformer to receivedAt?
                 @RequestParam("metadata") String jsonMetadata,
                 @RequestParam("file") MultipartFile file)  {
+        
         String cbrId = "CBR_" + source + "_" + id;
         
         // TODO: Log message in
+        // DO log message receipt even if it's a duplicate, but log that it is a duplicate
         
         // Send message to endpoint
         ProducerTemplate template = camelContext.createProducerTemplate();
         
         // send with a body and header 
             Gson gson = new Gson();
+            
+            @SuppressWarnings("rawtypes")
             HashMap mapMetadata = gson.fromJson(jsonMetadata, HashMap.class);
         
             Exchange ex = new ExchangeBuilder(camelContext)
@@ -58,8 +63,8 @@ public class InputController {
            
             template.send(endpoint, ex);
                 
+            // TODO: Return more data in the response.
             return cbrId;
-            
     }
     
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY,
