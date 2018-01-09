@@ -7,6 +7,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
+/*
+ * This class was initially used to transform a message for sending outside of
+ * CBR.  We do not currently have any mechanic that sends a message via HTTP.
+ * 
+ * If this functionality is re-enabled, this class should be revisited and 
+ * revised -- it is not currently integrated properly with the rest of the
+ * code base.
+ */
+@Deprecated
 public class HTTP4Transformer implements Processor {
     public void process(Exchange exchange) throws Exception {
         String[] headers = { CBR.SOURCE, CBR.SOURCE_ID, CBR.SOURCE_RECEIVED_TIME, CBR.BATCH, CBR.BATCH_INDEX,

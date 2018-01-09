@@ -16,6 +16,12 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * Loads data into the PHIN-MS tables.  Used primarily for testing purposes at 
+ * this time, but may have production applications.
+ * @author ECOLE
+ *
+ */
 public class PhinMSProducer extends DefaultProducer {
 
     private static Logger logger = LogManager.getLogger("PhinMsInsert");

@@ -11,6 +11,19 @@ import com.google.gson.Gson;
 
 import gov.cdc.sdp.cbr.model.SDPMessage;
 
+/**
+ * A transformer specifically designed to transform tuples from the PHIN-MS 
+ * database into usable messages for SDP-CBR.
+ * 
+ * Out of the database, the messages are stored in a HashMap<String, String>, 
+ * where the key is the column name and the value is the value of that field in 
+ * the record.
+ * 
+ * Converts the map into a text body containing the HL7 payload, a set of
+ * necessary headers, and an SDPMessage object for message metadata.
+ *
+ */
+// TODO: Consider moving somewhere other than common. Specific to PHIN-MS db
 public class PhinMSTransformer implements Processor {
 
     @Override

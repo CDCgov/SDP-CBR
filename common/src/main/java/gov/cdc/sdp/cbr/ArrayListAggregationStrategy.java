@@ -6,12 +6,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
+/**
+ * An aggregation strategy is a means for aggregating a set of received message.
+ * The ArrayListAggregationStrategy creates a new exchange from a collection of
+ * incoming messages.
+ * 
+ * Each incoming message can be in a success or an error state.  The 
+ * ArrayListAggregationStrategy maintains a counter of total messages and a 
+ * counter of messages in error.
+ *
+ */
 public class ArrayListAggregationStrategy implements AggregationStrategy {
 
     public ArrayListAggregationStrategy() {
         super();
     }
 
+    /**
+     * The message invoked when this class is used as the aggregation strategy
+     * for a route in camel.
+     */
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         Message newIn = newExchange.getIn();
         Object newBody = newIn.getBody();

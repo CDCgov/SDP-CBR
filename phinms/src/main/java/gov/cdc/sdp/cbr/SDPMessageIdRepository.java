@@ -12,6 +12,8 @@ import org.apache.camel.processor.idempotent.jdbc.AbstractJdbcMessageIdRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
+// TODO: Duplicate class!  See sdp-cbr-common
 public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SDPMessageIdRepository.class);

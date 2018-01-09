@@ -12,6 +12,11 @@ import com.google.gson.Gson;
 
 import gov.cdc.sdp.cbr.model.SDPMessage;
 
+/**
+ * Transformer that populates an SDPMessage object and necessary headers based
+ * on the headers and content of an incoming Exchange with a MultipartFile as
+ * a body.
+ */
 public class GenericTransformer implements Processor {
 
     @Override

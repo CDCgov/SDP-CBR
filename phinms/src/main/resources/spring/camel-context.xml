@@ -22,7 +22,6 @@
     <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
     <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
     <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
-    <bean class="gov.cdc.sdp.cbr.HTTP4Transformer" id="httpTransformer"/>
     <bean class="gov.cdc.sdp.cbr.SDPMessageIdRepository" id="foodNetIDRepo">
         <constructor-arg ref="sdpqDataSource"/>
         <constructor-arg value="foodNetIds"/>

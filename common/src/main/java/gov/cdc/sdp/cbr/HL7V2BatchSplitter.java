@@ -18,6 +18,29 @@ import com.google.gson.Gson;
 import ca.uhn.hl7v2.HL7Exception;
 import gov.cdc.sdp.cbr.model.SDPMessage;
 
+/**
+ * Given an incoming message whose body is a batch HL7v2 message, the splitter
+ * creates a series of new messages, one for each HL7 message in the batch.
+ * 
+ * The expected format of the incoming message is:
+ * 
+ * FHS|
+ *    BHS|       * 1 or more BHS element
+ *       MSH|       * containing 1 or more MSH element
+ *       MSH|
+ *       MSH|
+ *    BTS|      * BHS element close
+ * FTS|
+ * 
+ * At the end there will be a new Exchange for every MSH.  The CBR ID of each 
+ * message will be the original CBR ID with a batch index appended, so that CBR1
+ * becomes:
+ * CBR1_1
+ * CBR1_2, etc.
+ * 
+ * @author ECOLE
+ *
+ */
 public class HL7V2BatchSplitter {
     private static final Logger LOG = LoggerFactory.getLogger(HL7V2BatchSplitter.class);
 

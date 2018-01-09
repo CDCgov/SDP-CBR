@@ -12,6 +12,11 @@ import org.apache.camel.processor.idempotent.jdbc.AbstractJdbcMessageIdRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An repository for message ids to enable persistent idempotence.  Allows for 
+ * dynamic table names, enabling multiple sets of ids.  
+ *
+ */
 public class SDPMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SDPMessageIdRepository.class);

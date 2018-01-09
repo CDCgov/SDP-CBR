@@ -31,6 +31,12 @@ import com.google.gson.Gson;
 import gov.cdc.sdp.cbr.CBR;
 import gov.cdc.sdp.cbr.model.SDPMessage;
 
+/**
+ * Consumer for the database queue component.  Polls the database queue table
+ * for new records and feeds them into a camel route. The DatabaseQueueConsumer
+ * requires PostgreSQL 9.5 or above.
+ *
+ */
 public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
     private String tableName;
     private JdbcTemplate jdbcTemplate;
@@ -71,6 +77,10 @@ public class DatabaseQueueConsumer extends ScheduledBatchPollingConsumer {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.tableName = tn;
 
+        // FOR UPDATE SKIP LOCKED
+        // - locks the selected rows so that multiple instances of the consumer
+        // will not pull the same records.
+        // - requires PostgreSQL 9.5 or above.
         this.query = "with batch as (SELECT * FROM " + tableName + " WHERE status = 'queued' or (status = 'failed' AND attempts<=" + maxAttempts + ") LIMIT " + limit + " FOR UPDATE SKIP LOCKED) "
                    + "UPDATE " + tableName + " t SET status = 'sending' FROM batch WHERE t.id = batch.id RETURNING *;";
 

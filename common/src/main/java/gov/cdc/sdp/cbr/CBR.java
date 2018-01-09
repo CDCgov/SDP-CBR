@@ -1,5 +1,12 @@
 package gov.cdc.sdp.cbr;
 
+/** 
+ * Defines constants for the various headers that will be used in CBR messages.
+ *
+ * Should be used only for message header names.  Other constants should be
+ * stored in a different class.
+ *
+ */
 public interface CBR {
     /*
      * Identifies the source system from which CBR received the message. For the
