@@ -4,18 +4,19 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultMessage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,9 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,9 +35,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import gov.cdc.sdp.cbr.trace.TraceLogTest;
+import gov.cdc.sdp.cbr.HL7V2BatchSplitter;
+import gov.cdc.sdp.cbr.model.SDPMessage;
 import gov.cdc.sdp.cbr.trace.TraceService;
 import gov.cdc.sdp.cbr.trace.model.TraceLog;
 import gov.cdc.sdp.cbr.trace.model.TraceStatus;
@@ -64,6 +62,9 @@ public class LogApiTest {
     
     @Autowired
     private WebApplicationContext webApplicationContext;
+    
+	private static final String MESSAGE_ID = "Test_message";
+	private static final String VALID_BATCH_FILE_NAME = "src/test/resources/BatchTest_GenV2_2msgs.txt";
     
     @Before
     public void setUp() {
@@ -98,17 +99,17 @@ public class LogApiTest {
 
             @Override
             public void handle(MvcResult result) throws Exception {
-                // TODO Auto-generated method stub
+                
                 String jsonContent = result.getResponse().getContentAsString();
                 Gson gson = new Gson();
-                List readFromJson = gson.fromJson(jsonContent, List.class);
-                assertNotNull(readFromJson);
+                TraceLog[] logMsg = gson.fromJson(jsonContent, TraceLog[].class);
+                assertNotNull(logMsg);
                 
-                for (Object o : readFromJson) {
-                    TraceLog logMsg = gson.fromJson((String)o, TraceLog.class);
-                    assertEquals(TraceStatus.ERROR,logMsg.getStatus());      
-                    assertEquals("This is msg 1",logMsg.getDescription());                         
-                }
+                for (TraceLog traceLog : logMsg) {
+                    assertEquals(TraceStatus.ERROR, traceLog.getStatus());      
+                    assertEquals("This is msg 1", traceLog.getDescription());                         
+                	
+            	}
             }});
         }
     
@@ -131,19 +132,77 @@ public class LogApiTest {
                 // TODO Auto-generated method stub
                 String jsonContent = result.getResponse().getContentAsString();
                 Gson gson = new Gson();
-                List readFromJson = gson.fromJson(jsonContent, List.class);
+                TraceLog[] readFromJson = gson.fromJson(jsonContent, TraceLog[].class);
                 assertNotNull(readFromJson);
                 int count = 0;
-                for (Object o : readFromJson) {
+                for (TraceLog traceLog : readFromJson) {
                     count++;
-                    TraceLog logMsg = gson.fromJson((String)o, TraceLog.class);
-                    assertEquals(count==1 ? TraceStatus.WARN : TraceStatus.INFO,logMsg.getStatus());      
-                    assertEquals("This is msg 1-"+count,logMsg.getDescription());
+                    
+                    assertEquals(count==1 ? TraceStatus.WARN : TraceStatus.INFO,traceLog.getStatus());      
+                    assertEquals("This is msg 1-"+count,traceLog.getDescription());
                 }
                 assertEquals(4, count); // Should be 4 messages.
             }});
         }
-  
+    
+    @Test
+    public void testRetrieveSingleStatus() throws Exception {
+        
+        traceService.addTraceMessage("cbrId1", "src", TraceStatus.INFO, "This is msg 1");
+        
+        mockMvc.perform(get("/cbr/status/cbrId1"))
+        
+        .andDo(new ResultHandler(){
+
+            @Override
+            public void handle(MvcResult result) throws Exception {
+                // TODO Auto-generated method stub
+                String jsonContent = result.getResponse().getContentAsString();
+                Gson gson = new Gson();
+                assertNotNull(jsonContent);
+                
+                assertEquals(gson.toJson(TraceStatus.INFO), jsonContent);      
+                
+            }});
+        }
+    
+    @Test
+    public void testRetrieveBatchStatus() throws Exception {
+        
+        traceService.addTraceMessage(MESSAGE_ID + "_batch_0", "src", TraceStatus.INFO, "This is batch 0");
+        
+        mockMvc.perform(get("/cbr/batchstatus/" + MESSAGE_ID + "_batch_0"))
+        
+        .andDo(new ResultHandler(){
+
+            @Override
+            public void handle(MvcResult result) throws Exception {
+                // TODO Auto-generated method stub
+                String jsonContent = result.getResponse().getContentAsString();
+                Gson gson = new Gson();
+                HL7V2BatchSplitter splitter = new HL7V2BatchSplitter();
+                Message msg = new DefaultMessage();
+                SDPMessage sdpMsg = new SDPMessage();
+                sdpMsg.setId(MESSAGE_ID);
+
+                String expected_bh = MESSAGE_ID + "_batch_0";
+                msg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, new Gson().toJson(sdpMsg));
+                msg.setBody(readFile(VALID_BATCH_FILE_NAME));
+
+                List<Message> messages = splitter.splitMessage(msg);
+                assertEquals(3, messages.size());
+                
+                for (Message m : messages) {
+                    SDPMessage out = new Gson().fromJson((String) m.getHeader(SDPMessage.SDP_MESSAGE_HEADER), SDPMessage.class);
+                    assertEquals(expected_bh, out.getBatchId());
+                    
+                }
+               
+                assertNotNull(jsonContent);
+                assertEquals(gson.toJson(TraceStatus.INFO), jsonContent);      
+                
+            }});
+        }
     
     @After
     public void tearDown() throws SQLException {
@@ -162,5 +221,9 @@ public class LogApiTest {
         ps.execute();
         ps.close();
         conn.close();
+    }
+    
+    private String readFile(String file) throws IOException {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)));
     }
 }
