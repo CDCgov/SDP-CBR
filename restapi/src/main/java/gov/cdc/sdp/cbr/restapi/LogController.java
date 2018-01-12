@@ -1,8 +1,10 @@
 package gov.cdc.sdp.cbr.restapi;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,10 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 
 import gov.cdc.sdp.cbr.trace.TraceService;
-import gov.cdc.sdp.cbr.trace.model.TraceLog;
 
 @Controller
 public class LogController {
+	
     
     @Autowired
     private TraceService traceService;
@@ -30,7 +32,7 @@ public class LogController {
 
      // TODO: Find a way to do this with batch messages.
         // TODO: Add a version with source and source id
-      Gson gson = new Gson();
+    	Gson gson = new Gson();
         return gson.toJson(traceService.getTrace(cbrId));
     }
     
@@ -46,8 +48,17 @@ public class LogController {
         // TODO: TEST
         // TODO: Find a way to do this with batch messages.
 
-      Gson gson = new Gson();
+    	Gson gson = new Gson();
         return gson.toJson(traceService.getStatus(cbrId));
+    }
+    
+    @RequestMapping(value="/cbr/batchstatus/{batchId}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getBatchMessageStatus(
+            @PathVariable("batchId") String batchId) throws SQLException, IOException  {
+
+    	Gson gson = new Gson();
+        return gson.toJson(traceService.getStatus(batchId));
     }
     
     
@@ -59,15 +70,10 @@ public class LogController {
             @RequestParam("id") String id,
             @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
         String cbrId = "CBR_" + source + "_" + id;
-     //   return cbrId;
-        
-        // TODO: TEST
-        // TODO: Find a way to do this with batch messages.
-
-      Gson gson = new Gson();
+    
+        Gson gson = new Gson();
         return gson.toJson(traceService.getStatus(cbrId));
     }
-    
     
 
 }
