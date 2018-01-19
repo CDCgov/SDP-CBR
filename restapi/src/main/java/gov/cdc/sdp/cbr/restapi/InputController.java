@@ -20,8 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Controller
+@Api(value="input", description="Operations that allow input of messages into CBR")
+@RequestMapping(value="/cbr")     
 public class InputController {
 
     @Autowired
@@ -30,14 +35,14 @@ public class InputController {
     @Value("${input.post.endpoint}")
     public String endpoint;
     
-    @RequestMapping(value="/cbr/input", method = RequestMethod.POST)
-    
+    @RequestMapping(value="/input", method = RequestMethod.POST)   
+    @ApiOperation(value = "Add a single message to the phinms queue")
     public @ResponseBody String processInputFile (
-                @RequestParam("id") String id,
-                @RequestParam("source") String source,
+                @ApiParam(name="id", value="A unique id for the message", required=true) @RequestParam("id") String id,
+                @ApiParam(name="source", value="The source sending the message", required=true) @RequestParam("source") String source,
                 // TODO: Add createdAt, change createdAt in transformer to receivedAt?
-                @RequestParam("metadata") String jsonMetadata,
-                @RequestParam("file") MultipartFile file)  {
+                @ApiParam(name="metadata", value="A map of String key-value metadata records", required=true) @RequestParam("metadata") String jsonMetadata,
+                @ApiParam(name="file", value="The payload of the message: may be a single HL7 message or a batch message", required=true) @RequestParam("file") MultipartFile file)  {
         
         String cbrId = "CBR_" + source + "_" + id;
         

@@ -1,0 +1,7 @@
+
+
+<bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
+
+<context:annotation-config />
+ 
+<mvc:default-servlet-handler/>
