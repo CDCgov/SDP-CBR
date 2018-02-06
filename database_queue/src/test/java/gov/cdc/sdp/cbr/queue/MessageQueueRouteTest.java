@@ -35,7 +35,7 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  */
 public class MessageQueueRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String startEndpointUri = "activemq:queue:test.a";
+    protected String startEndpointUri = "activemq:queue:CBRQueue";
 
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
