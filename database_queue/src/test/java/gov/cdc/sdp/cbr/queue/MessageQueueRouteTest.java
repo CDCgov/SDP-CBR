@@ -1,52 +1,96 @@
 package gov.cdc.sdp.cbr.queue;
 
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-
-import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelTestContextBootstrapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jms.connection.JmsTransactionManager;
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.BootstrapWith;
+import org.springframework.test.context.ContextConfiguration;
 
-/**
- *
- */
+@RunWith(CamelSpringJUnit4ClassRunner.class)
+@BootstrapWith(CamelTestContextBootstrapper.class)
+@ContextConfiguration(locations = { "classpath:MessageQueueRouteTest-context.xml" })
+@PropertySource("classpath:application.properties")
+
 public class MessageQueueRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String startEndpointUri = "activemq:queue:CBRQueue";
-
+    protected String startEndpointUri = "activemq:queue:CBR";
+    
+    @EndpointInject(uri = "mock:mock_endpoint")
+    protected MockEndpoint mock_endpoint;
+    
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+    
+    @Autowired
+    protected CamelContext camelContext;
+    
+    @Test
+    public void testQueueToEndpoint() throws Exception {
+    	mock_endpoint.expectedMessageCount(1);
+    	
+    	// Post SDP message to queue
+    	Exchange exchange = new DefaultExchange(camelContext);
+        Message msg = new DefaultMessage();
+  
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testQueueProducer_rec");
+        map.put("messageId", "testQueueProducer_msg");
+        map.put("payloadName", "Name");
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testQueueProducer");
+        map.put("messageRecipient", "recipient");
+        msg.setBody(map);
+        exchange.setIn(msg);
+        template.send(exchange);
+        
+        // Deliver to endpoint, messagecount 1
+        // Out queue now has 1 message, per context route
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
+   
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
+    	mock_endpoint.expectedMessageCount(1);
         String expectedBody = "Hello there!";
 
-        resultEndpoint.expectedBodiesReceived(expectedBody);
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "testQueueProducer_rec");
+        map.put("messageId", "testQueueProducer_msg");
+        map.put("payloadName", "Name");
+        map.put("localFileName", "file??");
+        map.put("service", "service");
+        map.put("action", "action");
+        map.put("arguments", "arge");
+        map.put("fromPartyId", "testQueueProducer");
+        map.put("messageRecipient", "recipient");
+        
+        resultEndpoint.expectedBodiesReceived(map);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
-        sendExchange(expectedBody);
+        sendExchange(map);
 
-        resultEndpoint.assertIsSatisfied();
+        //resultEndpoint.assertIsSatisfied();
+        mock_endpoint.assertIsSatisfied(camelContext);
     }
 
     protected void sendExchange(final Object expectedBody) {
@@ -57,64 +101,7 @@ public class MessageQueueRouteTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:mock_endpoint");
     }
 
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
-        // END SNIPPET: example
-
-        return camelContext;
-    }
-
-    @Test
-    public void testInvalidDestinationOptionOnConsumer() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
-        try {
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("activemq:queue:foo?destination.consumer.exclusive=true&destination.consumer.unknown=foo")
-                        .to("mock:result");
-                }
-            };
-        } catch (Exception e) {
-            fail("Should not have accepted bad destination options.");
-        }
-    }
-
-    @Test
-    public void testInvalidDestinationOptionOnProducer() throws Exception {
-        try {
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("activemq:queue:foo")
-                        .to("activemq:queue:bar?destination.producer.exclusive=true");
-                }
-            };
-        } catch (Exception e) {
-            fail("Should not have accepted bad destination options.");
-        }
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(startEndpointUri).to("activemq:queue:test.b");
-                from("activemq:queue:test.b").to("mock:result");
-
-                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
-                endpoint1.getConfiguration().setTransactionManager(new JmsTransactionManager());
-                endpoint1.getConfiguration().setTransacted(true);
-                from(endpoint1).to("mock:transactedClient");
-
-                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
-                endpoint2.getConfiguration().setTransacted(false);
-                from(endpoint2).to("mock:nonTrasnactedClient");
-            }
-        };
-    }
 }
