@@ -89,7 +89,6 @@ public class MessageQueueRouteTest extends CamelTestSupport {
 
         sendExchange(map);
 
-        //resultEndpoint.assertIsSatisfied();
         mock_endpoint.assertIsSatisfied(camelContext);
     }
 
