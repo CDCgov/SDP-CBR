@@ -1,6 +1,7 @@
 package gov.cdc.sdp.cbr.restapi;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -25,6 +26,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import gov.cdc.sdp.cbr.trace.TraceService;
+import gov.cdc.sdp.cbr.trace.model.TraceStatus;
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:context.xml" })
 @WebAppConfiguration
@@ -37,6 +42,9 @@ public class InputApiTest {
     
     @Autowired
     protected CamelContext camelContext;
+    
+    @Autowired
+    protected TraceService traceService;
 
     @EndpointInject(uri = "mock:mock_endpoint")
     protected MockEndpoint mockEndpoint;
@@ -65,7 +73,9 @@ public class InputApiTest {
     
     @Test
     public void testMultipartSubmit() throws Exception {
-  
+    	// current size of test trace log messages
+    	int traceSize = traceService.getTrace("CBR_testSrc_test").size();
+    	
         mockEndpoint.reset();
         MockMultipartFile file = new MockMultipartFile(
                 "file", 
@@ -86,14 +96,18 @@ public class InputApiTest {
                 .param("source", "testSrc")
                 .param("metadata", "{}")) // JSON representation of a map -- will be translated  with GSON.
                 .andExpect(status().isOk())
-                .andExpect(content().string("CBR_testSrc_test")); // Returned CBR ID.
+                .andExpect(content().string("CBR_testSrc_test/data:{}")); // Returned CBR ID.
 
         MockEndpoint.assertIsSatisfied(camelContext);
+        // size should now be +1
+        assertEquals(traceSize + 1, traceService.getTrace("CBR_testSrc_test").size());
     }
     
     @Test
     public void testMultipartSubmitWithCorruptMetadata() throws Exception {
         // Provides invalid JSON map structure for Metadata -- expect 422 failure.
+    	int traceSize = traceService.getTrace("Error 422").size();
+    	
         mockEndpoint.reset();
         MockMultipartFile file = new MockMultipartFile(
                 "file", 
@@ -111,5 +125,6 @@ public class InputApiTest {
                 .andExpect(status().is(HttpStatus.UNPROCESSABLE_ENTITY.value()));
 
         MockEndpoint.assertIsSatisfied(camelContext);
+        assertEquals(traceSize + 1, traceService.getTrace("Error 422").size());
     }
 }

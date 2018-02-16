@@ -104,6 +104,58 @@ public class TraceService {
             }
         }
     }
+    
+    /**
+     * Finds and generates the highest severity status across all trace logs for
+     * a given CBR ID.
+     * 
+     * @param cbrId
+     *            The CBR ID of the originating message that was sent to CBR.
+     * @param source
+     *            The source of the originating message that was sent to CBR.
+     * @return The highest possible status condition for the given message.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown when the specified message has not been logged into
+     *             the system.
+     * @throws SQLException
+     *             Thrown when a database connection fails. 
+     * @throws InvalidObjectException 
+     *              Thrown when the status cannot be converted from the tuple
+     */
+    public TraceStatus getStatus(String cbrId, String source) throws IllegalArgumentException, SQLException, InvalidObjectException {
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = traceLogDs.getConnection();
+            ps = conn.prepareStatement(
+                      "SELECT max(status) from " + tableName
+                    + " WHERE CBR_ID = ? AND SOURCE = ?");
+            ps.setString(1, cbrId);
+            ps.setString(2,  source);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                throw new IllegalArgumentException("No logs found for CBR ID " + cbrId);
+            }
+            Integer statusValue = rs.getInt(1);
+            if (statusValue == 0) {
+                throw new IllegalArgumentException("No logs found for CBR ID " + cbrId);
+            }
+            TraceStatus maxStatus = TraceStatus.getStatus(statusValue);
+            if (maxStatus == null) {
+                throw new InvalidObjectException("Invalid status found for CBR ID " + cbrId);
+            }
+            return maxStatus;
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
 
     /**
      * Returns an ordered list of all log event for a given inbound message to
@@ -154,6 +206,59 @@ public class TraceService {
         }
     }
 
+    /**
+     * Returns an ordered list of all log event for a given inbound message to
+     * CBR.
+     * 
+     * @param cbrId
+     *            The CBR ID of the originating message that was sent to CBR.
+     * @param source
+     * 			  The source of the originating message that was sent to CBR.            	
+     * @return An ordered list of messages by creation date. If no messages are
+     *         found, an empty list
+     * @throws SQLException 
+     * @throws InvalidObjectException 
+     */
+    public List<TraceLog> getTrace(String cbrId, String source) throws SQLException, InvalidObjectException {
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = traceLogDs.getConnection();
+            ps = conn.prepareStatement(
+                      "SELECT * from " + tableName
+                    + " WHERE CBR_ID = ? AND SOURCE = ?");
+            ps.setString(1, cbrId);
+            ps.setString(2,  source);
+            ResultSet rs = ps.executeQuery();
+            List<TraceLog> messages = new ArrayList<TraceLog>();
+            while (rs.next()) {
+                Integer statusValue = rs.getInt("status");
+                TraceStatus status = TraceStatus.getStatus(statusValue);
+                if (status == null) {
+                    throw new InvalidObjectException("Invalid status found for CBR ID " + cbrId);
+                }
+                messages.add(
+                        new TraceLog(
+                                rs.getString("cbr_id"),
+                                rs.getString("source"),
+                                status,
+                                rs.getString("description"),
+                                rs.getTimestamp("created_at")
+                                ));
+            }
+            return messages;
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+    
+    
     private boolean save(TraceLog log) throws SQLException {
         String sql = "INSERT INTO " + tableName + " (cbr_id, source, status, description, created_at)" + " values (?, ?, ?, ?, ?)";
         Connection conn = null;

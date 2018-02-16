@@ -30,23 +30,45 @@ public class LogController {
     public String getTraceLog(
             @PathVariable("cbrId") String cbrId) throws InvalidObjectException, SQLException  {
 
-     // TODO: Find a way to do this with batch messages.
-        // TODO: Add a version with source and source id
     	Gson gson = new Gson();
         return gson.toJson(traceService.getTrace(cbrId));
     }
     
+    @RequestMapping(value="/cbr/log", method = RequestMethod.GET)
+    @ResponseBody
+    public String getTraceLogByIdAndSource(
+            @RequestParam("id") String id,
+            @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
+        
+    	//String cbrId = "CBR_" + source + "_" + id;
+    
+        Gson gson = new Gson();
+        return gson.toJson(traceService.getTrace(id, source));
+    }
+    
+    @RequestMapping(value="/cbr/batchlog/{batchId}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getBatchTraceLog(
+            @PathVariable("batchId") String batchId) throws InvalidObjectException, SQLException  {
 
-    // TODO: Finish implementing
+    	Gson gson = new Gson();
+        return gson.toJson(traceService.getTrace(batchId));
+    }
+    
+    @RequestMapping(value="/cbr/batchlog", method = RequestMethod.GET)
+    @ResponseBody
+    public String getBatchTraceLogByIdAndSource(
+            @RequestParam("batchId") String batchId,
+            @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
+
+    	Gson gson = new Gson();
+        return gson.toJson(traceService.getTrace(batchId, source));
+    }
+
     @RequestMapping(value="/cbr/status/{cbrId}", method = RequestMethod.GET)
     @ResponseBody
     public String getMessageStatus(
             @PathVariable("cbrId") String cbrId) throws InvalidObjectException, SQLException  {
-        //String cbrId = "CBR_" + source + "_" + id;
-     //   return cbrId;
-        
-        // TODO: TEST
-        // TODO: Find a way to do this with batch messages.
 
     	Gson gson = new Gson();
         return gson.toJson(traceService.getStatus(cbrId));
@@ -69,10 +91,22 @@ public class LogController {
     public String getMessageStatus(
             @RequestParam("id") String id,
             @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
-        String cbrId = "CBR_" + source + "_" + id;
+        
+    	//String cbrId = "CBR_" + source + "_" + id;
     
         Gson gson = new Gson();
-        return gson.toJson(traceService.getStatus(cbrId));
+        return gson.toJson(traceService.getStatus(id, source));
+    }
+    
+    @RequestMapping(value="/cbr/batchstatus", method = RequestMethod.GET)
+    @ResponseBody
+    public String getBatchStatus(
+            @RequestParam("id") String id,
+            @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
+        
+    
+        Gson gson = new Gson();
+        return gson.toJson(traceService.getStatus(id, source));
     }
     
 
