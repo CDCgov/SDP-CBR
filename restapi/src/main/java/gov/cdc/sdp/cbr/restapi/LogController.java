@@ -40,8 +40,6 @@ public class LogController {
             @RequestParam("id") String id,
             @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
         
-    	//String cbrId = "CBR_" + source + "_" + id;
-    
         Gson gson = new Gson();
         return gson.toJson(traceService.getTrace(id, source));
     }
@@ -83,17 +81,12 @@ public class LogController {
         return gson.toJson(traceService.getStatus(batchId));
     }
     
-    
-    // NOTE: this message uses the source and source id for the lookup, instead of the generated CBR_ID
-    // TODO: Finish implementing
     @RequestMapping(value="/cbr/status", method = RequestMethod.GET)
     @ResponseBody
     public String getMessageStatus(
             @RequestParam("id") String id,
             @RequestParam("source") String source) throws InvalidObjectException, SQLException  {
         
-    	//String cbrId = "CBR_" + source + "_" + id;
-    
         Gson gson = new Gson();
         return gson.toJson(traceService.getStatus(id, source));
     }
