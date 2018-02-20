@@ -1,7 +1,5 @@
 package gov.cdc.sdp.cbr.restapi;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.sql.SQLException;
