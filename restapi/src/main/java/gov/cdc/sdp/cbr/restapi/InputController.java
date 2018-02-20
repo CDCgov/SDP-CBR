@@ -44,14 +44,14 @@ public class InputController {
                 @RequestParam("source") String source,
                 // TODO: Add createdAt, change createdAt in transformer to receivedAt?
                 @RequestParam("metadata") String jsonMetadata,
-                @RequestParam("file") MultipartFile file)  {
+                @RequestParam("file") MultipartFile file) throws Exception  {
         
         String cbrId = "CBR_" + source + "_" + id;
         
         try {
 			traceService.addTraceMessage(cbrId, source, TraceStatus.INFO, "Message from id " + id + " received");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			traceService.addTraceMessage(cbrId, source, TraceStatus.ERROR, e.getMessage());
 		}
         
         // Send message to endpoint
@@ -79,11 +79,11 @@ public class InputController {
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY,
                     reason="Could not parse JSON")  // 422
     @ExceptionHandler(JsonSyntaxException.class)
-    public void handleException() {
+    public void handleException() throws Exception {
     	try {
 			traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, "Could not parse JSON");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, e.getMessage());
 		}
     }
     
