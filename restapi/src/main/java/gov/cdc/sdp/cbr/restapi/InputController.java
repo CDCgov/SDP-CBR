@@ -21,52 +21,60 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import gov.cdc.sdp.cbr.trace.TraceService;
+import gov.cdc.sdp.cbr.trace.model.TraceStatus;
+
 @Controller
 public class InputController {
 
     @Autowired
     protected CamelContext camelContext;
     
+    @Autowired
+    private TraceService traceService;
+    
     @Value("${input.post.endpoint}")
     public String endpoint;
     
     @RequestMapping(value="/cbr/input", method = RequestMethod.POST)
     
-    public @ResponseBody String doSomething(
+    public @ResponseBody String processInputFile (
                 @RequestParam("id") String id,
                 @RequestParam("source") String source,
+                // TODO: Add createdAt, change createdAt in transformer to receivedAt?
                 @RequestParam("metadata") String jsonMetadata,
-                @RequestParam("file") MultipartFile file)  {
+                @RequestParam("file") MultipartFile file) throws Exception  {
+        
         String cbrId = "CBR_" + source + "_" + id;
-        
-        // TODO: Log message in
-        
+        traceService.addTraceMessage(cbrId, source, TraceStatus.INFO, "Message from id " + id + " received");
+		        
         // Send message to endpoint
         ProducerTemplate template = camelContext.createProducerTemplate();
         
         // send with a body and header 
-            Gson gson = new Gson();
-            HashMap mapMetadata = gson.fromJson(jsonMetadata, HashMap.class);
+        Gson gson = new Gson();
         
-            Exchange ex = new ExchangeBuilder(camelContext)
-                    .withBody(file)
-                    .withHeader("CBR_ID", cbrId)
-                    .withHeader("ORIGINATING_CBR_ID", cbrId)
-                    .withHeader("sourceId", id)
-                    .withHeader("source", source)
-                    .withHeader("METADATA", mapMetadata).build();
-           
-            template.send(endpoint, ex);
-                
-            return cbrId;
+        @SuppressWarnings("rawtypes")
+        HashMap mapMetadata = gson.fromJson(jsonMetadata, HashMap.class);
+    
+        Exchange ex = new ExchangeBuilder(camelContext)
+                .withBody(file)
+                .withHeader("CBR_ID", cbrId)
+                .withHeader("ORIGINATING_CBR_ID", cbrId)
+                .withHeader("sourceId", id)
+                .withHeader("source", source)
+                .withHeader("METADATA", mapMetadata).build();
+       
+        template.send(endpoint, ex);
             
+        return cbrId + "/data:" + mapMetadata.toString();
     }
     
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY,
                     reason="Could not parse JSON")  // 422
     @ExceptionHandler(JsonSyntaxException.class)
-    public void handleException() {
-       // TODO: LOG SOMETHING
+    public void handleException() throws Exception {
+    	traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, "Could not parse JSON");
     }
     
 }

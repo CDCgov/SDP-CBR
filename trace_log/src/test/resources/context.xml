@@ -3,17 +3,16 @@
     xmlns:camel="http://camel.apache.org/schema/spring"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans      http://www.springframework.org/schema/beans/spring-beans.xsd              http://www.springframework.org/schema/context      http://www.springframework.org/schema/context/spring-context.xsd       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd ">
-    <context:component-scan base-package="gov.cdc.sdp.cbr.restapi"/>
-    <bean class="gov.cdc.sdp.cbr.trace.TraceService" id="bean-77f45346-c5cf-4688-aa95-a1743ab8b8d3">
-        <constructor-arg index="0" ref="traceLogDs"/>
-        <constructor-arg index="1" value="${trace.tableName}"/>
-    </bean>
     <bean class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close" id="traceLogDs">
         <property name="driverClassName" value="${trace.jdbc.driverClassName}"/>
         <property name="url" value="${trace.jdbc.url}"/>
         <property name="username" value="${trace.jdbc.username}"/>
         <property name="password" value="${trace.jdbc.password}"/>
+    </bean>
+    <bean class="gov.cdc.sdp.cbr.trace.TraceService" id="bean-a6970cd6-a33d-4d3c-a367-abeedbb751b7">
+        <constructor-arg index="0" ref="traceLogDs"/>
+        <constructor-arg index="1" value="${trace.tableName}"/>
     </bean>
     <bean
         class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
