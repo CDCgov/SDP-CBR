@@ -67,11 +67,23 @@ public class LogApiTest {
 	private static final String VALID_BATCH_FILE_NAME = "src/test/resources/BatchTest_GenV2_2msgs.txt";
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         if (LogApiTest.ds == null) {
             LogApiTest.ds = (DataSource) camelContext.getRegistry().lookupByName("traceLogDs");
         }
+        String sql = "CREATE TABLE IF NOT EXISTS trace_log_api_test ("
+                + "  id           bigserial primary key,"
+                + "  cbr_id       varchar(255) NOT NULL, " 
+                + "  source       varchar(255) NOT NULL, " 
+                + "  status       int, "
+                + "  description  varchar(255) NOT NULL, " 
+                + "  created_at   timestamp NOT NULL)";
+        Connection conn = ds.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.execute();
+        ps.close();
+        conn.close();
     }
 
     @Test
