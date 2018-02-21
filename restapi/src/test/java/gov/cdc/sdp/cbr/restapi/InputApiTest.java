@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import javax.sql.DataSource;
@@ -14,6 +15,8 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -147,5 +150,24 @@ public class InputApiTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         assertEquals(traceSize + 1, traceService.getTrace("Error 422").size());
+    }
+    
+    @After
+    public void tearDown() throws SQLException {
+        DataSource ds = (DataSource) camelContext.getRegistry().lookupByName("traceLogDs");
+        Connection conn = ds.getConnection();
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM trace_log_api_test");
+        ps.execute();
+        ps.close();
+        conn.close();
+    }
+    
+    @AfterClass 
+    public static void afterClass() throws SQLException {
+        Connection conn = ds.getConnection();
+        PreparedStatement ps = conn.prepareStatement("DROP TABLE if exists trace_log_api_test");
+        ps.execute();
+        ps.close();
+        conn.close();
     }
 }
