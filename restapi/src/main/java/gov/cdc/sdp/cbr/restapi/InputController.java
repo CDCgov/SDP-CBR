@@ -1,6 +1,5 @@
 package gov.cdc.sdp.cbr.restapi;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
@@ -47,13 +46,8 @@ public class InputController {
                 @RequestParam("file") MultipartFile file) throws Exception  {
         
         String cbrId = "CBR_" + source + "_" + id;
-        
-        try {
-			traceService.addTraceMessage(cbrId, source, TraceStatus.INFO, "Message from id " + id + " received");
-		} catch (SQLException e) {
-			traceService.addTraceMessage(cbrId, source, TraceStatus.ERROR, e.getMessage());
-		}
-        
+        traceService.addTraceMessage(cbrId, source, TraceStatus.INFO, "Message from id " + id + " received");
+		        
         // Send message to endpoint
         ProducerTemplate template = camelContext.createProducerTemplate();
         
@@ -80,11 +74,7 @@ public class InputController {
                     reason="Could not parse JSON")  // 422
     @ExceptionHandler(JsonSyntaxException.class)
     public void handleException() throws Exception {
-    	try {
-			traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, "Could not parse JSON");
-		} catch (SQLException e) {
-			traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, e.getMessage());
-		}
+    	traceService.addTraceMessage("Error 422", "", TraceStatus.ERROR, "Could not parse JSON");
     }
     
 }
