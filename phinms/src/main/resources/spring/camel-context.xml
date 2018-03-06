@@ -11,14 +11,13 @@
         <property name="username" value="${phinms.jdbc.username}"/>
         <property name="password" value="${phinms.jdbc.password}"/>
     </bean>
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="tcp://localhost:61616"/>
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq">
+        <property name="brokerURL" value="${queue.url}"/>
     </bean>
     <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
     <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
     <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
     <bean class="gov.cdc.sdp.cbr.HTTP4Transformer" id="httpTransformer"/>
-
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
             <hl7 id="unvalidatedHl7" validate="false"/>
@@ -57,15 +56,15 @@
             <setHeader headerName="HL7Filter" id="_setHeader7">
                 <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
             </setHeader>
-            <choice>
-              <when>
-                <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter"/>
-                <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
-                <to id="foodNetQueue" uri="activemq:queue:foodNet"/>
-              </when>
-              <otherwise>
-                <to id="dead" uri="activemq:queue:deadLetter"/>
-              </otherwise>
+            <choice id="_choice2">
+                <when id="_when2">
+                    <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter"/>
+                    <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
+                    <to id="foodNetQueue" uri="activemq:queue:foodNet"/>
+                </when>
+                <otherwise id="_otherwise2">
+                    <to id="dead" uri="activemq:queue:deadLetter"/>
+                </otherwise>
             </choice>
         </route>
     </camelContext>
