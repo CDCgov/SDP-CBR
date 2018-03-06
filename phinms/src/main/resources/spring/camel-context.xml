@@ -11,10 +11,14 @@
         <property name="username" value="${phinms.jdbc.username}"/>
         <property name="password" value="${phinms.jdbc.password}"/>
     </bean>
-    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq">
-        <property name="brokerURL" value="${queue.url}"/>
-        <property name="userName" value="${queue.userName}"/>
-        <property name="password" value="${queue.password}"/>
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="${queue.url}"/>
+                <property name="userName" value="${queue.userName}"/>
+                <property name="password" value="${queue.password}"/>
+            </bean>
+        </property>
     </bean>
     <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
     <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
