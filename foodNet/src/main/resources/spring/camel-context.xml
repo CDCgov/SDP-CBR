@@ -12,14 +12,9 @@
         <property name="username" value="${sdpqDataSource.jdbc.username}"/>
         <property name="password" value="${sdpqDataSource.jdbc.password}"/>
     </bean>
-    <bean
-        class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
-        <property name="location" value="classpath:application.properties"/>
-    </bean>
     <bean class="gov.cdc.sdp.cbr.aphl.AIMSHeaderProcessor" id="aimsHeaderProcessor"/>
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="application.properties"/>
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="1"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
