@@ -22,6 +22,8 @@
     <maven-build-helper-plugin.version>1.12</maven-build-helper-plugin.version>
     <jmh.version>1.13</jmh.version>
     <camel.version>2.18.1.redhat-000012</camel.version>
+    <checkstyle.config.location>configuration/checkstyle.xml</checkstyle.config.location>
+    <checkstyle.excludes>target</checkstyle.excludes>
   </properties>
     <dependencyManagement>
     <dependencies>
