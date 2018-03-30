@@ -1,50 +1,50 @@
 package gov.cdc.sdp.cbr;
 
-import java.util.Date;
-import java.util.Map;
+import com.google.gson.Gson;
+
+import gov.cdc.sdp.cbr.model.SDPMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.Gson;
-
-import gov.cdc.sdp.cbr.model.SDPMessage;
+import java.util.Date;
+import java.util.Map;
 
 public class GenericTransformer implements Processor {
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        Gson gson = new Gson();
-        
-        Message inMsg = exchange.getIn();
+  @Override
+  public void process(Exchange exchange) throws Exception {
+    Message inMsg = exchange.getIn();
 
-        MultipartFile body = (MultipartFile) inMsg.getBody();
-        
-        String bodyString = new String(body.getBytes());
+    MultipartFile body = (MultipartFile) inMsg.getBody();
 
-        // TODO: Reconcile exchange id CBR_ID (See PhinMSTransformer) with CBR_ID from REST api.      
-        // String exchg_src = exchange.getFromRouteId().toUpperCase();
-        String sourceId = (String) inMsg.getHeader("sourceId");
-        String cbr_id = (String) inMsg.getHeader("CBR_ID");
+    String bodyString = new String(body.getBytes());
 
-        SDPMessage sdpMessage = new SDPMessage();
-        sdpMessage.setBatch(false);
-        sdpMessage.setBatchId(null);
-        sdpMessage.setBatchIndex(0);
-        sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
-        sdpMessage.setId(cbr_id);
-        sdpMessage.setPayload(bodyString);
-        sdpMessage.setSourceId(sourceId);
-        sdpMessage.setSourceAttributes((Map)inMsg.getHeader("METADATA"));
-        
-        inMsg.setBody(bodyString);
+    // TODO: Reconcile exchange id CBR_ID (See PhinMSTransformer) with CBR_ID from
+    // REST api.
+    // String exchg_src = exchange.getFromRouteId().toUpperCase();
+    String sourceId = (String) inMsg.getHeader("sourceId");
+    String cbrId = (String) inMsg.getHeader("CBR_ID");
 
-        inMsg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
-        inMsg.setHeader(CBR.CBR_ID, cbr_id);
-        inMsg.setHeader(CBR.ID, cbr_id);
-        inMsg.setHeader("sourceId", sourceId);
-    }
+    SDPMessage sdpMessage = new SDPMessage();
+    sdpMessage.setBatch(false);
+    sdpMessage.setBatchId(null);
+    sdpMessage.setBatchIndex(0);
+    sdpMessage.setCbrReceivedTime(new Date(System.currentTimeMillis()).toString());
+    sdpMessage.setId(cbrId);
+    sdpMessage.setPayload(bodyString);
+    sdpMessage.setSourceId(sourceId);
+    sdpMessage.setSourceAttributes((Map) inMsg.getHeader("METADATA"));
+
+    inMsg.setBody(bodyString);
+
+    Gson gson = new Gson();
+    inMsg.setHeader(SDPMessage.SDP_MESSAGE_HEADER, gson.toJson(sdpMessage));
+    inMsg.setHeader(CBR.CBR_ID, cbrId);
+    inMsg.setHeader(CBR.ID, cbrId);
+    inMsg.setHeader("sourceId", sourceId);
+  }
 
 }

@@ -2,22 +2,22 @@ package gov.cdc.sdp.cbr.model;
 
 public class PhinMSSourceAttributes {
 
-    public final static String RECORDID = "RECORDID";
-    public final static String MESSAGEID = "MESSAGEID";
-    public final static String PAYLOADNAME = "PAYLOADNAME";
-    public final static String LOCALFILENAME = "LOCALFILENAME";
-    public final static String SERVICE = "SERVICE";
-    public final static String ACTION = "ACTION";
-    public final static String ARGUMENTS = "ARGUMENTS";
-    public final static String FROMPARTYID = "FROMPARTYID";
-    public final static String MESSAGERECIPIENT = "MESSAGERECIPIENT";
-    public final static String ERRORCODE = "ERRORCODE";
-    public final static String ERRORMESSAGE = "ERRORMESSAGE";
-    public final static String PROCESSINGSTATUS = "PROCESSINGSTATUS";
-    public final static String APPLICATIONSTATUS = "APPLICATIONSTATUS";
-    public final static String ENCRYPTION = "ENCRYPTION";
-    public final static String RECEIVEDTIME = "RECEIVEDTIME";
-    public final static String LASTUPDATETIME = "LASTUPDATETIME";
-    public final static String PROCESSID = "PROCESSID";
+  public static final String RECORDID = "RECORDID";
+  public static final String MESSAGEID = "MESSAGEID";
+  public static final String PAYLOADNAME = "PAYLOADNAME";
+  public static final String LOCALFILENAME = "LOCALFILENAME";
+  public static final String SERVICE = "SERVICE";
+  public static final String ACTION = "ACTION";
+  public static final String ARGUMENTS = "ARGUMENTS";
+  public static final String FROMPARTYID = "FROMPARTYID";
+  public static final String MESSAGERECIPIENT = "MESSAGERECIPIENT";
+  public static final String ERRORCODE = "ERRORCODE";
+  public static final String ERRORMESSAGE = "ERRORMESSAGE";
+  public static final String PROCESSINGSTATUS = "PROCESSINGSTATUS";
+  public static final String APPLICATIONSTATUS = "APPLICATIONSTATUS";
+  public static final String ENCRYPTION = "ENCRYPTION";
+  public static final String RECEIVEDTIME = "RECEIVEDTIME";
+  public static final String LASTUPDATETIME = "LASTUPDATETIME";
+  public static final String PROCESSID = "PROCESSID";
 
 }
