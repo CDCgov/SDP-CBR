@@ -11,81 +11,83 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GroupPath implements Expression{
-    String name;
-    String rep;
-    Expression constraint;
-    public GroupPath(String name, String rep, Expression constraint){
-        this.name=name;
-        this.rep=rep;
-        this.constraint = constraint;
+public class GroupPath implements Expression {
+  String name;
+  String rep;
+  Expression constraint;
+
+  public GroupPath(String name, String rep, Expression constraint) {
+    this.name = name;
+    this.rep = rep;
+    this.constraint = constraint;
+  }
+
+  public Object evaluate(Context ctx) {
+    List<Group> list = new ArrayList();
+    SegmentFinder finder = (SegmentFinder) ctx.get("FINDER");
+    if (rep == null || rep.equals("*")) {
+      int index = 0;
+      Group group = null;
+
+      while ((group = evaluateRepition(index++, finder)) != null) {
+        list.add(group);
+      }
+    } else if (rep != null) {
+      try {
+        Integer index = Integer.parseInt(rep);
+        Group group = evaluateRepition(index, finder);
+        list.add(group);
+      } catch (NumberFormatException nfe) {
+        // Exception not currently handled
+      }
+    } else {
+      Group group = evaluateRepition(0, finder);
+      list.add(group);
     }
 
-    public Object evaluate(Context ctx){
-        List<Group> list = new ArrayList();
-        SegmentFinder finder = (SegmentFinder)ctx.get("FINDER");
-        if(rep == null || rep.equals("*")){
-            int index = 0;
-            Group g = null;
+    return evaluateConstraint(list, ctx);
+  }
 
-            while(( g = evaluateRepition(index++,finder)) !=null){
-               list.add(g);
-            }
-        }else if(rep != null){
-            try{
-                Integer index = Integer.parseInt(rep);
-                Group g = evaluateRepition(index, finder);
-                list.add(g);
-            }catch(NumberFormatException e){
-
-            }
-        }else {
-            Group g = evaluateRepition(0, finder);
-            list.add(g);
+  private List evaluateConstraint(List<Group> groups, Context parent) {
+    if (constraint == null) {
+      return groups;
+    }
+    List<Group> list = new ArrayList();
+    for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
+      Group group = iter.next();
+      SegmentFinder finder = new SegmentFinder(group);
+      Context ctx = new Context(parent);
+      ctx.set("MESSAGE", group);
+      ctx.set("FINDER", finder);
+      Object object = constraint.evaluate(ctx);
+      if (object == null) {
+        continue;
+      }
+      if (object instanceof Boolean) {
+        if ((Boolean) object) {
+          list.add(group);
         }
-
-
-        return evaluateConstraint(list, ctx);
-    }
-
-    private List evaluateConstraint(List<Group> groups, Context parent){
-        if(constraint == null) return groups;
-        List<Group> list = new ArrayList();
-        for(Iterator<Group> iter = groups.iterator(); iter.hasNext();){
-            Group g = iter.next();
-            SegmentFinder f = new SegmentFinder(g);
-            Context ctx = new Context(parent);
-            ctx.set("MESSAGE", g);
-            ctx.set("FINDER", f);
-            Object o = constraint.evaluate(ctx);
-            if(o == null){
-                continue;
-            }
-            if(o instanceof Boolean){
-                if((Boolean)o){
-                    list.add(g);
-                }
-            }else if(o instanceof List){
-                if(((List)o).size() >0){
-                    list.add(g);
-                }
-            }else if(o != null){
-                list.add(g);
-            }
+      } else if (object instanceof List) {
+        if (((List) object).size() > 0) {
+          list.add(group);
         }
-        return list;
+      } else if (object != null) {
+        list.add(group);
+      }
     }
+    return list;
+  }
 
-    private Group evaluateRepition(int i, SegmentFinder finder){
-        try {
-            finder.reset();
-            Group g = finder.findGroup(name, i);
+  private Group evaluateRepition(int index, SegmentFinder finder) {
+    try {
+      finder.reset();
+      Group group = finder.findGroup(name, index);
 
-            return  g.isEmpty()? null : g;
-        }catch(HL7Exception e){
-
-        }
-        return null;
+      return group.isEmpty() ? null : group;
+    } catch (HL7Exception exception) {
+      // Exception currently not handled
     }
+    return null;
+  }
 
 }
