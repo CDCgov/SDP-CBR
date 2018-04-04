@@ -24,6 +24,8 @@
     <camel.version>2.18.1.redhat-000012</camel.version>
     <checkstyle.config.location>configuration/checkstyle.xml</checkstyle.config.location>
     <checkstyle.excludes>target</checkstyle.excludes>
+    <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
+    <checkstyle.violationSeverity>warning</checkstyle.violationSeverity>
   </properties>
   <dependencyManagement>
     <dependencies>
