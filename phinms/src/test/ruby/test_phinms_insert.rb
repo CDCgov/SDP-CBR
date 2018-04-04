@@ -18,5 +18,5 @@ lower_row['encryption'] ||= 'none'
 lower_row['localfilename'] ||= 'v2message.txt'
 lower_row['service'] ||= 'service'
 
-DB = Sequel.connect(adapter: 'postgres', host: 'localhost', database: 'sdp_db', user: 'sdp_dbq', password: 'bob')
+DB = Sequel.connect(adapter: 'postgres', host: 'localhost', database: 'cbr', user: 'cbr', password: 'cbr', port: '8888')
 DB[:message_inq].insert(lower_row)
