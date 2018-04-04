@@ -271,8 +271,8 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>hl7v2filter</module>
     <module>restapi</module>
+    <module>hl7v2filter</module>
     <module>common</module>
     <module>database_queue</module>
     <module>trace_log</module>
