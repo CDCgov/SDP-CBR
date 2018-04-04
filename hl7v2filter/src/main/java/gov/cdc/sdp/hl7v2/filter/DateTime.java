@@ -8,7 +8,7 @@ public class DateTime implements Comparable {
   int hour = -1;
   int minute = -1;
   int second = -1;
-  int millisecond = -1;
+  int millisecond = 0;
   int timezoneOffset = -1;
 
   public DateTime() {

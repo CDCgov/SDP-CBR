@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr</artifactId>
@@ -25,7 +25,7 @@
     <checkstyle.config.location>configuration/checkstyle.xml</checkstyle.config.location>
     <checkstyle.excludes>target</checkstyle.excludes>
   </properties>
-    <dependencyManagement>
+  <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.fabric8</groupId>
@@ -36,9 +36,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
-  <dependency>
+    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
@@ -213,7 +212,6 @@
       <artifactId>guava</artifactId>
       <version>22.0</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
@@ -252,37 +250,33 @@
       <artifactId>httpclient-osgi</artifactId>
       <version>4.5.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>${jmh.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>io.findify</groupId>
       <artifactId>s3mock_2.12</artifactId>
       <version>0.2.3</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>de.saly</groupId>
       <artifactId>javamail-mock2-fullmock</artifactId>
       <version>0.5-beta3</version>
     </dependency>
-
   </dependencies>
-	<modules>
+  <modules>
     <module>hl7v2filter</module>
-		<module>common</module>
-		<module>database_queue</module>
-		<module>trace_log</module>
-		<module>aphl</module>
-		<module>sdp-cbr-filter</module>
-		<module>phinms</module>
-		<module>foodNet</module>
-		<module>restapi</module>
-	</modules>
+    <module>restapi</module>
+    <module>common</module>
+    <module>database_queue</module>
+    <module>trace_log</module>
+    <module>aphl</module>
+    <module>sdp-cbr-filter</module>
+    <module>phinms</module>
+    <module>foodNet</module>
+  </modules>
 </project>
