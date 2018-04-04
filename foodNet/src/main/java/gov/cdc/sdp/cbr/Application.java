@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  *
  */
+
 package gov.cdc.sdp.cbr;
 
 import org.springframework.boot.SpringApplication;
@@ -26,11 +27,11 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource({ "classpath:spring/camel-context.xml" })
 public class Application {
 
-    /**
-     * A main method to start this application.
-     */
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+  /**
+   * A main method to start this application.
+   */
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 
 }
