@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>sdp-cbr-restapi</artifactId>
+  <name>SDP-CBR REST API</name>
+  <description>Interface for REST requests into or out of SDP-CBR</description>
+  <parent>
+    <groupId>gov.cdc.sdp</groupId>
+    <artifactId>sdp-cbr</artifactId>
+    <version>1.2.0</version>
+  </parent>
+  <dependencies>
+    <dependency>
+      <groupId>gov.cdc.sdp</groupId>
+      <artifactId>sdp-cbr-trace</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.3.0.603</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -15,8 +15,8 @@ public class SerializerTest {
 
     @Test
     public void testSerialization() {
-        String sample = "{\"batch\":true,\"batch_id\":\"batch_id_1\",\"batch_index\":12993399,\"cbr_received_time\":\"officia nulla\",\"id\":\"dolor fugiat nulla do\",\"payload\":\"in est ipsum Lorem\",\"recipient\":\"laborum nulla minim amet\",\"sender\":\"ullamco nulla\",\"source\":\"amet exercitation do esse mollit\",\"source_id\":\"cillum nisi labore officia\",\"source_received_time\":\"sit aliquip commodo\","
-                + "\"source_attributes\": {\"PAYLOADNAME\":\"TEST1\",\"ERRORCODE\":\"0\"}}";
+        String sample = "{\"batch\":true,\"batchId\":\"batch_id_1\",\"batchIndex\":12993399,\"cbrReceivedTime\":\"officia nulla\",\"id\":\"dolor fugiat nulla do\",\"payload\":\"in est ipsum Lorem\",\"recipient\":\"laborum nulla minim amet\",\"sender\":\"ullamco nulla\",\"source\":\"amet exercitation do esse mollit\",\"source_id\":\"cillum nisi labore officia\",\"source_received_time\":\"sit aliquip commodo\","
+                + "\"sourceAttributes\": {\"PAYLOADNAME\":\"TEST1\",\"ERRORCODE\":\"0\"}}";
 
         Gson gson = new Gson();
         SDPMessage msg = gson.fromJson(sample, SDPMessage.class);

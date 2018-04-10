@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tag::example[] -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="sdpqDataSource">
+        <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+        <property name="url" value="${sdpq.jdbc.url}"/>
+        <property name="username" value="${sdpq.jdbc.username}"/>
+        <property name="password" value="${sdpq.jdbc.password}"/>
+    </bean>
+    <bean
+        class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
+        <property name="location" value="classpath:application.properties"/>
+    </bean>
+    <bean class="gov.cdc.sdp.cbr.GenericTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="_route1">
+            <from id="_from1" uri="direct:start"/>
+            <process id="setHeaders" ref="myProcessor"/>
+            <camel:when id="_when1">
+                <camel:simple>body.trim().startsWith("FHS")</camel:simple>
+                <camel:split id="batchSplitter"
+                    parallelProcessing="false" strategyRef="agg">
+                    <camel:method
+                        beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+                        method="split" trim="false"/>
+                    <to id="_to1" uri="mock:mock_endpoint"/>
+                </camel:split>
+            </camel:when>
+           
+        </route>
+    </camelContext>
+</beans>
+<!-- end::example[] -->

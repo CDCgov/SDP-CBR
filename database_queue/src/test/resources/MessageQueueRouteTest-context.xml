@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tag::example[] -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="sdpqDataSource">
+        <property name="driverClassName" value="${sdpq.jdbc.driverClassName}"/>
+        <property name="url" value="${sdpq.jdbc.url}"/>
+        <property name="username" value="${sdpq.jdbc.username}"/>
+        <property name="password" value="${sdpq.jdbc.password}"/>
+    </bean>
+    <bean
+        class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer" id="bridgePropertyPlaceholder">
+        <property name="location" value="classpath:application.properties"/>
+    </bean>
+    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
+ 
+	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />		
+	</bean>
+	<!-- Pooled Connection Factory -->
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+	<!--  A maximum of 10 connections can be opened on high volume -->
+		<property name="maxConnections" value="10" />
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+	<bean id="jmsConfiguration" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="pooledConnectionFactory" />
+		<property name="transacted" value="false" />
+		<!--  It will start at 3 parallel consumers -->
+		<property name="concurrentConsumers" value="3" />
+		<!--  Once all the messages are sent or received, the client send
+		 acknowledgement to activemq -->
+		<property name="acknowledgementModeName" value="AUTO_ACKNOWLEDGE" />
+	</bean>
+	<bean id="activemqSimple" class="org.apache.activemq.camel.component.ActiveMQComponent">
+	</bean>
+	<bean id="activemqPool" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="configuration" ref="jmsConfiguration" />
+	</bean>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="_route1">
+            <from id="_from1" uri="direct:start"/>
+            <!-- to id="_to1" uri="activemqSimple:queue:CBR"/-->
+            <process id="setHeaders" ref="myProcessor"/>
+            <split id="batchSplitter" parallelProcessing="false" strategyRef="agg">
+                <method beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
+                    method="split" trim="false"/>
+                <to id="_to1" uri="activemqSimple:queue:CBR"/>
+            </split>
+        </route>
+        <route id="_route2">
+            <from id="_from2" uri="activemqSimple:queue:CBR"/>
+            <to id="producer_to" uri="activemqSimple:queue:CBRout"/>
+            <to id="producer_mock_to" uri="mock:mock_endpoint"/>
+        </route>
+       
+    </camelContext>
+</beans>
+<!-- end::example[] -->
