@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr-phinms</artifactId>
@@ -9,34 +9,32 @@
   <name>PHIN-MS camel route for Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
   <parent>
-   <groupId>gov.cdc.sdp</groupId>
-  <artifactId>sdp-cbr</artifactId>
-  <version>1.1.0</version>
+    <groupId>gov.cdc.sdp</groupId>
+    <artifactId>sdp-cbr</artifactId>
+    <version>1.2.0</version>
   </parent>
-  
   <dependencies>
-	<dependency>
+    <dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-common</artifactId>
-      <version>1.1.0</version>
-	</dependency>
-	<dependency>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-queue</artifactId>
-      <version>1.1.0</version>
-	</dependency>
-	<dependency>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-aphl</artifactId>
-      <version>1.1.0</version>
-	</dependency>
-	<dependency>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-filter</artifactId>
-      <version>1.1.0</version>
-	</dependency>
+      <version>1.2.0</version>
+    </dependency>
   </dependencies>
-
   <build>
     <defaultGoal>spring-boot:run</defaultGoal>
     <plugins>
@@ -97,7 +95,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -111,7 +108,6 @@
             <goals>
               <goal>testCompile</goal>
             </goals>
-
             <configuration>
               <annotationProcessorPaths>
                 <path>
@@ -124,7 +120,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>${maven-assembly-plugin.version}</version>

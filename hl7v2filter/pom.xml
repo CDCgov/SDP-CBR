@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>HL7V2Filter</artifactId>
-  <version>1.0</version>
-
+  <version>1.2.0</version>
   <properties>
     <hapi.version.stable>2.2</hapi.version.stable>
     <slf4j.version>1.6.2</slf4j.version>
@@ -16,7 +15,6 @@
     <checkstyle.config.location>../configuration/checkstyle.xml</checkstyle.config.location>
     <checkstyle.excludes>target</checkstyle.excludes>
   </properties>
-
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
     <dependency>
@@ -24,13 +22,11 @@
       <artifactId>antlr4-runtime</artifactId>
       <version>4.7</version>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.4</version>
     </dependency>
-
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-base</artifactId>
@@ -76,16 +72,6 @@
       <artifactId>hapi-structures-v26</artifactId>
       <version>${hapi.version.stable}</version>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>ca.uhn.hapi</groupId>-->
-      <!--<artifactId>hapi-structures-v27</artifactId>-->
-      <!--<version>${hapi.version.stable}</version>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>ca.uhn.hapi</groupId>-->
-      <!--<artifactId>hapi-structures-v28</artifactId>-->
-      <!--<version>${hapi.version.stable}</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -101,7 +87,6 @@
       <artifactId>log4j-over-slf4j</artifactId>
       <version>1.6.2</version>
     </dependency>
-
   </dependencies>
   <build>
     <plugins>
@@ -114,14 +99,13 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>4.5.3</version>
         <configuration>
           <sourceDirectory>src/grammer</sourceDirectory>
-         <outputDirectory>${project.build.directory}/generated-sources/antlr4/gov/cdc/sdp/hl7v2/filter</outputDirectory>
+          <outputDirectory>${project.build.directory}/generated-sources/antlr4/gov/cdc/sdp/hl7v2/filter</outputDirectory>
           <arguments>
             <argument>-package</argument>
             <argument>gov.cdc.sdp.hl7v2.filter</argument>
@@ -136,8 +120,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
-
 </project>
