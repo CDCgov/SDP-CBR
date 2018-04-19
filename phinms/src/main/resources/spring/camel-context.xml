@@ -117,7 +117,7 @@
                             beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                             method="split" trim="false"/>
                         <setExchangePattern id="_setExchangePattern1" pattern="InOnly"/>
-                        <to id="toMainQueue80" uri="activemq:queue:phinmsInQ"/>
+                        <to id="toMainQueue80" uri="activemq:queue:phinmsInQ2"/>
                     </camel:split>
                     <setHeader headerName="errorMsg" id="_setHeader3">
                         <simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
@@ -132,7 +132,7 @@
             </camel:choice>
         </route>
         <route id="foodNetFilter2">
-            <from id="fromInQ80" uri="activemq:queue:phinmsInQ"/>
+            <from id="fromInQ80" uri="activemq:queue:phinmsInQ2"/>
             <log id="_log4" message="FOOD NET FILTER"/>
             <setHeader headerName="HL7Filter" id="_setHeader5">
                 <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
