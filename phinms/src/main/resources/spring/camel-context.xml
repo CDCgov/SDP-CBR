@@ -11,7 +11,7 @@
         <property name="username" value="${phinms.jdbc.username}"/>
         <property name="password" value="${phinms.jdbc.password}"/>
     </bean>
-    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+    <bean class="org.apache.camel.component.jms.JmsComponent" id="activemq">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="${queue.url}"/>
@@ -21,57 +21,160 @@
         </property>
     </bean>
     <bean class="gov.cdc.sdp.cbr.PhinMSTransformer" id="myProcessor"/>
+    <bean class="gov.cdc.sdp.cbr.PhinMSTransformer2" id="myProcessor2"/>
     <bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer"/>
     <bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy" id="agg"/>
     <bean class="gov.cdc.sdp.cbr.HTTP4Transformer" id="httpTransformer"/>
-    <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" streamCache="true" trace="false" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
             <hl7 id="unvalidatedHl7" validate="false"/>
         </dataFormats>
         <!-- and the redelivery policy is a profile where we can configure it -->
         <redeliveryPolicyProfile id="myPolicy" maximumRedeliveries="1"
             redeliveryDelay="2000" retryAttemptedLogLevel="WARN"/>
-        <route id="PHINMS">
-            <from id="cbr_phinms" uri="sql:{{phinms.sql}}"/>
-            <camel:process id="setHeaders" ref="myProcessor"/>
-            <camel:choice id="_choice1">
-                <camel:when id="_when1">
+        <restConfiguration apiContextPath="api-doc" bindingMode="off"
+            component="restlet" enableCORS="true" host="0.0.0.0" port="8282">
+            <dataFormatProperty key="prettyPrint" value="true"/>
+            <!-- setup swagger api descriptions -->
+            <apiProperty key="base.path" value="cbr"/>
+            <apiProperty key="api.version" value="1.0.0"/>
+            <apiProperty key="api.title" value="CDC SDP CDR API"/>
+            <apiProperty key="api.description" value="Service that allows users to submit and query messages"/>
+            <apiProperty key="api.contact.name" value="CDC SDP CBR"/>
+        </restConfiguration>
+        <rest path="/sdp/cbr">
+            <get uri="/message">
+                <description>Service to get a message from the queue</description>
+                <responseMessage code="200" message="A message from the queue"/>
+                <to uri="direct:message-get"/>
+            </get>
+            <get uri="/message/{id}">
+                <description>Service to get details of an existing message</description>
+                <param description="The message id" name="id" type="path"/>
+                <responseMessage code="200" message="The message with the given id"/>
+                <to uri="direct:message-get"/>
+            </get>
+            <post uri="/message">
+                <description>Service to get details of an existing message</description>
+                <!-- <param name="id" type="path" description="The message id" /> -->
+                <responseMessage code="200" message="The message was received"/>
+                <to uri="direct:message-post-batch"/>
+            </post>
+        </rest>
+        <!-- <route id="PHINMS"> -->
+        <!-- <from id="cbr_phinms" uri="sql:{{phinms.sql}}"/> -->
+        <!-- <camel:process id="setHeaders" ref="myProcessor"/> -->
+        <!-- <camel:choice id="_choice1"> -->
+        <!-- <camel:when id="_when1"> -->
+        <!-- <camel:simple>body.trim().startsWith("FHS")</camel:simple> -->
+        <!-- <camel:split id="batchSplitter" -->
+        <!-- parallelProcessing="false" strategyRef="agg"> -->
+        <!-- <camel:method -->
+        <!-- beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter" -->
+        <!-- method="split" trim="false"/> -->
+        <!-- <to id="toMainQueue" uri="activemq:queue:phinmsInQ"/> -->
+        <!-- </camel:split> -->
+        <!-- <setHeader headerName="errorMsg" id="_setHeader1"> -->
+        <!-- <simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages 
+			failed.</simple> -->
+        <!-- </setHeader> -->
+        <!-- </camel:when> -->
+        <!-- <camel:otherwise id="_otherwise1"> -->
+        <!-- <to id="_to2" uri="activemq:queue:deadLetter"/> -->
+        <!-- <setHeader headerName="errorMsg" id="_setHeader2"> -->
+        <!-- <simple>An error occurred.</simple> -->
+        <!-- </setHeader> -->
+        <!-- </camel:otherwise> -->
+        <!-- </camel:choice> -->
+        <!-- </route> -->
+        <!-- <route id="foodNetFilter"> -->
+        <!-- <from id="fromInQ" uri="activemq:queue:phinmsInQ"/> -->
+        <!-- <log id="_log1" message="FOOD NET FILTER"/> -->
+        <!-- <setHeader headerName="HL7Filter" id="_setHeader7"> -->
+        <!-- <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant> -->
+        <!-- </setHeader> -->
+        <!-- <choice id="_choice2"> -->
+        <!-- <when id="_when2"> -->
+        <!-- <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter"/> -->
+        <!-- <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/> -->
+        <!-- <to id="foodNetQueue" uri="activemq:queue:foodNet"/> -->
+        <!-- </when> -->
+        <!-- <otherwise id="_otherwise2"> -->
+        <!-- <to id="dead" uri="activemq:queue:deadLetter"/> -->
+        <!-- </otherwise> -->
+        <!-- </choice> -->
+        <!-- </route> -->
+        <route id="message-post-batch-route">
+            <from id="_from3" uri="direct:message-post-batch"/>
+            <unmarshal id="_unmarshal1">
+                <csv useMaps="true"/>
+            </unmarshal>
+            <camel:split id="_split1">
+                <simple>${body}</simple>
+                <to id="_to1" uri="direct:message-post"/>
+            </camel:split>
+        </route>
+        <route id="message-get-route">
+            <from id="_from1" uri="direct:message-get"/>
+            <log id="_log2" message="test get message request received"/>
+            <pollEnrich id="_pollEnrich1" timeout="5000">
+                <constant>activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true</constant>
+            </pollEnrich>
+        </route>
+        <route id="message-post-route">
+            <from id="_from2" uri="direct:message-post"/>
+            <log id="_log3" message="test post message request received"/>
+            <camel:process id="setHeaders82" ref="myProcessor2"/>
+            <camel:choice id="_choice3">
+                <camel:when id="_when3">
                     <camel:simple>body.trim().startsWith("FHS")</camel:simple>
-                    <camel:split id="batchSplitter"
+                    <camel:split id="batchSplitter80"
                         parallelProcessing="false" strategyRef="agg">
                         <camel:method
                             beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter"
                             method="split" trim="false"/>
-                        <to id="toMainQueue" uri="activemq:queue:phinmsInQ"/>
+                        <setExchangePattern id="_setExchangePattern1" pattern="InOnly"/>
+                        <to id="toMainQueue80" uri="activemq:queue:phinmsInQ2"/>
                     </camel:split>
-                    <setHeader headerName="errorMsg" id="_setHeader1">
+                    <setHeader headerName="errorMsg" id="_setHeader3">
                         <simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
                     </setHeader>
                 </camel:when>
-                <camel:otherwise id="_otherwise1">
-                    <to id="_to2" uri="activemq:queue:deadLetter"/>
-                    <setHeader headerName="errorMsg" id="_setHeader2">
+                <camel:otherwise id="_otherwise3">
+                    <to id="_to3" uri="activemq:queue:deadLetter"/>
+                    <setHeader headerName="errorMsg" id="_setHeader4">
                         <simple>An error occurred.</simple>
                     </setHeader>
                 </camel:otherwise>
             </camel:choice>
         </route>
-        <route id="foodNetFilter">
-            <from id="fromInQ" uri="activemq:queue:phinmsInQ"/>
-            <log id="_log1" message="FOOD NET FILTER"/>
-            <setHeader headerName="HL7Filter" id="_setHeader7">
+        <route id="foodNetFilter2">
+            <from id="fromInQ80" uri="activemq:queue:phinmsInQ2"/>
+            <log id="_log4" message="FOOD NET FILTER"/>
+            <setHeader headerName="HL7Filter" id="_setHeader5">
                 <constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
             </setHeader>
-            <choice id="_choice2">
-                <when id="_when2">
+            <choice id="_choice4">
+                <when id="_when4">
                     <method beanType="gov.cdc.sdp.cbr.filter.HL7Terser" method="filter"/>
-                    <log id="fnf_passed_log" message="Exchange passed FoodNet filter"/>
-                    <to id="foodNetQueue" uri="activemq:queue:foodNet"/>
+                    <log id="fnf_passed_log_80" message="Exchange passed FoodNet filter"/>
+                    <to id="foodNetTopic" uri="activemq:topic:VirtualTopic.foodnetTopic"/>
+                    <log id="_log5" message="Message sent to foodnetTopic"/>
                 </when>
-                <otherwise id="_otherwise2">
-                    <to id="dead" uri="activemq:queue:deadLetter"/>
+                <otherwise id="_otherwise4">
+                    <to id="dead80" uri="activemq:queue:deadLetter"/>
                 </otherwise>
             </choice>
         </route>
+        <route id="consumer1-route">
+            <from id="_from4" uri="activemq:queue:Consumer.1.VirtualTopic.foodnetTopic?transacted=true"/>
+            <log id="_log6" message="Received message for consumer 1"/>
+        </route>
+        <!-- <route id="consumer2-route"> -->
+        <!-- <from id="_from5" -->
+        <!-- uri="activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true" 
+			/> -->
+        <!-- <log id="_log7" message="Received message for consumer 2" /> -->
+        <!-- </route> -->
     </camelContext>
 </beans>
