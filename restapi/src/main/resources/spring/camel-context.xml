@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	<bean class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" id="phinMsDataSource">
+		<property name="driverClassName"
+			value="${phinms.jdbc.driverClassName}" />
+		<property name="url" value="${phinms.jdbc.url}" />
+		<property name="username" value="${phinms.jdbc.username}" />
+		<property name="password" value="${phinms.jdbc.password}" />
+	</bean>
+	<bean class="org.apache.camel.component.jms.JmsComponent"
+		id="activemq">
+		<property name="connectionFactory">
+			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<property name="brokerURL" value="${queue.url}" />
+				<property name="userName" value="${queue.userName}" />
+				<property name="password" value="${queue.password}" />
+			</bean>
+		</property>
+	</bean>
+	<!-- <bean class="gov.cdc.sdp.cbr.MultipartTransformer2" id="multipartProcessor"/> -->
+	<bean class="gov.cdc.sdp.cbr.MultipartTransformer"
+		id="multipartProcessor" />
+	<bean class="gov.cdc.sdp.cbr.PhinMSTransformerCsv"
+		id="myProcessor2" />
+	<bean class="gov.cdc.sdp.cbr.PhinMSTransformerText"
+		id="myProcessor3" />
+	<bean class="gov.cdc.sdp.cbr.JSONTransformer" id="jsonTransformer" />
+	<bean class="gov.cdc.sdp.cbr.ArrayListAggregationStrategy"
+		id="agg" />
+	<bean class="gov.cdc.sdp.cbr.HTTP4Transformer"
+		id="httpTransformer" />
+	<camelContext id="camel" streamCache="false" trace="true"
+		xmlns="http://camel.apache.org/schema/spring">
+		<dataFormats>
+			<hl7 id="unvalidatedHl7" validate="false" />
+		</dataFormats>
+		<!-- and the redelivery policy is a profile where we can configure it -->
+		<redeliveryPolicyProfile id="myPolicy"
+			maximumRedeliveries="1" redeliveryDelay="2000"
+			retryAttemptedLogLevel="WARN" />
+
+		<onException>
+			<exception>java.lang.Exception</exception>
+			<handled>
+				<constant>true</constant>
+			</handled>
+			<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+				<constant>500</constant>
+			</setHeader>
+			<setBody>
+				<simple>${exception.message}\n</simple>
+			</setBody>
+		</onException>
+		<!-- component="netty4-http" -->
+		<!-- Tried processing code with Netty, but there was an error with processing 
+			one of the messages in the test HL7 file -->
+
+		<restConfiguration apiContextListing="false"
+			apiContextPath="api-doc" bindingMode="off" component="restlet"
+			contextPath="sdp/cbr/rest" enableCORS="true" host="localhost"
+			port="8282">
+			<dataFormatProperty key="prettyPrint" value="true" />
+			<!-- setup swagger api descriptions -->
+			<apiProperty key="base.path" value="rest" />
+			<apiProperty key="api.version" value="1.0.0" />
+			<apiProperty key="api.title" value="CDC SDP CbR API" />
+			<apiProperty key="api.description"
+				value="Service that allows users to submit and query messages" />
+			<apiProperty key="api.contact.name" value="CDC SDP CBR" />
+		</restConfiguration>
+		<rest path="/messages">
+			<camel:description>HL7 Messages</camel:description>
+			<get produces="text/plain" uri="/">
+				<description>Service to get a message from the queue</description>
+				<responseMessage code="200"
+					message="A message from the queue" />
+				<to uri="direct:message-get" />
+			</get>
+			<post consumes="multipart/form-data" produces="text/plain"
+				uri="/">
+				<description>Service to upload a batch of messages</description>
+				<param dataType="file" description="The hl7 text file"
+					name="csvFile" type="formData" />
+				<responseMessage code="200"
+					message="The message(s) were received" />
+				<to uri="direct:message-post-batch" />
+			</post>
+			<post consumes="multipart/form-data" produces="text/plain"
+				uri="/csv">
+				<description>Service to upload a batch of messages</description>
+				<param dataType="file" description="The hl7 CSV file"
+					name="csvFile" type="formData" />
+				<responseMessage code="200"
+					message="The message(s) were received" />
+				<to uri="direct:message-post-csv-batch" />
+			</post>
+		</rest>
+		<route id="message-get-route">
+			<from id="_from1" uri="direct:message-get" />
+			<log id="_log2" message="test get message request received" />
+			<pollEnrich id="_pollEnrich1" timeout="5000">
+				<constant>activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true</constant>
+			</pollEnrich>
+		</route>
+		<route id="message-post-batch-route">
+			<from id="_from93" uri="direct:message-post-batch" />
+			<camel:process id="_multipartProcessor93"
+				ref="multipartProcessor" />
+			<convertBodyTo id="_convertBodyTo1" type="String" />
+			<log id="_log997" message="body after string conversion: ${body}" />
+			<camel:process id="setHeaders992" ref="myProcessor3" />
+			<camel:split id="_split193">
+				<tokenize token="\r\n" trim="true" />
+				<to id="_to193" uri="direct:message-post" />
+			</camel:split>
+		</route>
+		<route id="message-post-csv-batch-route">
+			<from id="_from3" uri="direct:message-post-csv-batch" />
+			<!-- <convertBodyTo id="_convertBodyTo2" type="String"/> -->
+			<!-- <log id="_log987" message="body after string conversion: ${body}"/> -->
+			<camel:process id="_multipartProcessor"
+				ref="multipartProcessor" />
+			<unmarshal id="_unmarshal1">
+				<csv useMaps="true" />
+			</unmarshal>
+			<camel:split id="_split1">
+				<simple>${body}</simple>
+				<to id="_to1" uri="direct:message-post-csv" />
+			</camel:split>
+		</route>
+		<route id="message-post-route">
+			<from id="_from5" uri="direct:message-post" />
+			<!-- <log id="_log7" message="body before Hl7 Split: ${body}"/> -->
+			<log id="_log1" message="test post message request received" />
+			<camel:process id="setHeaders892" ref="myProcessor3" />
+			<camel:choice id="_choice2">
+				<camel:when id="_when2">
+					<camel:simple>body.trim().startsWith("FHS")</camel:simple>
+					<camel:split id="batchSplitter890"
+						parallelProcessing="false" strategyRef="agg">
+						<camel:method
+							beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter" method="split"
+							trim="false" />
+						<setExchangePattern id="_setExchangePattern2"
+							pattern="InOnly" />
+						<to id="toMainQueue890" uri="activemq:queue:phinmsInQ2" />
+					</camel:split>
+					<setHeader headerName="errorMsg" id="_setHeader3">
+						<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
+					</setHeader>
+				</camel:when>
+				<camel:otherwise id="_otherwise1">
+					<to id="_to2" uri="activemq:queue:deadLetter" />
+					<setHeader headerName="errorMsg" id="_setHeader2">
+						<simple>An error occurred.</simple>
+					</setHeader>
+				</camel:otherwise>
+			</camel:choice>
+		</route>
+		<route id="message-post-csv-route">
+			<from id="_from2" uri="direct:message-post-csv" />
+			<!-- <log id="_log957" message="body before Hl7 Split: ${body}"/> -->
+			<log id="_log3" message="test post csv message request received" />
+			<camel:process id="setHeaders82" ref="myProcessor2" />
+			<camel:choice id="_choice3">
+				<camel:when id="_when3">
+					<camel:simple>body.trim().startsWith("FHS")</camel:simple>
+					<camel:split id="batchSplitter80"
+						parallelProcessing="false" strategyRef="agg">
+						<camel:method
+							beanType="gov.cdc.sdp.cbr.HL7V2BatchSplitter" method="split"
+							trim="false" />
+						<setExchangePattern id="_setExchangePattern1"
+							pattern="InOnly" />
+						<to id="toMainQueue80" uri="activemq:queue:phinmsInQ2" />
+					</camel:split>
+					<setHeader headerName="errorMsg" id="_setHeader36">
+						<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
+					</setHeader>
+				</camel:when>
+				<camel:otherwise id="_otherwise3">
+					<to id="_to3" uri="activemq:queue:deadLetter" />
+					<setHeader headerName="errorMsg" id="_setHeader4">
+						<simple>An error occurred.</simple>
+					</setHeader>
+				</camel:otherwise>
+			</camel:choice>
+		</route>
+		<route id="foodNetFilter2">
+			<from id="fromInQ80" uri="activemq:queue:phinmsInQ2" />
+			<log id="_log4" message="FOOD NET FILTER" />
+			<setHeader headerName="HL7Filter" id="_setHeader5">
+				<constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
+			</setHeader>
+			<choice id="_choice4">
+				<when id="_when4">
+					<method beanType="gov.cdc.sdp.cbr.filter.HL7Terser"
+						method="filter" />
+					<log id="fnf_passed_log_80"
+						message="Exchange passed FoodNet filter" />
+<!-- 					<setOutHeader headerName="Content-Type"> -->
+<!-- 						<constant>text/plain</constant> -->
+<!-- 					</setOutHeader> -->
+					<to id="foodNetTopic"
+						uri="activemq:topic:VirtualTopic.foodnetTopic" />
+					<log id="_log5" message="Message sent to foodnetTopic" />
+				</when>
+				<otherwise id="_otherwise4">
+					<to id="dead80" uri="activemq:queue:deadLetter" />
+				</otherwise>
+			</choice>
+		</route>
+		<!-- The following is just an example of a route which reads a message 
+			from the virtual topic when one becomes available -->
+		<route id="consumer1-route">
+			<from id="_from4"
+				uri="activemq:queue:Consumer.1.VirtualTopic.foodnetTopic?transacted=true" />
+			<log id="_log6" message="Received message for consumer 1" />
+		</route>
+		<!-- <route id="consumer2-route"> -->
+		<!-- <from id="_from5" -->
+		<!-- uri="activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true" 
+			/> -->
+		<!-- <log id="_log7" message="Received message for consumer 2" /> -->
+		<!-- </route> -->
+	</camelContext>
+</beans>
