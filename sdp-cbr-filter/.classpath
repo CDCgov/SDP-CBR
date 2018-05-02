@@ -30,6 +30,5 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/sdp-cbr"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sdp-cbr-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/sdp-cbr-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
