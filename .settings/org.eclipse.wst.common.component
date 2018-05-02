@@ -3,10 +3,15 @@
         <wb-resource deploy-path="/" source-path="/src/main/java"/>
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/src/test/perf"/>
-        <wb-resource deploy-path="/" source-path="/common/src/main"/>
-        <wb-resource deploy-path="/" source-path="/aphl/src"/>
-        <wb-resource deploy-path="/" source-path="/database_queue/src"/>
-        <wb-resource deploy-path="/" source-path="/foodNet/src"/>
         <wb-resource deploy-path="/" source-path="/core/src"/>
+        <wb-resource deploy-path="/" source-path="/common/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/database_queue/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/database_queue/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/foodNet/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/foodNet/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/aphl/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/aphl/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/trace_log/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/trace_log/src/main/resources"/>
     </wb-module>
 </project-modules>
