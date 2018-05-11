@@ -5,25 +5,35 @@
 	xmlns:jee="http://www.springframework.org/schema/jee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-	<bean class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" id="phinMsDataSource">
-		<property name="driverClassName"
-			value="${phinms.jdbc.driverClassName}" />
-		<property name="url" value="${phinms.jdbc.url}" />
-		<property name="username" value="${phinms.jdbc.username}" />
-		<property name="password" value="${phinms.jdbc.password}" />
-	</bean>
-	<bean class="org.apache.camel.component.jms.JmsComponent"
-		id="activemq">
-		<property name="connectionFactory">
-			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="${queue.url}" />
-				<property name="userName" value="${queue.userName}" />
-				<property name="password" value="${queue.password}" />
-			</bean>
-		</property>
-	</bean>
-	<!-- <bean class="gov.cdc.sdp.cbr.MultipartTransformer2" id="multipartProcessor"/> -->
+
+    <!-- Discovers the ActiveMQ service dynamically -->
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+
+        <!--
+            The following properties can be customized in the application.properties file or the deployment.yml file (?).
+            Values can be changed using external environment variables (see application.properties for details).
+        -->
+
+        <property name="brokerURL" value="${activemq.broker.url}"/>
+        <property name="userName" value="${activemq.broker.username:#null}"/>
+        <property name="password" value="${activemq.broker.password:#null}"/>
+    </bean>
+
+    <bean primary="true" id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+        <property name="maxConnections" value="${activemq.pool.max.connections}"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <bean id="jmsConfig" class="org.apache.activemq.camel.component.ActiveMQConfiguration">
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="concurrentConsumers" value="${activemq.concurrent.consumers}"/>
+    </bean>
+
+    <bean id="amq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="configuration" ref="jmsConfig"/>
+    </bean>
+
+
 	<bean class="gov.cdc.sdp.cbr.MultipartTransformer"
 		id="multipartProcessor" />
 	<bean class="gov.cdc.sdp.cbr.PhinMSTransformerCsv"
@@ -103,10 +113,13 @@
 		</rest>
 		<route id="message-get-route">
 			<from id="_from1" uri="direct:message-get" />
-			<log id="_log2" message="test get message request received" />
+			<log id="_log2" message="get request received" />
 			<pollEnrich id="_pollEnrich1" timeout="5000">
-				<constant>activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true</constant>
+				<constant>amq:Consumer.2.VirtualTopic.foodnetTopic?transacted=true</constant>
 			</pollEnrich>
+			<removeHeaders pattern="*" />
+<!-- 			<convertBodyTo id="_convertBodyTo9911" type="String" /> -->
+<!-- 			<log id="_log9897" message="body after get from topic: ${body}" /> -->
 		</route>
 		<route id="message-post-batch-route">
 			<from id="_from93" uri="direct:message-post-batch" />
@@ -158,14 +171,14 @@
 							trim="false" />
 						<!-- This only seemed to work by setting this exchange pattern.  Maybe it should be in and out? -->
 						<setExchangePattern id="_setExchangePattern2" pattern="InOnly" />
-						<to id="toMainQueue890" uri="activemq:queue:phinmsInQ2" />
+						<to id="toMainQueue890" uri="amq:phinmsInQ2" />
 					</camel:split>
 					<setHeader headerName="errorMsg" id="_setHeader3">
 						<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
 					</setHeader>
 				</camel:when>
 				<camel:otherwise id="_otherwise1">
-					<to id="_to2" uri="activemq:queue:deadLetter" />
+					<to id="_to2" uri="amq:deadLetter" />
 					<setHeader headerName="errorMsg" id="_setHeader2">
 						<simple>An error occurred.</simple>
 					</setHeader>
@@ -188,14 +201,14 @@
 							trim="false" />
 						<setExchangePattern id="_setExchangePattern1"
 							pattern="InOnly" />
-						<to id="toMainQueue80" uri="activemq:queue:phinmsInQ2" />
+						<to id="toMainQueue80" uri="amq:phinmsInQ2" />
 					</camel:split>
 					<setHeader headerName="errorMsg" id="_setHeader36">
 						<simple>${in.header.ERROR_COUNT} of ${in.header.MSG_COUNT} messages failed.</simple>
 					</setHeader>
 				</camel:when>
 				<camel:otherwise id="_otherwise3">
-					<to id="_to3" uri="activemq:queue:deadLetter" />
+					<to id="_to3" uri="amq:deadLetter" />
 					<setHeader headerName="errorMsg" id="_setHeader4">
 						<simple>An error occurred.</simple>
 					</setHeader>
@@ -203,7 +216,7 @@
 			</camel:choice>
 		</route>
 		<route id="foodNetFilter2">
-			<from id="fromInQ80" uri="activemq:queue:phinmsInQ2" />
+			<from id="fromInQ80" uri="amq:phinmsInQ2" />
 			<log id="_log4" message="FOOD NET FILTER" />
 			<setHeader headerName="HL7Filter" id="_setHeader5">
 				<constant>*(/.MSH-21(*)-1 EQUALS FDD_MMG_V1.0)</constant>
@@ -218,11 +231,11 @@
 <!-- 						<constant>text/plain</constant> -->
 <!-- 					</setOutHeader> -->
 					<to id="foodNetTopic"
-						uri="activemq:topic:VirtualTopic.foodnetTopic" />
+						uri="amq:topic:VirtualTopic.foodnetTopic" />
 					<log id="_log5" message="Message sent to foodnetTopic" />
 				</when>
 				<otherwise id="_otherwise4">
-					<to id="dead80" uri="activemq:queue:deadLetter" />
+					<to id="dead80" uri="amq:deadLetter" />
 				</otherwise>
 			</choice>
 			<log id="_log557" message="body end foodnet filter: ${body}" />
@@ -231,13 +244,13 @@
 			from the virtual topic when one becomes available -->
 		<route id="consumer1-route">
 			<from id="_from4"
-				uri="activemq:queue:Consumer.1.VirtualTopic.foodnetTopic?transacted=true" />
+				uri="amq:Consumer.1.VirtualTopic.foodnetTopic?transacted=true" />
 			<log id="_log6" message="Received message for consumer 1" />
 		</route>
 		
 		<!-- <route id="consumer2-route"> -->
 		<!-- <from id="_from5" -->
-		<!-- uri="activemq:queue:Consumer.2.VirtualTopic.foodnetTopic?transacted=true" /> -->
+		<!-- uri="amq:Consumer.2.VirtualTopic.foodnetTopic?transacted=true" /> -->
 		<!-- <log id="_log7" message="Received message for consumer 2" /> -->
 		<!-- </route> -->
 	</camelContext>
