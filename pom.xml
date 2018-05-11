@@ -11,7 +11,7 @@
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
   <properties>
     <hapi.version.stable>2.2</hapi.version.stable>
-    <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
+    <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
     <fabric8.version>2.2.170.redhat-000010</fabric8.version>
     <fabric8.maven.plugin.version>3.1.80.redhat-000010</fabric8.maven.plugin.version>
     <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
@@ -21,7 +21,7 @@
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
     <maven-build-helper-plugin.version>1.12</maven-build-helper-plugin.version>
     <jmh.version>1.13</jmh.version>
-    <camel.version>2.18.1.redhat-000012</camel.version>
+    <camel.version>2.18.1.redhat-000025</camel.version>
     <checkstyle.config.location>configuration/checkstyle.xml</checkstyle.config.location>
     <checkstyle.excludes>target</checkstyle.excludes>
     <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
@@ -51,38 +51,38 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-hl7</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-sql</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mail</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -171,12 +171,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-script-starter</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-sql-starter</artifactId>
-      <version>2.18.1.redhat-000012</version>
+      <version>2.18.1.redhat-000025</version>
     </dependency>
     <!-- jdbc -->
     <dependency>
@@ -271,7 +271,7 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>restapi</module>
+    <module>restapi2</module>
     <module>hl7v2filter</module>
     <module>common</module>
     <module>database_queue</module>

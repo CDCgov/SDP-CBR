@@ -18,6 +18,7 @@
 package gov.cdc.sdp.cbr;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -42,6 +43,7 @@ public class Application {
       ServletRegistrationBean servlet = new ServletRegistrationBean(
           new CamelHttpTransportServlet(), "/sdp/cbr/*");
       servlet.setName("CamelServlet");
+      servlet.setLoadOnStartup(1);
       return servlet;
   }
   

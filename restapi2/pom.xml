@@ -3,7 +3,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>sdp-cbr-restapi</artifactId>
+  <artifactId>sdp-cbr-restapi2</artifactId>
   <name>SDP-CBR REST API</name>
   <description>Interface for REST requests into or out of SDP-CBR</description>
   <parent>
@@ -12,26 +12,26 @@
     <version>1.2.0</version>
   </parent>
   <dependencies>
-    <dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-common</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-queue</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-aphl</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.cdc.sdp</groupId>
-      <artifactId>sdp-cbr-filter</artifactId>
-      <version>1.2.0</version>
-    </dependency>
+     <dependency> 
+       <groupId>gov.cdc.sdp</groupId> 
+       <artifactId>sdp-cbr-common</artifactId> 
+       <version>1.2.0</version> 
+     </dependency> 
+     <dependency> 
+       <groupId>gov.cdc.sdp</groupId> 
+       <artifactId>sdp-cbr-queue</artifactId> 
+       <version>1.2.0</version> 
+     </dependency> 
+     <dependency> 
+       <groupId>gov.cdc.sdp</groupId> 
+       <artifactId>sdp-cbr-aphl</artifactId> 
+       <version>1.2.0</version> 
+     </dependency> 
+     <dependency> 
+       <groupId>gov.cdc.sdp</groupId> 
+       <artifactId>sdp-cbr-filter</artifactId> 
+       <version>1.2.0</version> 
+     </dependency> 
     
     <!-- spring-boot -->
     <dependency>
@@ -41,6 +41,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <!-- Enabling health checks -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
     <!-- Camel -->
@@ -88,16 +93,14 @@
 	  <artifactId>webjars-locator</artifactId>
 	</dependency>
 	
-    <!-- activemq -->
+    <!-- ActiveMQ -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-activemq</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-broker</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
     </dependency>
     
     <!-- test -->
