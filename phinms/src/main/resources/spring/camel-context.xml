@@ -15,8 +15,6 @@
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="${queue.url}"/>
-                <property name="userName" value="${queue.userName}"/>
-                <property name="password" value="${queue.password}"/>
             </bean>
         </property>
     </bean>
