@@ -1,0 +1,20 @@
+#!/bin/sh
+#Global S2I variable setup
+source /usr/local/s2i/s2i-setup
+
+# Copy our custom maven setting to the home dir
+if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
+  # This is a really complicated way to replace the contents of one file with another, but it works :)
+  # It's necessary because the permissions in the builder image don't allow the file to be replaced,
+  # so methods like:
+  #    cp new_file old_file
+  # or:
+  # cat new_file > old_file
+  # won't work.
+  sed -i "1 {r ${S2I_SOURCE_DIR}/configuration/settings.xml
+      d}; 2,\$ d" "${HOME}/.m2/settings.xml"
+  rm "${S2I_SOURCE_DIR}/configuration/settings.xml"
+fi
+
+# Now launch original assemble script
+exec /usr/local/s2i/assemble

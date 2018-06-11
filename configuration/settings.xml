@@ -121,6 +121,14 @@
       </pluginRepositories>
     </profile>
   </profiles>
+  
+  <proxies>
+    <!-- ### configured http proxy ### -->
+  </proxies>
+
+  <mirrors>
+    <!-- ### configured mirrors ### -->
+  </mirrors>
 
   <activeProfiles>
     <activeProfile>fuse.repos</activeProfile>
