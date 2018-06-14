@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr-phinms</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <name>PHIN-MS camel route for Surveillance Data Platform Content Based Routing SDP-CBR</name>
   <description>SDP-CBR Spring Boot Camel route defined in XML</description>
   <parent>
