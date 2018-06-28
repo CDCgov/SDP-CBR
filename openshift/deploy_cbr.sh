@@ -2,10 +2,14 @@
 #title		: deploy_cbr.sh
 #description	: Deploys a new CBR OpenShift project
 #author		: Matt Bajzek (mkbajzek)
-#date		: 20180615
+#date		: 20180628
 #usage		: bash deploy_cbr.sh
 #
 # Deploy a new OpenShift project for SDP Content Based Routing (based on user input)
+#
+# Note: this version of this script is essentially a placeholder. A more complete
+#       version (which will use the OpenShift CLI commands to sign new certificates
+#       with the server's certificate) is currently being tested.
 #====================================================================================
 
 SERVICE_ACCOUNT_NAME="amq-service-account"

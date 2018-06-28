@@ -5,12 +5,12 @@ metadata:
 spec:
   hard:
     configmaps: "10"
-    cpu: 1500m
-    memory: 5Gi
+    cpu: 3000m
+    memory: 10Gi
     persistentvolumeclaims: "4"
     pods: "10"
     replicationcontrollers: "20"
     requests.storage: 100Gi
     resourcequotas: "1"
-    secrets: "20"
-    services: "10"
+    secrets: "30"
+    services: "20"
