@@ -45,6 +45,280 @@ objects:
     creationTimestamp: null
     generation: 1
     labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: broker-amq
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: broker
+          deploymentconfig: broker-amq
+      spec:
+        containers:
+        - env:
+          - name: AMQ_USER
+            valueFrom:
+              secretKeyRef:
+                key: amq-user
+                name: amq-broker-credentials
+          - name: AMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-password
+                name: amq-broker-credentials
+          - name: AMQ_TRANSPORTS
+            value: openwire
+          - name: AMQ_QUEUES
+            value: ${AMQ_QUEUES_LIST}
+          - name: AMQ_TOPICS
+            value: ${AMQ_TOPICS_LIST}
+          - name: MQ_SERIALIZABLE_PACKAGES
+          - name: AMQ_SPLIT
+            value: "true"
+          - name: AMQ_MESH_DISCOVERY_TYPE
+            value: kube
+          - name: AMQ_MESH_SERVICE_NAME
+            value: broker-amq-tcp-ssl
+          - name: AMQ_MESH_SERVICE_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: AMQ_KEYSTORE_TRUSTSTORE_DIR
+            value: /etc/amq-secret-volume
+          - name: AMQ_TRUSTSTORE
+            value: broker.ts
+          - name: AMQ_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-truststore-password
+                name: amq-broker-credentials
+          - name: AMQ_KEYSTORE
+            value: broker.ks
+          - name: AMQ_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-keystore-password
+                name: amq-broker-credentials
+          - name: AMQ_STORAGE_USAGE_LIMIT
+            value: ${AMQ_STORAGE_LIMIT}
+          image: registry.access.redhat.com/jboss-amq-6/amq63-openshift
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            tcpSocket:
+              port: 5672
+            timeoutSeconds: 1
+          name: broker-amq
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 5672
+            name: amqp
+            protocol: TCP
+          - containerPort: 5671
+            name: amqp-ssl
+            protocol: TCP
+          - containerPort: 1883
+            name: mqtt
+            protocol: TCP
+          - containerPort: 8883
+            name: mqtt-ssl
+            protocol: TCP
+          - containerPort: 61613
+            name: stomp
+            protocol: TCP
+          - containerPort: 61612
+            name: stomp-ssl
+            protocol: TCP
+          - containerPort: 61616
+            name: tcp
+            protocol: TCP
+          - containerPort: 61617
+            name: tcp-ssl
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/amq/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/amq-secret-volume
+            name: broker-secret-volume
+            readOnly: true
+          - mountPath: /opt/amq/data
+            name: broker-amq-pvol
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: amq-service-account
+        serviceAccountName: amq-service-account
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: broker-secret-volume
+          secret:
+            defaultMode: 420
+            secretName: amq-secret-broker
+        - name: broker-amq-pvol
+          persistentVolumeClaim:
+            claimName: broker-amq-claim
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - broker-amq
+        from:
+          kind: ImageStreamTag
+          name: jboss-amq-63:1.1
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-drainer
+  spec:
+    replicas: 0
+    selector:
+      deploymentconfig: broker-drainer
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          application: broker
+          deploymentconfig: broker-drainer
+        name: broker-drainer
+      spec:
+        containers:
+        - command:
+          - /opt/amq/bin/drain.sh
+          env:
+          - name: AMQ_USER
+            valueFrom:
+              secretKeyRef:
+                key: amq-user
+                name: amq-broker-credentials
+          - name: AMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-password
+                name: amq-broker-credentials
+          - name: AMQ_MESH_SERVICE_NAME
+            value: broker-amq-tcp-ssl
+          - name: AMQ_MESH_SERVICE_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: registry.access.redhat.com/jboss-amq-6/amq63-openshift
+          imagePullPolicy: Always
+          name: broker-drainer
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 61617
+            name: tcp-ssl
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/amq/data
+            name: broker-amq-pvol
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: broker-amq-pvol
+          persistentVolumeClaim:
+            claimName: broker-amq-claim
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - broker-drainer
+        from:
+          kind: ImageStreamTag
+          name: jboss-amq-63:1.1
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
       app: foodnet
       promotion-group: cbr
     name: foodnet
@@ -71,18 +345,6 @@ objects:
       spec:
         containers:
         - env:
-          - name: PGQUEUE_USER
-            valueFrom:
-              secretKeyRef:
-                key: database-user
-                name: pgqueue
-          - name: PGQUEUE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: database-password
-                name: pgqueue
-          - name: PGQUEUE_DATABASE
-            value: ${PGQUEUE_DATABASE_NAME}
           - name: AIMS_BUCKET
             value: ${AIMS_BUCKET_NAME}
           - name: AIMS_ACCESS_KEY
@@ -95,8 +357,34 @@ objects:
               secretKeyRef:
                 key: secret-access-key
                 name: aims
+          - name: AMQ_USER
+            valueFrom:
+              secretKeyRef:
+                key: amq-user
+                name: amq-broker-credentials
+          - name: AMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-password
+                name: amq-broker-credentials
+          - name: AMQ_KEYSTORE_TRUSTSTORE_DIR
+            value: /etc/amq-secret-volume
+          - name: AMQ_KEYSTORE
+            value: foodnet_client.ks
+          - name: AMQ_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-keystore-password
+                name: amq-foodnet-client-credentials
+          - name: AMQ_TRUSTSTORE
+            value: client.ts
+          - name: AMQ_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-truststore-password
+                name: amq-foodnet-client-credentials
           - name: JAVA_APP_JAR
-            value: sdp-cbr-foodnet-${CBR_RELEASE}.jar
+            value: sdp-cbr-foodnet-1.2.0.jar
           - name: HTTP_PROXY
           - name: HTTPS_PROXY
           - name: NO_PROXY
@@ -141,6 +429,9 @@ objects:
           volumeMounts:
           - mountPath: /deployments/config/
             name: foodnet-config-data
+          - mountPath: /etc/amq-secret-volume
+            name: amq-foodnet-client-secret-volume
+            readOnly: true
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -151,6 +442,10 @@ objects:
             defaultMode: 420
             name: foodnet-config
           name: foodnet-config-data
+        - name: amq-foodnet-client-secret-volume
+          secret:
+            defaultMode: 420
+            secretName: amq-secret-foodnet-client
     test: false
     triggers:
     - imageChangeParams:
@@ -161,113 +456,6 @@ objects:
           kind: ImageStreamTag
           name: foodnet:latest
           namespace: ${NAMESPACE}
-      type: ImageChange
-    - type: ConfigChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
-- apiVersion: v1
-  kind: DeploymentConfig
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: pgqueue
-      promotion-group: cbr
-      template: postgresql-persistent-template
-    name: pgqueue
-  spec:
-    replicas: 1
-    selector:
-      name: pgqueue
-    strategy:
-      activeDeadlineSeconds: 21600
-      recreateParams:
-        timeoutSeconds: 600
-      resources: {}
-      type: Recreate
-    template:
-      metadata:
-        creationTimestamp: null
-        labels:
-          app: pgqueue
-          name: pgqueue
-      spec:
-        containers:
-        - env:
-          - name: POSTGRESQL_USER
-            valueFrom:
-              secretKeyRef:
-                key: database-user
-                name: pgqueue
-          - name: POSTGRESQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: database-password
-                name: pgqueue
-          - name: POSTGRESQL_DATABASE
-            value: ${PGQUEUE_DATABASE_NAME}
-          image: registry.access.redhat.com/rhscl/postgresql-95-rhel7
-          imagePullPolicy: IfNotPresent
-          livenessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            tcpSocket:
-              port: 5432
-            timeoutSeconds: 1
-          name: postgresql
-          ports:
-          - containerPort: 5432
-            protocol: TCP
-          readinessProbe:
-            exec:
-              command:
-              - /bin/sh
-              - -i
-              - -c
-              - psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c
-                'SELECT 1'
-            failureThreshold: 3
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-          resources:
-            limits:
-              memory: ${PGQUEUE_MEMORY_LIMIT}
-          securityContext:
-            capabilities: {}
-            privileged: false
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          volumeMounts:
-          - mountPath: /var/lib/pgsql/data
-            name: pgqueue-data
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-        volumes:
-        - name: pgqueue-data
-          persistentVolumeClaim:
-            claimName: pgqueue
-    test: false
-    triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - postgresql
-        from:
-          kind: ImageStreamTag
-          name: postgresql:9.5
-          namespace: openshift
       type: ImageChange
     - type: ConfigChange
   status:
@@ -311,18 +499,32 @@ objects:
       spec:
         containers:
         - env:
-          - name: PGQUEUE_USER
+          - name: AMQ_USER
             valueFrom:
               secretKeyRef:
-                key: database-user
-                name: pgqueue
-          - name: PGQUEUE_PASSWORD
+                key: amq-user
+                name: amq-broker-credentials
+          - name: AMQ_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: database-password
-                name: pgqueue
-          - name: PGQUEUE_DATABASE
-            value: ${PGQUEUE_DATABASE_NAME}
+                key: amq-password
+                name: amq-broker-credentials
+          - name: AMQ_KEYSTORE_TRUSTSTORE_DIR
+            value: /etc/amq-secret-volume
+          - name: AMQ_KEYSTORE
+            value: phinms_client.ks
+          - name: AMQ_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-keystore-password
+                name: amq-phinms-client-credentials
+          - name: AMQ_TRUSTSTORE
+            value: client.ts
+          - name: AMQ_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-truststore-password
+                name: amq-phinms-client-credentials
           - name: POSTGRESQL_USER
             valueFrom:
               secretKeyRef:
@@ -344,7 +546,7 @@ objects:
           - name: POSTGRESQL_DATABASE
             value: ${POSTGRESQL_DATABASE_NAME}
           - name: JAVA_APP_JAR
-            value: sdp-cbr-phinms-${CBR_RELEASE}.jar
+            value: sdp-cbr-phinms-1.2.0.jar
           - name: HTTP_PROXY
           - name: HTTPS_PROXY
           - name: NO_PROXY
@@ -389,6 +591,9 @@ objects:
           volumeMounts:
           - mountPath: /deployments/config/
             name: phinms-config-data
+          - mountPath: /etc/amq-secret-volume
+            name: amq-phinms-client-secret-volume
+            readOnly: true
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -399,6 +604,10 @@ objects:
             defaultMode: 420
             name: phinms-config
           name: phinms-config-data
+        - name: amq-phinms-client-secret-volume
+          secret:
+            defaultMode: 420
+            secretName: amq-secret-phinms-client
     test: false
     triggers:
     - imageChangeParams:
@@ -418,6 +627,105 @@ objects:
     replicas: 0
     unavailableReplicas: 0
     updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's AMQP (SSL) port
+    creationTimestamp: null
+    labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq-amqp-ssl
+  spec:
+    ports:
+    - port: 5671
+      protocol: TCP
+      targetPort: 5671
+    selector:
+      deploymentconfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's MQTT (SSL) port
+    creationTimestamp: null
+    labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq-mqtt-ssl
+  spec:
+    ports:
+    - port: 8883
+      protocol: TCP
+      targetPort: 8883
+    selector:
+      deploymentconfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's STOMP (SSL) port
+    creationTimestamp: null
+    labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq-stomp-ssl
+  spec:
+    ports:
+    - port: 61612
+      protocol: TCP
+      targetPort: 61612
+    selector:
+      deploymentconfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's OpenWire (SSL) port
+      service.alpha.openshift.io/dependencies: '[{"name": "broker-amq-amqp-ssl", "kind":
+        "Service"}, {"name": "broker-amq-mqtt-ssl","kind": "Service"},{"name": "broker-amq-stomp-ssl",
+        "kind": "Service"}]'
+    creationTimestamp: null
+    labels:
+      app: amq63-persistent-ssl
+      application: broker
+      promotion-group: cbr
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq-tcp-ssl
+  spec:
+    ports:
+    - port: 61617
+      protocol: TCP
+      targetPort: 61617
+    selector:
+      deploymentconfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
 - apiVersion: v1
   kind: Service
   metadata:
@@ -444,27 +752,6 @@ objects:
       targetPort: 8778
     selector:
       deploymentconfig: foodnet
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    creationTimestamp: null
-    labels:
-      app: pgqueue
-      promotion-group: cbr
-      template: postgresql-persistent-template
-    name: pgqueue
-  spec:
-    ports:
-    - name: postgresql
-      port: 5432
-      protocol: TCP
-      targetPort: 5432
-    selector:
-      name: pgqueue
     sessionAffinity: None
     type: ClusterIP
   status:
@@ -515,17 +802,11 @@ objects:
 
       # lets use a different management port in case you need to listen to HTTP requests on 8080
       management.port=8081
+      server.port=8080
 
       # disable all management endpoints except health
       endpoints.enabled = false
       endpoints.health.enabled = true
-
-      sdpqDataSource.jdbc.driverClassName=org.postgresql.Driver
-      sdpqDataSource.jdbc.url=jdbc:postgresql://pgqueue:5432/${PGQUEUE_DATABASE}
-      sdpqDataSource.jdbc.username=${PGQUEUE_USER}
-      sdpqDataSource.jdbc.password=${PGQUEUE_PASSWORD}
-
-      foodNet.queue=foodNetQueue?dataSource=sdpqDataSource
 
       aims.bucketName=${AIMS_BUCKET}
       aims.AccessKey=${AIMS_ACCESS_KEY}
@@ -534,6 +815,14 @@ objects:
       aims.url=${aims.bucketName}?amazonS3Endpoint=${aims.S3Url}&accessKey=${aims.AccessKey}&secretKey=${aims.SecretAccessKey}
       aims.SQSUrl=
       aims.SQSNotificationURL=
+
+      queue.url=ssl://broker-amq-tcp-ssl:61617
+      queue.userName=${AMQ_USER}
+      queue.password=${AMQ_PASSWORD}
+      queue.keyStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_KEYSTORE}
+      queue.keyStorePassword=${AMQ_KEYSTORE_PASSWORD}
+      queue.trustStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_TRUSTSTORE}
+      queue.trustStorePassword=${AMQ_TRUSTSTORE_PASSWORD}
   kind: ConfigMap
   metadata:
     creationTimestamp: null
@@ -562,11 +851,6 @@ objects:
       endpoints.enabled = false
       endpoints.health.enabled = true
 
-      sdpqDataSource.jdbc.driverClassName=org.postgresql.Driver
-      sdpqDataSource.jdbc.url=jdbc:postgresql://pgqueue:5432/${PGQUEUE_DATABASE}
-      sdpqDataSource.jdbc.username=${PGQUEUE_USER}
-      sdpqDataSource.jdbc.password=${PGQUEUE_PASSWORD}
-
       phinms.jdbc.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
       phinms.jdbc.url=jdbc:sqlserver://${POSTGRESQL_URL}:${POSTGRESQL_PORT};instance=${POSTGRESQL_INSTANCE}&databaseName=${POSTGRESQL_DATABASE};encrypt=true;trustServerCertificate=true;
       phinms.jdbc.username=${POSTGRESQL_USER}
@@ -577,7 +861,13 @@ objects:
       phinms.sql=select * from ${phinms.table} where processingStatus = 'queued' and  (applicationStatus is NULL or applicationStatus='NULL')?dataSource=phinMsDataSource&onConsume=update ${phinms.table} set applicationStatus='completed' where recordId=:#recordId&onConsumeFailed=update ${phinms.table} set applicationStatus='failed' where recordId=:#recordId&delay=10000
 
       foodNet.queue=foodNetQueue?dataSource=sdpqDataSource
-      nndss.queue=nndssQueue?tableName=nndssQueue&dataSource=sdpqDataSource
+      queue.url=ssl://broker-amq-tcp-ssl:61617
+      queue.userName=${AMQ_USER}
+      queue.password=${AMQ_PASSWORD}
+      queue.keyStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_KEYSTORE}
+      queue.keyStorePassword=${AMQ_KEYSTORE_PASSWORD}
+      queue.trustStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_TRUSTSTORE}
+      queue.trustStorePassword=${AMQ_TRUSTSTORE_PASSWORD}
   kind: ConfigMap
   metadata:
     creationTimestamp: null
@@ -599,16 +889,39 @@ objects:
   type: Opaque
 - apiVersion: v1
   stringData:
-    database-password: ${SECRET_PGQUEUE_PASSWORD}
-    database-user: ${SECRET_PGQUEUE_USER}
+    amq-keystore-password: ${SECRET_AMQ_BROKER_KEYSTORE_PASSWORD}
+    amq-password: ${SECRET_AMQ_PASSWORD}
+    amq-truststore-password: ${SECRET_AMQ_BROKER_TRUSTSTORE_PASSWORD}
+    amq-user: ${SECRET_AMQ_USER}
   kind: Secret
   metadata:
     creationTimestamp: null
     labels:
-      app: pgqueue
+      app: broker
       promotion-group: cbr
-      template: postgresql-persistent-template
-    name: pgqueue
+    name: amq-broker-credentials
+  type: Opaque
+- apiVersion: v1
+  stringData:
+    amq-keystore-password: ${SECRET_AMQ_FOODNET_CLIENT_KEYSTORE_PASSWORD}
+    amq-truststore-password: ${SECRET_AMQ_CLIENT_TRUSTSTORE_PASSWORD}
+  kind: Secret
+  metadata:
+    creationTimestamp: null
+    labels:
+      promotion-group: cbr
+    name: amq-foodnet-client-credentials
+  type: Opaque
+- apiVersion: v1
+  stringData:
+    amq-keystore-password: ${SECRET_AMQ_PHINMS_CLIENT_KEYSTORE_PASSWORD}
+    amq-truststore-password: ${SECRET_AMQ_CLIENT_TRUSTSTORE_PASSWORD}
+  kind: Secret
+  metadata:
+    creationTimestamp: null
+    labels:
+      promotion-group: cbr
+    name: amq-phinms-client-credentials
   type: Opaque
 - apiVersion: v1
   stringData:
@@ -628,21 +941,19 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      app: pgqueue
+      app: amq63-persistent-ssl
+      application: broker
       promotion-group: cbr
-      template: postgresql-persistent-template
-    name: pgqueue
+      template: amq63-persistent-ssl
+      xpaas: 1.5.0
+    name: broker-amq-claim
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
-        storage: ${PGQUEUE_VOLUME_CAPACITY}
+        storage: ${AMQ_VOLUME_CAPACITY}
 parameters:
-- displayName: CBR version number
-  name: CBR_RELEASE
-  required: true
-  value: '1.1.0'
 - description: The OpenShift Namespace where the project's ImageStreams reside.
   displayName: ImageStream Namespace
   name: NAMESPACE
@@ -654,32 +965,56 @@ parameters:
   name: DOCKER_REGISTRY_PORT
   required: true
   value: '5000'
-- description: Name for the pgqueue database
-  displayName: Pgqueue Database Name
-  name: PGQUEUE_DATABASE_NAME
+- description: Standard broker user's username. Required for connecting to the broker. If left empty, it will be generated.
+  displayName: A-MQ Username
+  from: "user[a-zA-Z0-9]{3}"
+  generate: expression
+  name: SECRET_AMQ_USER
   required: true
-  value: 'cbr'
-- description: Username for the pgqueue database
-  displayName: Pgqueue Username
-  name: SECRET_PGQUEUE_USER
-  required: true
-  value: 'cbr'
-- description: Password for the pgqueue database
-  displayName: Pgqueue Password
+- description: Standard broker user's password. Required for connecting to the broker. If left empty, it will be generated.
+  displayName: A-MQ Password
   from: '[a-zA-Z0-9]{16}'
   generate: expression
-  name: SECRET_PGQUEUE_PASSWORD
+  name: SECRET_AMQ_PASSWORD
   required: true
-- description: Volume space available for pgqueue data, e.g. 512Mi, 2Gi
-  displayName: Pgqueue Volume Capacity
-  name: PGQUEUE_VOLUME_CAPACITY
+- description: Password for the JBoss A-MQ Broker SSL Keystore
+  displayName: A-MQ Broker Keystore Password
+  name: SECRET_AMQ_BROKER_KEYSTORE_PASSWORD
+  required: true
+- description: Password for the JBoss A-MQ Broker SSL Trust Store
+  displayName: A-MQ Broker Trust Store Password
+  name: SECRET_AMQ_BROKER_TRUSTSTORE_PASSWORD
+  required: true
+- description: Password for the JBoss A-MQ Foodnet Client SSL Keystore
+  displayName: A-MQ Foodnet Client Keytore Password
+  name: SECRET_AMQ_FOODNET_CLIENT_KEYSTORE_PASSWORD
+  required: true
+- description: Password for the JBoss A-MQ Phinms Client SSL Keystore
+  displayName: A-MQ Phinms Client Keytore Password
+  name: SECRET_AMQ_PHINMS_CLIENT_KEYSTORE_PASSWORD
+  required: true
+- description: Password for the JBoss A-MQ Client SSL Trust Store
+  displayName: A-MQ Client Trust Store Password
+  name: SECRET_AMQ_CLIENT_TRUSTSTORE_PASSWORD
+  required: true
+- description: A-MQ queue names, separated by commas. These queues will be automatically created when the broker starts. If left empty, queues will be still created dynamically.
+  displayName: A-MQ Queues
+  name: AMQ_QUEUES_LIST
+  required: false
+- description: A-MQ topic names, separated by commas. These topics will be automatically created when the broker starts. If left empty, topics will be still created dynamically.
+  displayName: A-MQ Topics
+  name: AMQ_TOPICS_LIST
+  required: false
+- description: Sets the store disk limit usage in activemq.xml. If the value set is greater than the disk size, it will be resized to the available disk space.
+  displayName: A-MQ Storage Usage Limit
+  name: AMQ_STORAGE_LIMIT
+  required: false
+  value: '20 gb'
+- description: Size of the volume used by A-MQ for persisting messages
+  displayName: A-MQ Volume Capacity
+  name: AMQ_VOLUME_CAPACITY
   required: true
   value: 1Gi
-- description: Maximum amount of memory pgqueue can use
-  displayName: Pgqueue Memory Limit
-  name: PGQUEUE_MEMORY_LIMIT
-  required: true
-  value: 512Mi
 - description: Database URL for PHIN-MS 
   displayName: PHIN-MS URL
   name: POSTGRESQL_ADDRESS_URL
