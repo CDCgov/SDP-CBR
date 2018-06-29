@@ -1,0 +1,24 @@
+<configuration>
+
+	<appender name="JMX-NOTIF"
+		class="gov.cdc.sdp.cbr.appender.JmxNotificationAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>[%date{mm:ss.SSS}][%thread][%msg]%n</pattern>
+		</layout>
+	</appender>
+
+	<!-- Send debug messages to System.out -->
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="info">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="JMX-NOTIF" />
+	</root>
+</configuration>

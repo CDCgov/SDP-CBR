@@ -10,3 +10,10 @@ spec:
             limits:
               cpu: "1.0"
 #              memory: 256Mi
+          env:
+          - name: ACTIVEMQ_SERVICE_NAME
+            value: broker-amq-tcp
+          - name: ACTIVEMQ_BROKER_USERNAME
+            value: admin
+          - name: ACTIVEMQ_BROKER_PASSWORD
+            value: admin

@@ -1,0 +1,30 @@
+# Spring Boot configuration
+# spring:
+#  profiles:
+#    active: googleOAuth
+# Spring Security configuration
+security:
+  oauth2:
+    client:
+      clientId: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      clientSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope: email
+      #scope: https://www.googleapis.com/auth/games
+    resource:
+      userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+      preferTokenInfo: true
+# Server configuration
+#server:
+# port: 8080
+ 
+#logging:
+#  level:
+#    org.springframework.web: ERROR
+#    com.mkyong: DEBUG
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+#    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+#  file: C:/application.log
