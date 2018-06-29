@@ -6,20 +6,32 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
-
+import org.apache.camel.builder.NotifyBuilder;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+//import org.springframework.test.context.junit4.SpringRunner;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 
 @RunWith(CamelSpringBootRunner.class)
-@SpringBootTest //(webEnvironment = WebEnvironment.DEFINED_PORT)  // defaults to 8080
+@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.DEFINED_PORT) // defaults to 8080
+// @SpringBootTest //(webEnvironment = WebEnvironment.DEFINED_PORT)  // defaults to 8080
 //@ContextConfiguration(locations = { "classpath:/spring/camel-context-activemq.xml" })
 public class HttpApiTest extends Assert {
 
@@ -31,42 +43,107 @@ public class HttpApiTest extends Assert {
     @Autowired
     private ProducerTemplate template;
     
-    @Test
-    public void testGetMessage() throws Exception {
-        // use http4 component to get the message
-    	// body is null
+    @Before
+    public void setUp() {
+    	LOG.info("@Before setUp");
+    }
 
+    @After
+    public void tearDown() {
+    	LOG.info("@After tearDown");
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+      LOG.info("@BeforeClass setUpClass");
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+      LOG.info("@AfterClass tearDownClass");
+    }
+    
+	@Test
+	public void testGetOneMessage() throws Exception {
+	
+	    // NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+	    
+		// use http4 component to get the message
+		// body is null
+		String response = null;
+
+        response = template.requestBody("http4://localhost:8080/sdp/cbr/messages/", null, String.class);
+        if ((response != null) && (!response.isEmpty())) {
+            LOG.info("Response: {}", response);
+        } else {
+        	LOG.info("No Messages.");
+        }
+	
+	}
+    
+    
+    @Test
+    public void testGetAllMessages() throws Exception {
+
+        // NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        
+    	// use http4 component to get the message
+    	// body is null
     	String response = null;
     	int count = 0;
-    	do {
-            response = template.requestBody("http4://localhost:8282/sdp/cbr/rest/messages/", null, String.class);
-            if ((response != null) && (!response.isEmpty())) {
-                LOG.info("Response #{}: {}", ++count, response);
-            } else {
-            	LOG.info("End of Messages. Final count is {}", count);
-            }
-    	} while ((response != null) && (!response.isEmpty()));
+		do {
+		    response = template.requestBody("http4://localhost:8080/sdp/cbr/messages/", null, String.class);
+		    if ((response != null) && (!response.isEmpty())) {
+		        LOG.info("Response #{}: {}", ++count, response);
+		    } else {
+		    	LOG.info("End of Messages. Final count is {}", count);
+		    }
+		} while ((response != null) && (!response.isEmpty()));
 
     }
     
     @Test
-    public void testPostMessage() throws Exception {
+    public void testPostTxtMessage() throws Exception {
         // use http4 component to post the message
-    	LOG.info("Starting testPostMessage");
-        String filename = "src/test/resources/phinms_input_multi.csv";
+    	LOG.info("Starting testPostTxtMessage");
+        String filename = "src/test/resources/phinms_input_multi_hl7_no_quotes.txt";
         //InputStream hl7Stream = new FileInputStream(filename);
-        String content = new Scanner(new File(filename)).useDelimiter("\\Z").next();
+        File file = new File(filename);
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();         
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addBinaryBody ("upfile", file, ContentType.DEFAULT_BINARY, filename);
+        HttpEntity entity = builder.build();
         try {
-        	Future<String> reply = template.asyncRequestBody("http4://localhost:8282/sdp/cbr/rest/message", content, String.class);
+        	Future<String> reply = template.asyncRequestBody("http4://localhost:8080/sdp/cbr/messages", entity, String.class);
         	reply.get(60, TimeUnit.SECONDS);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 	        LOG.info("An error happened...");
 			e.printStackTrace();
 		}
-        //String response = template.requestBodyAndHeader("http4://localhost:8080/sdp/cbr/message", body, "Accept", "application/json", String.class);
-        //LOG.info("Response: {}", response);
-        LOG.info("End of testPostMessage");
+        
+
+        LOG.info("End of testPostTxtMessage");
+    }
+    
+    @Test
+    public void testPostCsvMessage() throws Exception {
+        // use http4 component to post the message
+    	LOG.info("Starting testPostCsvMessage");
+        String filename = "src/test/resources/phinms_input_multi.csv";
+        File file = new File(filename);
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();         
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addBinaryBody ("upfile", file, ContentType.DEFAULT_BINARY, filename);
+        HttpEntity entity = builder.build();
+        try {
+        	Future<String> reply = template.asyncRequestBody("http4://localhost:8080/sdp/cbr/messages/csv", entity, String.class);
+        	reply.get(60, TimeUnit.SECONDS);
+		} catch (Exception e) {
+	        LOG.info("An error happened...");
+			e.printStackTrace();
+		}
+        
+        LOG.info("End of testPostCsvMessage");
     }
     
     @Test
@@ -76,11 +153,12 @@ public class HttpApiTest extends Assert {
 
     	String response = null;
 
-        response = template.requestBody("http4://localhost:8282/sdp/cbr/rest/api-doc", null, String.class);
+        response = template.requestBody("http4://localhost:8080/sdp/cbr/api-doc", null, String.class);
         if ((response != null) && (!response.isEmpty())) {
             LOG.info("Response {}", response);
         }
     }
+
 
 //    @Test
 //    public void testCreateOrder() throws Exception {

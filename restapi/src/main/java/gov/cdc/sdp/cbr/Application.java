@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @SpringBootApplication
 // load regular Spring XML file from the classpath that contains the Camel XML
@@ -42,6 +43,7 @@ public class Application {
       ServletRegistrationBean servlet = new ServletRegistrationBean(
           new CamelHttpTransportServlet(), "/sdp/cbr/*");
       servlet.setName("CamelServlet");
+      servlet.setLoadOnStartup(1);
       return servlet;
   }
   
