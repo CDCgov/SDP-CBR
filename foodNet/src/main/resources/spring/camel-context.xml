@@ -6,10 +6,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                                http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
     <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory">
-            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <bean class="org.apache.activemq.ActiveMQSslConnectionFactory">
                 <property name="brokerURL" value="${queue.url}"/>
                 <property name="userName" value="${queue.userName}"/>
                 <property name="password" value="${queue.password}"/>
+                <property name="trustStore" value="${queue.trustStore}"/>
+                <property name="trustStorePassword" value="${queue.trustStorePassword}"/>
+                <property name="keyStore" value="${queue.keyStore}"/>
+                <property name="keyStorePassword" value="${queue.keyStorePassword}"/>
             </bean>
         </property>
     </bean>
