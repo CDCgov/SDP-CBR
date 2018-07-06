@@ -16,6 +16,7 @@ SERVICE_ACCOUNT_NAME="amq-service-account"
 BROKER_SECRET_NAME="amq-secret-broker"
 FOODNET_CLIENT_SECRET_NAME="amq-secret-foodnet-client"
 PHINMS_CLIENT_SECRET_NAME="amq-secret-phinms-client"
+RESTAPI_CLIENT_SECRET_NAME="amq-secret-restapi-client"
 DEV_TEMPLATE_FILE="sdp-cbr-project-template.yaml"
 PROMOTION_TEMPLATE_FILE="sdp-cbr-project-promotion-template.yaml"
 
@@ -24,10 +25,12 @@ DIRECTORY_NAME="ssl"
 BROKER_KEYSTORE_FILE="$DIRECTORY_NAME/broker.ks"
 FOODNET_CLIENT_KEYSTORE_FILE="$DIRECTORY_NAME/foodnet_client.ks"
 PHINMS_CLIENT_KEYSTORE_FILE="$DIRECTORY_NAME/phinms_client.ks"
+RESTAPI_CLIENT_KEYSTORE_FILE="$DIRECTORY_NAME/restapi_client.ks"
 
 BROKER_CERT_FILE="$DIRECTORY_NAME/broker_cert"
 FOODNET_CLIENT_CERT_FILE="$DIRECTORY_NAME/foodnet_client_cert"
 PHINMS_CLIENT_CERT_FILE="$DIRECTORY_NAME/phinms_client_cert"
+RESTAPI_CLIENT_CERT_FILE="$DIRECTORY_NAME/restapi_client_cert"
 
 BROKER_TRUSTSTORE_FILE="$DIRECTORY_NAME/broker.ts"
 CLIENT_TRUSTSTORE_FILE="$DIRECTORY_NAME/client.ts"
@@ -105,11 +108,29 @@ else
 	echo ""
 fi
 
+if [ ! -f $RESTAPI_CLIENT_KEYSTORE_FILE ]; then
+	echo "Generating restapi client keystore (you will create a restapi client keystore password and need to enter it twice)..."
+	keytool -genkey -alias client -keyalg RSA -keystore $RESTAPI_CLIENT_KEYSTORE_FILE
+else
+	echo "restapi client keystore found ($RESTAPI_CLIENT_KEYSTORE_FILE). Skipping..."
+	echo ""
+fi
+
+if [ ! -f $RESTAPI_CLIENT_CERT_FILE ]; then
+	echo "Generating restapi client certificate (you will need to enter the restapi client keystore password)..."
+	keytool -export -alias client -keystore $RESTAPI_CLIENT_KEYSTORE_FILE -file $RESTAPI_CLIENT_CERT_FILE
+else
+	echo "restapi client certificate found ($RESTAPI_CLIENT_CERT_FILE). Skipping..."
+	echo ""
+fi
+
 if [ ! -f $BROKER_TRUSTSTORE_FILE ]; then
 	echo "Creating broker truststore from client certificates (you will create a broker truststore password and need to enter it several times)..."
 	keytool -import -alias foodnet_client -keystore $BROKER_TRUSTSTORE_FILE -file $FOODNET_CLIENT_CERT_FILE
 	echo ""
 	keytool -import -alias phinms_client -keystore $BROKER_TRUSTSTORE_FILE -file $PHINMS_CLIENT_CERT_FILE
+	echo ""
+	keytool -import -alias restapi_client -keystore $BROKER_TRUSTSTORE_FILE -file $RESTAPI_CLIENT_CERT_FILE
 	echo ""
 else
 	echo "Broker truststore found ($BROKER_TRUSTSTORE_FILE). Skipping..."
@@ -132,6 +153,8 @@ oc secrets new $FOODNET_CLIENT_SECRET_NAME $FOODNET_CLIENT_KEYSTORE_FILE $CLIENT
 oc secrets add sa/$SERVICE_ACCOUNT_NAME secret/$FOODNET_CLIENT_SECRET_NAME
 oc secrets new $PHINMS_CLIENT_SECRET_NAME $PHINMS_CLIENT_KEYSTORE_FILE $CLIENT_TRUSTSTORE_FILE
 oc secrets add sa/$SERVICE_ACCOUNT_NAME secret/$PHINMS_CLIENT_SECRET_NAME
+oc secrets new $RESTAPI_CLIENT_SECRET_NAME $RESTAPI_CLIENT_KEYSTORE_FILE $CLIENT_TRUSTSTORE_FILE
+oc secrets add sa/$SERVICE_ACCOUNT_NAME secret/$RESTAPI_CLIENT_SECRET_NAME
 
 template_file="$DEV_TEMPLATE_FILE"
 while true;

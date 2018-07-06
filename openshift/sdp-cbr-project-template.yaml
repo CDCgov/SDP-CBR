@@ -10,7 +10,7 @@ metadata:
     openshift.io/documentation-url: https://github.com/CDCgov/SDP-CBR
     template.openshift.io/provider-display-name: SDP Team
     template.openshift.io/support-url: https://svcmgr.cdc.gov/
-    tags: cdc, sdp, cbr, routing, foodnet, phinms
+    tags: cdc, sdp, cbr, routing, foodnet, phinms, restapi
   message: 'Content Based Routing was deployed from the template. Database username and password values can be found in the project secrets.'
 labels:
   template: CBR-template
@@ -37,6 +37,17 @@ objects:
       app: phinms
       promotion-group: cbr
     name: phinms
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: sdp-cbr-restapi
+      promotion-group: cbr
+    name: sdp-cbr-restapi
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -77,7 +88,7 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: v1.2.1
+        ref: rest-api-2
         uri: https://github.com/CDCgov/SDP-CBR
       type: Git
     strategy:
@@ -122,7 +133,7 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: v1.2.1
+        ref: rest-api-2
         uri: https://github.com/CDCgov/SDP-CBR
       type: Git
     strategy:
@@ -130,6 +141,49 @@ objects:
         env:
         - name: ARTIFACT_DIR
           value: phinms/target
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:2.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: sdp-cbr-restapi
+      promotion-group: cbr
+    name: sdp-cbr-restapi
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: sdp-cbr-restapi:latest
+    postCommit: {}
+    resources:
+      limits:
+        cpu: 750m
+        memory: 3Gi
+      requests:
+        cpu: 750m
+        memory: 3Gi
+    runPolicy: Serial
+    source:
+      git:
+        ref: rest-api-2
+        uri: https://github.com/CDCgov/SDP-CBR
+      type: Git
+    strategy:
+      sourceStrategy:
         from:
           kind: ImageStreamTag
           name: fis-java-openshift:2.0
@@ -768,6 +822,161 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: sdp-cbr-restapi
+      promotion-group: cbr
+    name: sdp-cbr-restapi
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: sdp-cbr-restapi
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: sdp-cbr-restapi
+          deploymentconfig: sdp-cbr-restapi
+      spec:
+        containers:
+        - env:
+          - name: AMQ_USER
+            valueFrom:
+              secretKeyRef:
+                key: amq-user
+                name: amq-broker-credentials
+          - name: AMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-password
+                name: amq-broker-credentials
+          - name: AMQ_KEYSTORE_TRUSTSTORE_DIR
+            value: /etc/amq-secret-volume
+          - name: AMQ_KEYSTORE
+            value: restapi_client.ks
+          - name: AMQ_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-keystore-password
+                name: amq-restapi-client-credentials
+          - name: AMQ_TRUSTSTORE
+            value: client.ts
+          - name: AMQ_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: amq-truststore-password
+                name: amq-restapi-client-credentials
+          - name: POSTGRESQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: postgresql
+          - name: POSTGRESQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: postgresql
+          - name: POSTGRESQL_DATABASE
+            value: ${POSTGRESQL_DATABASE_NAME}
+          - name: HTTP_PROXY
+          - name: HTTPS_PROXY
+          - name: NO_PROXY
+          - name: http_proxy
+          - name: https_proxy
+          - name: no_proxy
+          image: ${DOCKER_REGISTRY_IP}:${DOCKER_REGISTRY_PORT}/${NAMESPACE}/sdp-cbr-restapi
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          name: sdp-cbr-restapi
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 5
+            periodSeconds: 60
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 256Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /deployments/config/
+            name: restapi-config-data
+          - mountPath: /etc/amq-secret-volume
+            name: amq-restapi-client-secret-volume
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: restapi-config
+          name: restapi-config-data
+        - name: amq-restapi-client-secret-volume
+          secret:
+            defaultMode: 420
+            secretName: amq-secret-restapi-client
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sdp-cbr-restapi
+        from:
+          kind: ImageStreamTag
+          name: sdp-cbr-restapi:latest
+          namespace: ${NAMESPACE}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
     creationTimestamp: null
     generation: 1
     labels:
@@ -1202,6 +1411,36 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: sdp-cbr-restapi
+      promotion-group: cbr
+    name: sdp-cbr-restapi
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    - name: 9779-tcp
+      port: 9779
+      protocol: TCP
+      targetPort: 9779
+    selector:
+      deploymentconfig: sdp-cbr-restapi
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
     creationTimestamp: null
     labels:
       app: postgresql
@@ -1332,6 +1571,41 @@ objects:
       app: phinms
       promotion-group: cbr
     name: phinms-config
+- apiVersion: v1
+  data:
+    application.properties: |
+      #spring.main.sources=org.mycompany
+
+      logging.config=classpath:logback-spring.xml
+
+      # the options from org.apache.camel.spring.boot.CamelConfigurationProperties can be configured here
+      camel.springboot.name=SDP-CBR
+
+      # lets listen on all ports to ensure we can be invoked from the pod IP
+      server.address=0.0.0.0
+      management.address=0.0.0.0
+
+      # lets use a different management port in case you need to listen to HTTP requests on 8080
+      management.port=8081
+
+      # disable all management endpoints except health
+      endpoints.enabled = false
+      endpoints.health.enabled = true
+
+      queue.url=ssl://broker-amq-tcp-ssl:61617
+      queue.userName=${AMQ_USER}
+      queue.password=${AMQ_PASSWORD}
+      queue.keyStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_KEYSTORE}
+      queue.keyStorePassword=${AMQ_KEYSTORE_PASSWORD}
+      queue.trustStore=${AMQ_KEYSTORE_TRUSTSTORE_DIR}/${AMQ_TRUSTSTORE}
+      queue.trustStorePassword=${AMQ_TRUSTSTORE_PASSWORD}
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: restapi
+      promotion-group: cbr
+    name: restapi-config
 - apiVersion: v1
   data:
     config.json: |
@@ -1478,6 +1752,17 @@ objects:
   type: Opaque
 - apiVersion: v1
   stringData:
+    amq-keystore-password: ${SECRET_AMQ_RESTAPI_CLIENT_KEYSTORE_PASSWORD}
+    amq-truststore-password: ${SECRET_AMQ_CLIENT_TRUSTSTORE_PASSWORD}
+  kind: Secret
+  metadata:
+    creationTimestamp: null
+    labels:
+      promotion-group: cbr
+    name: amq-restapi-client-credentials
+  type: Opaque
+- apiVersion: v1
+  stringData:
     database-password: ${SECRET_POSTGRESQL_PASSWORD}
     database-user: ${SECRET_POSTGRESQL_USER}
   kind: Secret
@@ -1545,6 +1830,10 @@ parameters:
 - description: Password for the JBoss A-MQ Phinms Client SSL Keystore
   displayName: A-MQ Phinms Client Keytore Password
   name: SECRET_AMQ_PHINMS_CLIENT_KEYSTORE_PASSWORD
+  required: true
+- description: Password for the JBoss A-MQ restapi Client SSL Keystore
+  displayName: A-MQ restapi Client Keytore Password
+  name: SECRET_AMQ_RESTAPI_CLIENT_KEYSTORE_PASSWORD
   required: true
 - description: Password for the JBoss A-MQ Client SSL Trust Store
   displayName: A-MQ Client Trust Store Password
