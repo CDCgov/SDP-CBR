@@ -88,7 +88,7 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: rest-api-2
+        ref: template_for_rest_api
         uri: https://github.com/CDCgov/SDP-CBR
       type: Git
     strategy:
@@ -133,7 +133,7 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: rest-api-2
+        ref: template_for_rest_api
         uri: https://github.com/CDCgov/SDP-CBR
       type: Git
     strategy:
@@ -179,7 +179,7 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: rest-api-2
+        ref: template_for_rest_api
         uri: https://github.com/CDCgov/SDP-CBR
       type: Git
     strategy:
