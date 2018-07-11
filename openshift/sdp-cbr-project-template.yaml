@@ -1447,7 +1447,7 @@ objects:
       dep_env: stg
       promotion-group: cbr
       template: postgresql-ephemeral-template
-  name: postgresql
+    name: postgresql
   spec:
     ports:
     - name: postgresql
