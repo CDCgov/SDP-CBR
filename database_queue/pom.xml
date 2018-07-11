@@ -6,19 +6,19 @@
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>sdp-cbr-queue</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <name>SDP-CBR Database Queue Component</name>
   <description>SDP-CBR Camel component for managing database queues.</description>
   <parent>
     <groupId>gov.cdc.sdp</groupId>
     <artifactId>sdp-cbr</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
   </parent>
   <dependencies>
     <dependency>
       <groupId>gov.cdc.sdp</groupId>
       <artifactId>sdp-cbr-common</artifactId>
-      <version>1.2.0</version>
+      <version>1.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>

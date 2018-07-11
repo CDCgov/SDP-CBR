@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.cdc.sdp</groupId>
   <artifactId>HL7V2Filter</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <properties>
     <hapi.version.stable>2.2</hapi.version.stable>
     <slf4j.version>1.6.2</slf4j.version>
