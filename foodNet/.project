@@ -3,6 +3,9 @@
 	<name>sdp-cbr-aphl</name>
 	<comment></comment>
 	<projects>
+		<project>sdp-cbr-common</project>
+		<project>sdp-cbr-aphl</project>
+		<project>sdp-cbr-queue</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

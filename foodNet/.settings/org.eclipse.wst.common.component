@@ -5,6 +5,15 @@
         <wb-resource deploy-path="/" source-path="/src/main/java"/>
                 
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
+        <dependent-module deploy-path="/" handle="module:/resource/sdp-cbr-common/sdp-cbr-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/resource/sdp-cbr-aphl/sdp-cbr-aphl">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/resource/sdp-cbr-queue/sdp-cbr-queue">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
             
     </wb-module>
     

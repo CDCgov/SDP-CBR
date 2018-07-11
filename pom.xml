@@ -149,8 +149,7 @@
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v25</artifactId>
-      <version>${hapi.version.stable}</version>
-    </dependency>
+      </dependency>
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v251</artifactId>
