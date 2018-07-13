@@ -57,7 +57,8 @@
 
 		<restConfiguration apiContextListing="false"
 			apiContextPath="api-doc" bindingMode="off" component="servlet"
-			contextPath="sdp/cbr" enableCORS="true">
+			contextPath="sdp/cbr" enableCORS="true" host="restapi-cbr-jdhunt.129.83.185.216.xip.io"
+			port="80">
 			<dataFormatProperty key="prettyPrint" value="true" />
 			<!-- setup swagger api descriptions -->
 			<apiProperty key="base.path" value="cbr" />
